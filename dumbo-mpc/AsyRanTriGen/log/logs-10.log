@@ -1,0 +1,449 @@
+2025-08-13 07:48:39,140 [INFO] [10] Starting AsyRanTriGen
+2025-08-13 07:48:39,142 [INFO] self.pkbls: <beaver.broadcast.crypto.boldyreva.TBLSPublicKey object at 0xffff54ffb070>
+2025-08-13 07:48:39,144 [INFO] self.skbls: <beaver.broadcast.crypto.boldyreva.TBLSPrivateKey object at 0xffff54ffb0a0>
+2025-08-13 07:48:39,144 [INFO] [10] Starting ACSS to share 4 secrets
+2025-08-13 07:48:39,145 [INFO] [10] [ACSS] Using tag R_A (mode=avss_without_proof)
+2025-08-13 07:48:39,145 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,145 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,145 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,145 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,145 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,145 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,145 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,146 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,146 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,146 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,232 [INFO] after pyCommit commitmentlistandprooflist
+2025-08-13 07:48:39,255 [INFO] before return dumps
+2025-08-13 07:48:39,256 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,257 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,259 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,259 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,259 [INFO] before reliablebroadcast
+2025-08-13 07:48:39,259 [INFO] before reliablebroadcast
+2025-08-13 07:48:40,224 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,224 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,224 [INFO] AVID retrieve called with sid: 11-0-B-AVSS, index: 10
+2025-08-13 07:48:40,224 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,224 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,224 [INFO] AVID retrieve called with sid: 10-0-B-AVSS, index: 10
+2025-08-13 07:48:40,224 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,224 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,224 [INFO] AVID retrieve called with sid: 4-0-B-AVSS, index: 10
+2025-08-13 07:48:40,224 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,224 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,224 [INFO] AVID retrieve called with sid: 6-0-B-AVSS, index: 10
+2025-08-13 07:48:40,224 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,224 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,224 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 10
+2025-08-13 07:48:40,224 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,224 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,225 [INFO] AVID retrieve called with sid: 5-0-B-AVSS, index: 10
+2025-08-13 07:48:40,225 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,225 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,225 [INFO] AVID retrieve called with sid: 9-0-B-AVSS, index: 10
+2025-08-13 07:48:40,254 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,255 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,255 [INFO] AVID retrieve called with sid: 8-0-B-AVSS, index: 10
+2025-08-13 07:48:40,285 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,285 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,285 [INFO] AVID retrieve called with sid: 12-0-B-AVSS, index: 10
+2025-08-13 07:48:40,296 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,299 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,301 [INFO] AVID retrieve called with sid: 7-0-B-AVSS, index: 10
+2025-08-13 07:48:40,308 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,312 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,313 [INFO] AVID retrieve called with sid: 13-0-B-AVSS, index: 10
+2025-08-13 07:48:40,363 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,363 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,363 [INFO] AVID retrieve called with sid: 14-0-B-AVSS, index: 10
+2025-08-13 07:48:40,373 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,373 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,373 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 10
+2025-08-13 07:48:40,374 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,374 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,374 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 10
+2025-08-13 07:48:40,374 [INFO] 0-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,374 [INFO] 11-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,376 [INFO] 10-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,376 [INFO] 6-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,384 [INFO] 8-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,384 [INFO] 5-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,384 [INFO] 12-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,384 [INFO] 4-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,384 [INFO] 9-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,397 [INFO] 7-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,400 [INFO] 13-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,410 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,411 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,411 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 10
+2025-08-13 07:48:40,446 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,460 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,469 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,493 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,536 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,545 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,559 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,570 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,610 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,618 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,643 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,646 [INFO] [10] [random shares] Starting ACS where node 1 is set as leader 
+2025-08-13 07:48:40,646 [INFO] [10] [random shares] The proposal of node 10 is [13, 7, 0, 10, 5, 11, 8, 6, 4, 12, 9]
+2025-08-13 07:48:40,647 [INFO] enter handle_message
+2025-08-13 07:48:40,714 [INFO] 3-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,715 [INFO] 14-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,715 [INFO] 2-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,719 [INFO] after reliablebroadcast
+2025-08-13 07:48:40,719 [INFO] enter _process_avss_msg
+2025-08-13 07:48:40,719 [INFO] AVID retrieve called with sid: 15-0-B-AVSS, index: 10
+2025-08-13 07:48:40,720 [INFO] 1-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,749 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,758 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,768 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,775 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:40,795 [INFO] [10] value-self.acss_outputs.keys():dict_keys([13, 7, 0, 10, 5, 11, 8, 6, 4, 12, 9, 3, 1, 2, 14])
+2025-08-13 07:48:40,797 [INFO] [10] --Directly send the proposal!--
+2025-08-13 07:48:40,838 [INFO] 15-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:40,865 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 0
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 1
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 2
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 3
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 4
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 5
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 6
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 7
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 8
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 9
+2025-08-13 07:48:41,156 [INFO] [10] Broadcasting to 10
+2025-08-13 07:48:41,157 [INFO] [10] Broadcasting to 11
+2025-08-13 07:48:41,157 [INFO] [10] Broadcasting to 12
+2025-08-13 07:48:41,157 [INFO] [10] Broadcasting to 13
+2025-08-13 07:48:41,157 [INFO] [10] Broadcasting to 14
+2025-08-13 07:48:41,157 [INFO] [10] Broadcasting to 15
+2025-08-13 07:48:41,221 [INFO] [10] Broadcasting to 0
+2025-08-13 07:48:41,221 [INFO] [10] Broadcasting to 1
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 2
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 3
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 4
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 5
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 6
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 7
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 8
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 9
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 10
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 11
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 12
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 13
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 14
+2025-08-13 07:48:41,223 [INFO] [10] Broadcasting to 15
+2025-08-13 07:48:41,223 [INFO] [10] [random shares] The ACS set is [0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+2025-08-13 07:48:41,223 [INFO] [10] Starting extract random shares
+2025-08-13 07:48:41,308 [INFO] [10] Obtaining total 24 random shares!
+2025-08-13 07:48:41,308 [INFO] [10] Starting to generate beaver triples
+2025-08-13 07:48:41,308 [INFO] [10] [beaver triples] Starting to share random shares
+2025-08-13 07:48:41,308 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+2025-08-13 07:48:41,309 [INFO] before reliablebroadcast
+hidden g = {[6679831729115696150 8653662730902241269 1535610680227111361 17342916647841752903 17135755455211762752 1297449291367578485] [13451288730302620273 10097742279870053774 15949884091978425806 5885175747529691540 1016841820992199104 845620083434234474]}
+hidden h = {[13794385998538644597 108816626937764141 12130603454454490125 6127379912259600201 17481961476035825978 950355161936836191] [10722765800778186391 17107915684035394744 11626309118465119103 5217919199071354366 6102759180633827794 660535627654889709]}
+hidden Equal? false
+2025/08/13 07:48:42 prodProofs size =  13965
+2025/08/13 07:48:42 prodProofs count =  12
+2025-08-13 07:48:42,172 [INFO] prodProofs size: 14192 bytes
+2025-08-13 07:48:42,173 [INFO] prodProofs count: 12
+2025-08-13 07:48:42,335 [INFO] before return dumps
+2025-08-13 07:48:42,335 [INFO] before reliablebroadcast
+2025-08-13 07:48:42,335 [INFO] before reliablebroadcast
+2025-08-13 07:48:42,336 [INFO] before reliablebroadcast
+2025-08-13 07:48:42,336 [INFO] before reliablebroadcast
+2025-08-13 07:48:42,336 [INFO] before reliablebroadcast
+2025-08-13 07:48:42,336 [INFO] before reliablebroadcast
+2025-08-13 07:48:42,456 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,457 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,457 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 10
+2025-08-13 07:48:42,463 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,463 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,463 [INFO] AVID retrieve called with sid: 4-0-B-AVSS, index: 10
+2025-08-13 07:48:42,463 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,464 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,464 [INFO] AVID retrieve called with sid: 14-0-B-AVSS, index: 10
+2025-08-13 07:48:42,464 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,464 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,465 [INFO] AVID retrieve called with sid: 7-0-B-AVSS, index: 10
+2025-08-13 07:48:42,465 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,465 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,465 [INFO] AVID retrieve called with sid: 11-0-B-AVSS, index: 10
+2025-08-13 07:48:42,478 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,478 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,478 [INFO] AVID retrieve called with sid: 6-0-B-AVSS, index: 10
+2025-08-13 07:48:42,479 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,479 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,479 [INFO] AVID retrieve called with sid: 5-0-B-AVSS, index: 10
+2025-08-13 07:48:42,479 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,479 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,479 [INFO] AVID retrieve called with sid: 12-0-B-AVSS, index: 10
+2025-08-13 07:48:42,479 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,479 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,479 [INFO] AVID retrieve called with sid: 10-0-B-AVSS, index: 10
+2025-08-13 07:48:42,479 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,479 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,479 [INFO] AVID retrieve called with sid: 9-0-B-AVSS, index: 10
+2025-08-13 07:48:42,503 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,503 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,503 [INFO] AVID retrieve called with sid: 15-0-B-AVSS, index: 10
+2025-08-13 07:48:42,575 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,577 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,577 [INFO] AVID retrieve called with sid: 13-0-B-AVSS, index: 10
+2025-08-13 07:48:42,578 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,581 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,581 [INFO] AVID retrieve called with sid: 8-0-B-AVSS, index: 10
+2025-08-13 07:48:42,613 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,614 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,614 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 10
+2025-08-13 07:48:42,614 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,614 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,614 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 10
+2025-08-13 07:48:42,615 [INFO] after reliablebroadcast
+2025-08-13 07:48:42,615 [INFO] enter _process_avss_msg
+2025-08-13 07:48:42,615 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 10
+2025-08-13 07:48:42,625 [INFO] 7-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,626 [INFO] 14-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,639 [INFO] 9-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,639 [INFO] 6-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,639 [INFO] 4-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,641 [INFO] 12-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,641 [INFO] 5-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,641 [INFO] 0-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,641 [INFO] 10-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:42,691 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:42,757 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,077 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,164 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,220 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,221 [INFO] 8-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:43,264 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,311 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,350 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,437 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,452 [INFO] 2-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:43,459 [INFO] 11-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:43,460 [INFO] 3-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:43,499 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,501 [INFO] 15-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:43,534 [INFO] 1-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:43,535 [INFO] 13-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:43,594 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,646 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,719 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,795 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,861 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,931 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:43,933 [INFO] [10] [beaver triples] Starting to ACS where 2 is set as leader 
+2025-08-13 07:48:43,933 [INFO] [10] [beaver triples] The proposal of node 10 is [14, 7, 4, 6, 9, 10, 0, 12, 5, 8, 11]
+2025-08-13 07:48:43,933 [INFO] enter handle_message
+2025-08-13 07:48:44,000 [INFO] [10] value-self.acss_outputs.keys():dict_keys([14, 7, 4, 6, 9, 10, 0, 12, 5, 8, 11, 2, 3, 15, 1, 13])
+2025-08-13 07:48:44,000 [INFO] [10] --Directly send the proposal!--
+2025-08-13 07:48:44,692 [INFO] [10] Broadcasting to 0
+2025-08-13 07:48:44,692 [INFO] [10] Broadcasting to 1
+2025-08-13 07:48:44,692 [INFO] [10] Broadcasting to 2
+2025-08-13 07:48:44,692 [INFO] [10] Broadcasting to 3
+2025-08-13 07:48:44,692 [INFO] [10] Broadcasting to 4
+2025-08-13 07:48:44,692 [INFO] [10] Broadcasting to 5
+2025-08-13 07:48:44,692 [INFO] [10] Broadcasting to 6
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 7
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 8
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 9
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 10
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 11
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 12
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 13
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 14
+2025-08-13 07:48:44,693 [INFO] [10] Broadcasting to 15
+2025-08-13 07:48:44,751 [INFO] [10] Broadcasting to 0
+2025-08-13 07:48:44,752 [INFO] [10] Broadcasting to 1
+2025-08-13 07:48:44,752 [INFO] [10] Broadcasting to 2
+2025-08-13 07:48:44,752 [INFO] [10] Broadcasting to 3
+2025-08-13 07:48:44,762 [INFO] [10] Broadcasting to 4
+2025-08-13 07:48:44,762 [INFO] [10] Broadcasting to 5
+2025-08-13 07:48:44,763 [INFO] [10] Broadcasting to 6
+2025-08-13 07:48:44,763 [INFO] [10] Broadcasting to 7
+2025-08-13 07:48:44,763 [INFO] [10] Broadcasting to 8
+2025-08-13 07:48:44,765 [INFO] [10] Broadcasting to 9
+2025-08-13 07:48:44,765 [INFO] [10] Broadcasting to 10
+2025-08-13 07:48:44,765 [INFO] [10] Broadcasting to 11
+2025-08-13 07:48:44,765 [INFO] [10] Broadcasting to 12
+2025-08-13 07:48:44,765 [INFO] [10] Broadcasting to 13
+2025-08-13 07:48:44,765 [INFO] [10] Broadcasting to 14
+2025-08-13 07:48:44,765 [INFO] [10] Broadcasting to 15
+2025-08-13 07:48:44,765 [INFO] [10] [beaver triples] The ACS set is [0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14]
+2025-08-13 07:48:44,805 [INFO] [10] [beaver triples] Time taken for beaver_time: 5.660542011260986 seconds
+2025-08-13 07:48:44,805 [INFO] [10] [inputs] Start generating 16 public inputs via ACSS+ACS
+2025-08-13 07:48:44,808 [INFO] [10] [inputs] Starting ACSS to share 16 inputs
+2025-08-13 07:48:44,845 [INFO] [10] [ACSS] Using tag ACSS_INPUTS_AVSS (mode=avss_without_proof)
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:44,891 [INFO] before reliablebroadcast
+2025-08-13 07:48:46,448 [INFO] after pyCommit commitmentlistandprooflist
+2025-08-13 07:48:46,481 [INFO] before return dumps
+2025-08-13 07:48:46,482 [INFO] before reliablebroadcast
+2025-08-13 07:48:46,483 [INFO] before reliablebroadcast
+2025-08-13 07:48:46,483 [INFO] before reliablebroadcast
+2025-08-13 07:48:46,483 [INFO] before reliablebroadcast
+2025-08-13 07:48:46,483 [INFO] before reliablebroadcast
+2025-08-13 07:48:46,483 [INFO] before reliablebroadcast
+2025-08-13 07:48:46,518 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,519 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,519 [INFO] AVID retrieve called with sid: 12-0-B-AVSS, index: 10
+2025-08-13 07:48:46,520 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,520 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,520 [INFO] AVID retrieve called with sid: 11-0-B-AVSS, index: 10
+2025-08-13 07:48:46,522 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,522 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,522 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 10
+2025-08-13 07:48:46,524 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,524 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,525 [INFO] AVID retrieve called with sid: 14-0-B-AVSS, index: 10
+2025-08-13 07:48:46,525 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,525 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,526 [INFO] AVID retrieve called with sid: 7-0-B-AVSS, index: 10
+2025-08-13 07:48:46,526 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,527 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,527 [INFO] AVID retrieve called with sid: 5-0-B-AVSS, index: 10
+2025-08-13 07:48:46,527 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,527 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,527 [INFO] AVID retrieve called with sid: 8-0-B-AVSS, index: 10
+2025-08-13 07:48:46,527 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,527 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,528 [INFO] AVID retrieve called with sid: 4-0-B-AVSS, index: 10
+2025-08-13 07:48:46,528 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,528 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,528 [INFO] AVID retrieve called with sid: 13-0-B-AVSS, index: 10
+2025-08-13 07:48:46,583 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,583 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,583 [INFO] AVID retrieve called with sid: 6-0-B-AVSS, index: 10
+2025-08-13 07:48:46,583 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,583 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,583 [INFO] AVID retrieve called with sid: 10-0-B-AVSS, index: 10
+2025-08-13 07:48:46,583 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,584 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,584 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 10
+2025-08-13 07:48:46,663 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,663 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,663 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 10
+2025-08-13 07:48:46,664 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,664 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,671 [INFO] AVID retrieve called with sid: 15-0-B-AVSS, index: 10
+2025-08-13 07:48:46,672 [INFO] 10-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,674 [INFO] 0-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,675 [INFO] 7-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,675 [INFO] 4-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,675 [INFO] 13-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,675 [INFO] 2-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,680 [INFO] 14-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,680 [INFO] 6-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,680 [INFO] 12-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,680 [INFO] 5-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,681 [INFO] 11-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,681 [INFO] 8-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,702 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,703 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,703 [INFO] AVID retrieve called with sid: 9-0-B-AVSS, index: 10
+2025-08-13 07:48:46,753 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,764 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,770 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,791 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,819 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,827 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,833 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,838 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,845 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,854 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,865 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,888 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:46,891 [INFO] [10] [inputs] Starting ACS (leader=0); proposal size=12
+2025-08-13 07:48:46,893 [INFO] enter handle_message
+2025-08-13 07:48:46,893 [INFO] after reliablebroadcast
+2025-08-13 07:48:46,893 [INFO] enter _process_avss_msg
+2025-08-13 07:48:46,893 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 10
+2025-08-13 07:48:46,900 [INFO] 15-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:46,914 [INFO] [10] value-self.acss_outputs.keys():dict_keys([5, 0, 12, 2, 11, 10, 6, 14, 7, 4, 8, 13])
+2025-08-13 07:48:46,917 [INFO] [10] --Directly send the proposal!--
+2025-08-13 07:48:47,140 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:47,210 [INFO] 1-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:47,258 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:47,276 [INFO] 9-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:47,276 [INFO] 3-0-B-AVSS 10 RETRIEVE called.
+2025-08-13 07:48:47,329 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:47,360 [INFO] after self._handle_dealer_msgs
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 0
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 1
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 2
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 3
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 4
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 5
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 6
+2025-08-13 07:48:47,651 [INFO] [10] Broadcasting to 7
+2025-08-13 07:48:47,652 [INFO] [10] Broadcasting to 8
+2025-08-13 07:48:47,652 [INFO] [10] Broadcasting to 9
+2025-08-13 07:48:47,652 [INFO] [10] Broadcasting to 10
+2025-08-13 07:48:47,652 [INFO] [10] Broadcasting to 11
+2025-08-13 07:48:47,655 [INFO] [10] Broadcasting to 12
+2025-08-13 07:48:47,655 [INFO] [10] Broadcasting to 13
+2025-08-13 07:48:47,655 [INFO] [10] Broadcasting to 14
+2025-08-13 07:48:47,655 [INFO] [10] Broadcasting to 15
+2025-08-13 07:48:47,681 [INFO] [10] Broadcasting to 0
+2025-08-13 07:48:47,681 [INFO] [10] Broadcasting to 1
+2025-08-13 07:48:47,681 [INFO] [10] Broadcasting to 2
+2025-08-13 07:48:47,681 [INFO] [10] Broadcasting to 3
+2025-08-13 07:48:47,681 [INFO] [10] Broadcasting to 4
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 5
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 6
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 7
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 8
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 9
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 10
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 11
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 12
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 13
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 14
+2025-08-13 07:48:47,682 [INFO] [10] Broadcasting to 15
+2025-08-13 07:48:47,682 [INFO] [10] [inputs] ACS set size=12; set=[0, 2, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14]
+2025-08-13 07:48:47,682 [INFO] [10] [inputs] Decoded 16 input shares from dealer 0
+2025-08-13 07:48:47,682 [INFO] len a_all: 4, len b_all: 4, len c_all: 4
+2025-08-13 07:48:47,683 [INFO] [10] [inputs] Time taken to inputs_time: 2.8779637813568115 seconds
+2025-08-13 07:48:47,683 [INFO] [10] [layer 0] Using 4 triples (a,b,c) for multiplication
+2025-08-13 07:48:47,711 [INFO] [BatchReconstruct] P1 Send: 0.0005910396575927734
+2025-08-13 07:48:47,750 [INFO] [BatchReconstruct] P1 Reconstruct: 0.03717517852783203
+2025-08-13 07:48:47,750 [INFO] [BatchReconstruct] P2 Send: 0.0001666545867919922
+2025-08-13 07:48:47,772 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0222623348236084
+2025-08-13 07:48:47,773 [INFO] [10] [layer 0] done: produced 8 outputs; next I size=16
+2025-08-13 07:48:47,773 [INFO] [10] [layer 0] Time taken for layer layer_time: 0.08957529067993164 seconds
+2025-08-13 07:48:47,773 [INFO] [10] [final] opening 8 outputs
+2025-08-13 07:48:47,776 [INFO] [BatchReconstruct] P1 Send: 0.0003101825714111328
+2025-08-13 07:48:47,800 [INFO] [BatchReconstruct] P1 Reconstruct: 0.02294158935546875
+2025-08-13 07:48:47,816 [INFO] [BatchReconstruct] P2 Send: 0.0003082752227783203
+2025-08-13 07:48:47,826 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0098724365234375
+2025-08-13 07:48:47,827 [INFO] [10] [final] reconstructed 8 values
+2025-08-13 07:48:47,827 [INFO] [10] [final] Time taken for reconstruction rec_time: 0.054492950439453125 seconds
+2025-08-13 07:48:47,827 [INFO] [10] [beaver triples] Finished! Node 10, total number: 12, time: 8.68282961845398 (seconds)
+2025-08-13 07:48:47,827 [INFO] [10] Bytes Sent: R_A:405803 which is 9.921%
+2025-08-13 07:48:47,827 [INFO] [10] Bytes Sent: ACS:1000950 which is 24.47%
+2025-08-13 07:48:47,827 [INFO] [10] Bytes Sent: B_A:2676755 which is 65.438%
+2025-08-13 07:48:47,827 [INFO] [10] Bytes Sent: OPE:6990 which is 0.171%
+2025-08-13 07:48:47,827 [INFO] [10] Total bytes sent out aa: 4090498

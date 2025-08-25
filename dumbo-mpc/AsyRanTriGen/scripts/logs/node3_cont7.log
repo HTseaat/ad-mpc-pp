@@ -1,0 +1,139 @@
+Warning: Permanently added '101.43.22.70' (ECDSA) to the list of known hosts.
+Creating dumbo-mpc_dumbo-mpc_run ... 
+Creating dumbo-mpc_dumbo-mpc_run ... done
+2025-08-23 08:15:36,570 INFO [root] Running ADMPC ...
+2025-08-23 08:15:36,995 INFO [root] my_send_id: 80
+2025-08-23 08:15:37,077 INFO [root] ADMPC start time: 1755936937.0777717
+2025-08-23 08:15:37,078 INFO [root] [Layer 6] Reached run_admpc checkpoint
+2025-08-23 08:15:37,078 INFO [beaver.transfer] [2] Starting DynamicTransfer_Foll
+2025-08-23 08:15:37,078 INFO [beaver.transfer] [2] Starting ACSS to share 0 secrets
+2025-08-23 08:15:37,078 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 0, Client Mode: False
+2025-08-23 08:15:37,078 INFO [root] [2] AVSS tag: 0-0-6-B-AVSS
+2025-08-23 08:15:37,078 INFO [root] [2] RBC tag: 0-0-6-B-RBC
+2025-08-23 08:15:37,078 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 0, client_mode: False
+2025-08-23 08:15:37,078 INFO [root] rbc_list: [65, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,079 INFO [root] committee_size: 13
+2025-08-23 08:15:37,079 INFO [root] n: 14
+2025-08-23 08:15:37,079 INFO [root] f: 4
+2025-08-23 08:15:37,079 INFO [root] pid: 3
+2025-08-23 08:15:37,079 INFO [root] leader: 0
+2025-08-23 08:15:37,079 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 1, Client Mode: False
+2025-08-23 08:15:37,079 INFO [root] [2] AVSS tag: 1-0-6-B-AVSS
+2025-08-23 08:15:37,079 INFO [root] [2] RBC tag: 1-0-6-B-RBC
+2025-08-23 08:15:37,079 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 1, client_mode: False
+2025-08-23 08:15:37,079 INFO [root] rbc_list: [66, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,079 INFO [root] committee_size: 13
+2025-08-23 08:15:37,079 INFO [root] n: 14
+2025-08-23 08:15:37,079 INFO [root] f: 4
+2025-08-23 08:15:37,079 INFO [root] pid: 3
+2025-08-23 08:15:37,079 INFO [root] leader: 1
+2025-08-23 08:15:37,079 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 2, Client Mode: False
+2025-08-23 08:15:37,079 INFO [root] [2] AVSS tag: 2-0-6-B-AVSS
+2025-08-23 08:15:37,079 INFO [root] [2] RBC tag: 2-0-6-B-RBC
+2025-08-23 08:15:37,079 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 2, client_mode: False
+2025-08-23 08:15:37,079 INFO [root] rbc_list: [67, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,079 INFO [root] committee_size: 13
+2025-08-23 08:15:37,079 INFO [root] n: 14
+2025-08-23 08:15:37,079 INFO [root] f: 4
+2025-08-23 08:15:37,079 INFO [root] pid: 3
+2025-08-23 08:15:37,079 INFO [root] leader: 2
+2025-08-23 08:15:37,079 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 3, Client Mode: False
+2025-08-23 08:15:37,079 INFO [root] [2] AVSS tag: 3-0-6-B-AVSS
+2025-08-23 08:15:37,079 INFO [root] [2] RBC tag: 3-0-6-B-RBC
+2025-08-23 08:15:37,079 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 3, client_mode: False
+2025-08-23 08:15:37,079 INFO [root] rbc_list: [68, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,079 INFO [root] committee_size: 13
+2025-08-23 08:15:37,079 INFO [root] n: 14
+2025-08-23 08:15:37,079 INFO [root] f: 4
+2025-08-23 08:15:37,079 INFO [root] pid: 2
+2025-08-23 08:15:37,079 INFO [root] leader: 3
+2025-08-23 08:15:37,079 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 4, Client Mode: False
+2025-08-23 08:15:37,080 INFO [root] [2] AVSS tag: 4-0-6-B-AVSS
+2025-08-23 08:15:37,080 INFO [root] [2] RBC tag: 4-0-6-B-RBC
+2025-08-23 08:15:37,080 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 4, client_mode: False
+2025-08-23 08:15:37,080 INFO [root] rbc_list: [69, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,080 INFO [root] committee_size: 13
+2025-08-23 08:15:37,080 INFO [root] n: 14
+2025-08-23 08:15:37,080 INFO [root] f: 4
+2025-08-23 08:15:37,080 INFO [root] pid: 2
+2025-08-23 08:15:37,080 INFO [root] leader: 4
+2025-08-23 08:15:37,080 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 5, Client Mode: False
+2025-08-23 08:15:37,080 INFO [root] [2] AVSS tag: 5-0-6-B-AVSS
+2025-08-23 08:15:37,080 INFO [root] [2] RBC tag: 5-0-6-B-RBC
+2025-08-23 08:15:37,080 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 5, client_mode: False
+2025-08-23 08:15:37,080 INFO [root] rbc_list: [70, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,080 INFO [root] committee_size: 13
+2025-08-23 08:15:37,080 INFO [root] n: 14
+2025-08-23 08:15:37,080 INFO [root] f: 4
+2025-08-23 08:15:37,080 INFO [root] pid: 2
+2025-08-23 08:15:37,080 INFO [root] leader: 5
+2025-08-23 08:15:37,080 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 6, Client Mode: False
+2025-08-23 08:15:37,080 INFO [root] [2] AVSS tag: 6-0-6-B-AVSS
+2025-08-23 08:15:37,080 INFO [root] [2] RBC tag: 6-0-6-B-RBC
+2025-08-23 08:15:37,080 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 6, client_mode: False
+2025-08-23 08:15:37,080 INFO [root] rbc_list: [71, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,080 INFO [root] committee_size: 13
+2025-08-23 08:15:37,080 INFO [root] n: 14
+2025-08-23 08:15:37,080 INFO [root] f: 4
+2025-08-23 08:15:37,080 INFO [root] pid: 2
+2025-08-23 08:15:37,080 INFO [root] leader: 6
+2025-08-23 08:15:37,080 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 7, Client Mode: False
+2025-08-23 08:15:37,080 INFO [root] [2] AVSS tag: 7-0-6-B-AVSS
+2025-08-23 08:15:37,080 INFO [root] [2] RBC tag: 7-0-6-B-RBC
+2025-08-23 08:15:37,080 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 7, client_mode: False
+2025-08-23 08:15:37,080 INFO [root] rbc_list: [72, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,080 INFO [root] committee_size: 13
+2025-08-23 08:15:37,080 INFO [root] n: 14
+2025-08-23 08:15:37,080 INFO [root] f: 4
+2025-08-23 08:15:37,081 INFO [root] pid: 2
+2025-08-23 08:15:37,081 INFO [root] leader: 7
+2025-08-23 08:15:37,081 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 8, Client Mode: False
+2025-08-23 08:15:37,081 INFO [root] [2] AVSS tag: 8-0-6-B-AVSS
+2025-08-23 08:15:37,081 INFO [root] [2] RBC tag: 8-0-6-B-RBC
+2025-08-23 08:15:37,081 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 8, client_mode: False
+2025-08-23 08:15:37,081 INFO [root] rbc_list: [73, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,081 INFO [root] committee_size: 13
+2025-08-23 08:15:37,081 INFO [root] n: 14
+2025-08-23 08:15:37,081 INFO [root] f: 4
+2025-08-23 08:15:37,081 INFO [root] pid: 2
+2025-08-23 08:15:37,081 INFO [root] leader: 8
+2025-08-23 08:15:37,081 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 9, Client Mode: False
+2025-08-23 08:15:37,081 INFO [root] [2] AVSS tag: 9-0-6-B-AVSS
+2025-08-23 08:15:37,081 INFO [root] [2] RBC tag: 9-0-6-B-RBC
+2025-08-23 08:15:37,081 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 9, client_mode: False
+2025-08-23 08:15:37,081 INFO [root] rbc_list: [74, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,081 INFO [root] committee_size: 13
+2025-08-23 08:15:37,081 INFO [root] n: 14
+2025-08-23 08:15:37,081 INFO [root] f: 4
+2025-08-23 08:15:37,081 INFO [root] pid: 2
+2025-08-23 08:15:37,081 INFO [root] leader: 9
+2025-08-23 08:15:37,081 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 10, Client Mode: False
+2025-08-23 08:15:37,081 INFO [root] [2] AVSS tag: 10-0-6-B-AVSS
+2025-08-23 08:15:37,081 INFO [root] [2] RBC tag: 10-0-6-B-RBC
+2025-08-23 08:15:37,081 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 10, client_mode: False
+2025-08-23 08:15:37,081 INFO [root] rbc_list: [75, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,081 INFO [root] committee_size: 13
+2025-08-23 08:15:37,081 INFO [root] n: 14
+2025-08-23 08:15:37,081 INFO [root] f: 4
+2025-08-23 08:15:37,081 INFO [root] pid: 2
+2025-08-23 08:15:37,081 INFO [root] leader: 10
+2025-08-23 08:15:37,081 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 11, Client Mode: False
+2025-08-23 08:15:37,081 INFO [root] [2] AVSS tag: 11-0-6-B-AVSS
+2025-08-23 08:15:37,081 INFO [root] [2] RBC tag: 11-0-6-B-RBC
+2025-08-23 08:15:37,081 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 11, client_mode: False
+2025-08-23 08:15:37,081 INFO [root] rbc_list: [76, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,081 INFO [root] committee_size: 13
+2025-08-23 08:15:37,081 INFO [root] n: 14
+2025-08-23 08:15:37,081 INFO [root] f: 4
+2025-08-23 08:15:37,081 INFO [root] pid: 2
+2025-08-23 08:15:37,081 INFO [root] leader: 11
+2025-08-23 08:15:37,081 INFO [root] [2] Starting Batch AVSS. Id: 0, Dealer Id: 12, Client Mode: False
+2025-08-23 08:15:37,081 INFO [root] [2] AVSS tag: 12-0-6-B-AVSS
+2025-08-23 08:15:37,081 INFO [root] [2] RBC tag: 12-0-6-B-RBC
+2025-08-23 08:15:37,081 INFO [root] [2] Starting AVSS with shares_num: 0, dealer_id: 12, client_mode: False
+2025-08-23 08:15:37,082 INFO [root] rbc_list: [77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+2025-08-23 08:15:37,082 INFO [root] committee_size: 13
+2025-08-23 08:15:37,082 INFO [root] n: 14
+2025-08-23 08:15:37,082 INFO [root] f: 4
+2025-08-23 08:15:37,082 INFO [root] pid: 2
+2025-08-23 08:15:37,082 INFO [root] leader: 12

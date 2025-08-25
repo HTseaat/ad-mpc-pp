@@ -1,0 +1,95 @@
+Warning: Permanently added '101.43.22.70' (ECDSA) to the list of known hosts.
+Creating dumbo-mpc_dumbo-mpc_run ... 
+Creating dumbo-mpc_dumbo-mpc_run ... done
+2025-08-23 08:15:36,310 INFO [root] Running ADMPC ...
+2025-08-23 08:15:36,827 INFO [root] my_send_id: 2
+2025-08-23 08:15:36,906 INFO [root] ADMPC start time: 1755936936.9065723
+2025-08-23 08:15:36,907 INFO [root] [Layer 0] Reached run_admpc checkpoint
+2025-08-23 08:15:36,907 INFO [root] layer ID: 0 inputs_num: 15, n: 13, w: 100
+2025-08-23 08:15:36,907 INFO [root] public_keys: [{'X': '764688797112333123148267350914437588023650414149215014990094219143170550554943700227492340021465628703284479870371', 'Y': '1325608328191311571135022381494013099629539873108049860979480509346118982293553903573526777181208941418432929313289'}, {'X': '2450647488074711332885325471290357232461043076280872109919407449211196786452101346608632550238529111986382090538126', 'Y': '2044404842123493058842888241173327417068906332768534221900996855532702998849734836538179629731030054165825805893328'}, {'X': '3872281974901600230856820017341412545175525886922515019311410584108175729577630113020541075410156400625654214078940', 'Y': '1380615549620346232081660826773589889047774733982794522905442461715573572051955347378394619560659663059968012132657'}, {'X': '1478406097927462008356397070487922585991157561643476938103982075192813381856223009411667081678137687014330108928448', 'Y': '1057905235120658457060646385340205487775632629081127466213899134270953637777942557069711362774582405878715338604580'}, {'X': '1989910441839534186977631657773412179355827057890898841072637439453078494088726087717133622527153720934976737909581', 'Y': '1440462166251955223935059275883906213381851845611803170663918735238019384748505488062130278993100236400944181809178'}, {'X': '3616325201503943465508941701607549671772383658642661034987877870428770635787526392910804940893395679132208227274054', 'Y': '902662051918894862917374308007794821530528999806252670906832639615441852855534993195168249656588895216394440219524'}, {'X': '3880450748666171155338090460869819652547973621455982987246954613645104903269070256379980624783583113865839649197160', 'Y': '2928650297501520836261596598942423685054856761045124071927098236762719823552557102913215874794620429314797299054009'}, {'X': '645286176270309191137621359095166063686357190866563434755326053174202361882765009702892869929684560701500155316114', 'Y': '1258980872434444831563992481920826313131224821640956865527183940520052954844204551859104993967598508499933615772412'}, {'X': '1243770116851875581511752942661443079217833950401323010184573933390227257309206043295804196160663509697503750121798', 'Y': '1938932529890609715164592411715398491513902342975744596582000015617135692169111283612413245133693669474893541502218'}, {'X': '3683488667566085979855650579295613470648907678742522812429781366987882476852549629061717717426806654848090360026809', 'Y': '2575488317941969038561586876369309528013223964527956019469472036398036154235168522160530688171638064475247216398826'}, {'X': '2794981430090965030847885197726709997035921623168069080204574689200932365395164906878438700289136184042313175419039', 'Y': '1407390813681425642161534214434049791370529284078206542364427493263395215014367193276165702792471279379331257177056'}, {'X': '1737617598649754712226445879078301292676455122453806940467804601874660419182897814935194868355291664576887418159383', 'Y': '1639988195885858475255016663664129765371513328416677730303880888429126538440766216961986533814692401218835457812789'}, {'X': '1681709434724263824465411834498800713544210655569749466175593571537528202508843405449842501472577450866530497800118', 'Y': '779379752869261807543419104997809435620250608562820995990540664681345624219639814272405392104087672153672119603970'}]
+2025-08-23 08:15:36,907 INFO [root] [2] AVSS tag: 2-0-1-B-AVSS
+2025-08-23 08:15:36,907 INFO [root] [2] RBC tag: 2-0-1-B-RBC
+2025-08-23 08:15:36,989 INFO [root] self.msgmode: avss_without_proof
+2025-08-23 08:15:36,989 INFO [root] rbc_list: [2, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+2025-08-23 08:15:36,989 INFO [root] committee_size: 13
+2025-08-23 08:15:36,989 INFO [root] n: 14
+2025-08-23 08:15:36,989 INFO [root] f: 4
+2025-08-23 08:15:36,989 INFO [root] pid: 2
+2025-08-23 08:15:36,989 INFO [root] leader: 2
+2025-08-23 08:15:36,989 INFO [root] [2] Sending to 0: 13
+2025-08-23 08:15:36,989 INFO [root] [2] Sending to 1: 14
+2025-08-23 08:15:36,989 INFO [root] [2] Sending to 2: 15
+2025-08-23 08:15:36,989 INFO [root] [2] Sending to 3: 16
+2025-08-23 08:15:36,989 INFO [root] [2] Sending to 4: 17
+2025-08-23 08:15:36,989 INFO [root] [2] Sending to 5: 18
+2025-08-23 08:15:36,989 INFO [root] [2] Sending to 6: 19
+2025-08-23 08:15:36,990 INFO [root] [2] Sending to 7: 20
+2025-08-23 08:15:36,990 INFO [root] [2] Sending to 8: 21
+2025-08-23 08:15:36,990 INFO [root] [2] Sending to 9: 22
+2025-08-23 08:15:36,990 INFO [root] [2] Sending to 10: 23
+2025-08-23 08:15:36,990 INFO [root] [2] Sending to 11: 24
+2025-08-23 08:15:36,990 INFO [root] [2] Sending to 12: 25
+2025-08-23 08:15:36,990 INFO [root] [2] Starting AVID disperse
+2025-08-23 08:15:36,990 INFO [root] layer ID: 0 acss_pre_time: 0.08275318145751953
+2025-08-23 08:15:36,990 INFO [root] layer ID: 0 layer_time: 0.08301091194152832
+2025-08-23 08:15:36,991 INFO [root] [2] Dispersed VAL message to committee
+my_send_id: 2 exec_time: 5.086155652999878
+2025-08-23 08:15:46,992 INFO [root] [2] Bytes Sent: A1:276518 which is 100.0%
+2025-08-23 08:15:46,993 INFO [root] [2] Total bytes sent out aa: 276518
+2025-08-23 08:15:46,996 INFO [benchmark_logger] Total bytes sent out: 276518
+2025-08-23 08:15:47,003 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-107' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f7e3d8022b0>()]>>
+2025-08-23 08:15:47,003 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-109' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f7e3d8026d0>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f7e46073840>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f7e460ec0c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-08-23 08:15:47,004 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-111' coro=<rbc_dyn() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py:411> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object rbc_dyn at 0x7f7e3d804640>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py", line 411, in rbc_dyn
+    sender, msg = await receive()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-08-23 08:15:47,005 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-113' coro=<AVID_DYNAMIC.disperse() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py:461> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object AVID_DYNAMIC.disperse at 0x7f7e3d804b40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
