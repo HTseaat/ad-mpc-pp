@@ -1,6 +1,6 @@
-# Running Dumbo-MPC
+# Running AD-MPC++
 
-Fully asynchronous multi-party computation (MPC) has superior robustness in realizing privacy and guaranteed output delivery (GOD) against asynchronous adversaries that can arbitrarily delay communications. We design an efficient fully asynchronous MPC—Dumbo-MPC with entire GOD and optimal resilience against 𝑡 < 𝑛/3 corruptions (where 𝑛 is the total number of parties). The codebase includes the implementation for Dumbo-MPC.
+<!-- Fully asynchronous multi-party computation (MPC) has superior robustness in realizing privacy and guaranteed output delivery (GOD) against asynchronous adversaries that can arbitrarily delay communications. We design an efficient fully asynchronous MPC—Dumbo-MPC with entire GOD and optimal resilience against 𝑡 < 𝑛/3 corruptions (where 𝑛 is the total number of parties). The codebase includes the implementation for Dumbo-MPC.
 
 ## Setup
 
@@ -214,4 +214,4 @@ After benchmark, you can read the running results by connecting these instances 
 ./scplog.sh 4 5000
 ```
 
-These logs will be stored in `./log_4_8x`.
+These logs will be stored in `./log_4_8x`. -->
