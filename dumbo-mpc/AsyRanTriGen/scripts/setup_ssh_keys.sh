@@ -3,23 +3,50 @@ set -e
 
 # === 修改这里：你的远程服务器信息 ===
 NODE_SSH_USERNAME="root"
-NODE_IPS=("150.158.35.81"
-    "124.220.16.71"
-    "101.43.22.70"
-	"111.229.197.238"
-    "124.222.6.165"
-    "1.116.108.22"
-    "1.15.15.230"
-	"111.229.40.140"
-    "203.195.208.93"
-    "106.53.26.38"
-    "42.193.192.137"
-	"43.139.185.179"
-    "43.136.183.52"
-    "148.70.214.61"
-    "139.155.173.17"
-	"1.14.63.87"
-	)
+
+# === 从 ip.txt 读取 IP 列表，并可选只使用前 N 个 ===
+# 用法：
+#   ./setup_ssh_keys.sh        # 对 ip.txt 中所有 IP 配置免密
+#   ./setup_ssh_keys.sh 8      # 只对 ip.txt 中前 8 个 IP 配置免密
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+IP_FILE="$SCRIPT_DIR/ip.txt"
+
+if [ ! -f "$IP_FILE" ]; then
+    echo "❌ 找不到 IP 列表文件: $IP_FILE"
+    exit 1
+fi
+
+# 读取非空行，去掉行尾空白
+mapfile -t ALL_IPS < <(grep -v '^[[:space:]]*$' "$IP_FILE" | sed 's/[[:space:]]*$//')
+
+if [ "${#ALL_IPS[@]}" -eq 0 ]; then
+    echo "❌ $IP_FILE 中没有任何有效 IP 行"
+    exit 1
+fi
+
+if [ -n "$1" ]; then
+    NUM_NODES="$1"
+    if ! [[ "$NUM_NODES" =~ ^[0-9]+$ ]]; then
+        echo "❌ 参数必须是正整数，例如: ./setup_ssh_keys.sh 8"
+        exit 1
+    fi
+    if [ "$NUM_NODES" -le 0 ]; then
+        echo "❌ 节点数量必须 > 0"
+        exit 1
+    fi
+    if [ "$NUM_NODES" -gt "${#ALL_IPS[@]}" ]; then
+        echo "❌ 请求的节点数量 $NUM_NODES 超过 ip.txt 中的 IP 数量 ${#ALL_IPS[@]}"
+        exit 1
+    fi
+else
+    NUM_NODES="${#ALL_IPS[@]}"
+fi
+
+NODE_IPS=("${ALL_IPS[@]:0:$NUM_NODES}")
+
+echo "📌 将为前 $NUM_NODES 个节点配置免密登录："
+printf '  - %s\n' "${NODE_IPS[@]}"
 
 # === 第一步：在本地生成 SSH 密钥对（如果没有） ===
 KEY_PATH="$HOME/.ssh/id_ed25519"

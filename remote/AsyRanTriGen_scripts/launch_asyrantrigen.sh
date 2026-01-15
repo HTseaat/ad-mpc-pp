@@ -12,6 +12,8 @@ fi
 
 NODES_NUM="$1"
 BATCH_SIZE="$2"
+LAYERS="${3:-10}"
+
 
 # 读取统一的节点配置，与 control-node.sh 保持一致
 # 要求当前脚本位于 remote/AsyRanTriGen_scripts/ 目录
@@ -33,6 +35,8 @@ else
 fi
 
 echo "[DEBUG] 期望节点数(NODES_NUM) = $NODES_NUM"
+echo "[DEBUG] batch_size(BATCH_SIZE) = $BATCH_SIZE"
+echo "[DEBUG] layers(LAYERS) = $LAYERS"
 echo "[DEBUG] 实际读取到的 IP 数量 = ${#IPS_LIST[@]}"
 echo "[DEBUG] IP 列表: ${IPS_LIST[*]}"
 
@@ -63,7 +67,7 @@ for (( idx=0; idx< NODES_NUM; idx++ )); do
         docker-compose run -p ${peer_port}:${peer_port} \
         -w /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen \
         dumbo-mpc \
-        bash -lc 'python3 scripts/init_batchsize_ip.py --N $NODES_NUM --k $BATCH_SIZE && \
+        bash -lc 'python3 scripts/init_batchsize_layer_ip.py --N $NODES_NUM --k $BATCH_SIZE --layers $LAYERS && \
                     python3 -u -m scripts.run_beaver_triple -d -f conf/mpc_$NODES_NUM/local.${id}.json -time 0'"
     ) > "logs/node${idx}.log" 2>&1 &
     (( id++ ))

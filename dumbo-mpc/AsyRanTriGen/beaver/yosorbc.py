@@ -31,6 +31,7 @@ import numpy as np
 from reedsolo import RSCodec, ReedSolomonError
 from collections import defaultdict
 from typing import DefaultDict
+import time
 
 # ---------------------------------------------------------------------------
 #  Hard‑coded VRF key material for the 4‑node demo
@@ -443,10 +444,10 @@ class YosoRBC:
             asyncio.create_task(recv_echo()):  "ECHO",
             asyncio.create_task(recv_ready()): "READY",
         }
-
+        out_task_start = time.time()
         while tasks:
             done, _ = await asyncio.wait(tasks.keys(), return_when=asyncio.FIRST_COMPLETED)
-
+            task_start = time.time()
             for t in done:
                 tag_kind = tasks.pop(t)
                 try:
@@ -468,10 +469,13 @@ class YosoRBC:
                     logger.info("[READY] node %d received READY from %d", self.my_id, sender)
                     await self._handle_ready(msg)
                     tasks[asyncio.create_task(recv_ready())] = "READY"
-
+            task_end = time.time()
+            logger.info("[BENCHMARK] node %d reactor loop iteration time: %f seconds", self.my_id, task_end - task_start)
             if self._outputted:
                 for t in tasks.keys():
                     t.cancel()
+                out_task_end = time.time()
+                logger.info("[BENCHMARK] node %d total RBC time: %f seconds", self.my_id, out_task_end - out_task_start)
                 return
 
     # ......................................................................
@@ -483,6 +487,7 @@ class YosoRBC:
         Only the _origin_ node does RS‑encoding; everyone else just forwards
         the share intended for each receiver j.
         """
+        handle_send_start = time.time()
         if self._send_seen:
             return
         self._send_seen = True
@@ -518,8 +523,11 @@ class YosoRBC:
             p2p_send(dest, echo_msg)
 
         logger.info("[ECHO] node %d unicasted its shares", self.my_id)
+        handle_send_end = time.time()
+        logger.info("[BENCHMARK] node %d handle_send time: %f seconds", self.my_id, handle_send_end - handle_send_start)
     
     async def _handle_echo(self, msg, send_ready):
+        handle_echo_start = time.time()
         sender = msg["from"]
 
         # 1) committee membership check
@@ -555,6 +563,9 @@ class YosoRBC:
                     "proof": proof_r
                 }).encode())
                 logger.info("[READY] node %d broadcast READY", self.my_id)
+
+        handle_echo_end = time.time()
+        logger.info("[BENCHMARK] node %d handle_echo time: %f seconds", self.my_id, handle_echo_end - handle_echo_start)
         # # ------------------------------------------------------------------
         # # Count matching (share_hex , h) pairs ; send READY after ≥ 2t+1
         # # ------------------------------------------------------------------
@@ -587,6 +598,7 @@ class YosoRBC:
         #         logger.info("[READY] node %d broadcast READY with its share", self.my_id)
     
     async def _handle_ready(self, msg):
+        handle_ready_start = time.time()
         sender = msg["from"]
 
         ready_label = f"{self.prefix}:READY".encode()
@@ -625,6 +637,7 @@ class YosoRBC:
 
         # 3) attempt error‑correction once we have enough shares
         #    Alg‑4 loops over r=0..t; here we try every time |T_h| grows.
+        error_correction_start = time.time()
         if len(self._T_h) >= self.t + 1:
             try:
                 # Build stripes list indexed by node id; unknown => None
@@ -645,6 +658,10 @@ class YosoRBC:
                     await self.output_queue.put((self._msg, self._hash))
             except ReedSolomonError as e:
                 logger.error("RS decode failed with %d shares: %s", len(self._T_h), e)
+        error_correction_end = time.time()
+        logger.info("[BENCHMARK] node %d error_correction time: %f seconds", self.my_id, error_correction_end - error_correction_start)
+        handle_ready_end = time.time()
+        logger.info("[BENCHMARK] node %d handle_ready time: %f seconds", self.my_id, handle_ready_end - handle_ready_start)
     # ------------------------------------------------------------------
     #  Context‑manager / cleanup utilities
     # ------------------------------------------------------------------

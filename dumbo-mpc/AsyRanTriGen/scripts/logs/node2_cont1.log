@@ -1,73 +1,36 @@
-Warning: Permanently added '124.220.16.71' (ECDSA) to the list of known hosts.
+Warning: Permanently added '124.220.155.155' (ECDSA) to the list of known hosts.
 Creating dumbo-mpc_dumbo-mpc_run ... 
 Creating dumbo-mpc_dumbo-mpc_run ... done
-2025-08-23 08:15:36,426 INFO [root] Running ADMPC ...
-2025-08-23 08:15:36,933 INFO [root] my_send_id: 1
-2025-08-23 08:15:37,019 INFO [root] ADMPC start time: 1755936937.0197132
-2025-08-23 08:15:37,020 INFO [root] [Layer 0] Reached run_admpc checkpoint
-2025-08-23 08:15:37,020 INFO [root] layer ID: 0 inputs_num: 15, n: 13, w: 100
-2025-08-23 08:15:37,020 INFO [root] public_keys: [{'X': '1308414508949045132648953148551887319004622326439823163075785310195057151005784015612695545401432923587504849505195', 'Y': '1658127906914006135143663183398571041580078197968904749007995497299462523546064126792222709599916522905361174202438'}, {'X': '3098221677894081608056073521885480139362671006922675233142438052942199579449909496545596891024029349292702147387418', 'Y': '117110359423462022504010261345351949713454810145992741637001074651911922407146386006747926650522314903944828508136'}, {'X': '3318610096372234838663679789936351646787179657085800008554907319688194140427390992546119609269081130070520905782874', 'Y': '1993898677011755166859300778954749415997718553961839783928516698278927060827232482073433252897624720185663708698353'}, {'X': '1531170689132509896771259227461545615932699237558542167672189663722333606771838902186548809499032976901050206559090', 'Y': '3752665905414319254885030902052052372405752111427568780417640477072201596413480604842182162735661187716715193488361'}, {'X': '3881688706515323907565924797175610520566765926754475562482183762846000561870997159791733134182933824550539380771180', 'Y': '3500687533299456251353747409549619111221165869222718111171143922642861776124583600993688876328969120746546192904994'}, {'X': '71209748208793448460694021032020905155183508030240184549351336540163357686216307692283369124314157735013361460147', 'Y': '520415953636964680251961293062363258370217007224407559371336318704580089149373084659121226976826767827242459393384'}, {'X': '933982692145439343085310778903602752408877515016622395144287928156442118454549366292040498652070714377295348640920', 'Y': '3262192808280241572744365853578523312798565925513291924744493997608359625144871647612096207781697361458058265203589'}, {'X': '3105596087935375837258774393772497475206635172624202824799915168469045421513473623134074713246510728654771859115950', 'Y': '1231536959509819192757064367094397224246095348493110373040022708505492209827599664941026911976474025492084124129046'}, {'X': '2368878225687416668009330075735613155616881650239847620505570193326149250740717962806867434715570976006238019654611', 'Y': '376791016992929031641732306811968163556099094456339589453453549921145587233904026150732328313740918552291864753259'}, {'X': '3338080514294229054082843585165280281462416939524187664031394975893011555403441875928655665277463707220171659891690', 'Y': '2872740653711996861691789591277625128110695666825267159974271436285690021832981223578164653389037145911772435906798'}, {'X': '608394175320660659535751449558366671744360432795224030579772544566368464379233984160458388344968170015832651273179', 'Y': '389123121460537619984281805183245651135474581176655321832765341048386281537316794902931273978124064341923299716121'}, {'X': '2996000061670470182490960930981762922095561828738127445627001823723477790232205430072224745250990543928859458280026', 'Y': '536721510293304522908753693513402959549529855716588613859309763676457234389784926360750985343160379585649339611254'}, {'X': '43107981051762073118797847827000260984809413603246031747476626693286891816696751662532264195755570396016889625227', 'Y': '1209119370428400788167833719970647579863263075035328475456137306248082852371539616236757524988167669688641363828077'}]
-2025-08-23 08:15:37,020 INFO [root] [1] AVSS tag: 1-0-1-B-AVSS
-2025-08-23 08:15:37,020 INFO [root] [1] RBC tag: 1-0-1-B-RBC
-2025-08-23 08:15:37,109 INFO [root] self.msgmode: avss_without_proof
-2025-08-23 08:15:37,109 INFO [root] rbc_list: [1, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
-2025-08-23 08:15:37,109 INFO [root] committee_size: 13
-2025-08-23 08:15:37,109 INFO [root] n: 14
-2025-08-23 08:15:37,109 INFO [root] f: 4
-2025-08-23 08:15:37,109 INFO [root] pid: 1
-2025-08-23 08:15:37,109 INFO [root] leader: 1
-2025-08-23 08:15:37,109 INFO [root] [1] Sending to 0: 13
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 1: 14
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 2: 15
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 3: 16
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 4: 17
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 5: 18
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 6: 19
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 7: 20
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 8: 21
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 9: 22
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 10: 23
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 11: 24
-2025-08-23 08:15:37,110 INFO [root] [1] Sending to 12: 25
-2025-08-23 08:15:37,110 INFO [root] [1] Starting AVID disperse
-2025-08-23 08:15:37,110 INFO [root] layer ID: 0 acss_pre_time: 0.0899496078491211
-2025-08-23 08:15:37,110 INFO [root] layer ID: 0 layer_time: 0.0902254581451416
-2025-08-23 08:15:37,112 INFO [root] [1] Dispersed VAL message to committee
-my_send_id: 1 exec_time: 5.094801664352417
-2025-08-23 08:15:47,114 INFO [root] [1] Bytes Sent: A1:276531 which is 100.0%
-2025-08-23 08:15:47,114 INFO [root] [1] Total bytes sent out aa: 276531
-2025-08-23 08:15:47,117 INFO [benchmark_logger] Total bytes sent out: 276531
-2025-08-23 08:15:47,125 ERROR [asyncio] Task was destroyed but it is pending!
-task: <Task pending name='Task-107' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6887c132b0>()]>>
-2025-08-23 08:15:47,125 ERROR [asyncio] Task was destroyed but it is pending!
-task: <Task pending name='Task-109' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6887c136d0>()]>>
-Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6890484840>
-Traceback (most recent call last):
-  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
-    j, (tag, o) = await recv()
-  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
-    getter.cancel()  # Just in case getter is not done yet.
-  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
-  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
-  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
-  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
-  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
-RuntimeError: Event loop is closed
-Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f68904f50c0>
-Traceback (most recent call last):
-  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
-    j, (tag, o) = await recv()
-  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
-    getter.cancel()  # Just in case getter is not done yet.
-  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
-  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
-  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
-  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
-  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
-RuntimeError: Event loop is closed
-2025-08-23 08:15:47,126 ERROR [asyncio] Task was destroyed but it is pending!
-task: <Task pending name='Task-111' coro=<rbc_dyn() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py:411> wait_for=<Future cancelled>>
-Exception ignored in: <coroutine object rbc_dyn at 0x7f6887c15640>
+2025-12-17 02:12:33,857 INFO [root] Running ADMPC ...
+2025-12-17 02:12:34,685 INFO [root] my_send_id: 1
+2025-12-17 02:12:34,703 INFO [root] ADMPC start time: 1765937554.703239
+2025-12-17 02:12:34,703 INFO [root] [Layer 0] Reached run_admpc checkpoint
+2025-12-17 02:12:34,703 INFO [root] layer ID: 0 inputs_num: 50, n: 4, w: 100
+2025-12-17 02:12:34,704 INFO [root] public_keys: [{'X': '479866127819975823517443923334850900693572378879072040883722009448008242808017969516403740804407842608851466735046', 'Y': '3185031828423392299482560234506001293909816138499046716459413264618757210853670856025347905403099792369758574528465'}, {'X': '1036569133023978030588610261908919126155788749602275431459813791139221545873560348243193843247371083805220383161494', 'Y': '882666739375045250927876421731498991391013238147623602886278965975015742258842505694664123036313631731844449946679'}, {'X': '1725808170539510152330196902963216056835724469200885284589635562749507057231716092569694462954203173854884170228295', 'Y': '700378628638661900891498057093015685054357055979637130233392115172348405329271098540636123316578249865589082628059'}, {'X': '1951133457650657722834286708850976928581706576020382204821736580288756797092459635913266147841149901346555129075024', 'Y': '2855281360322452658018133250016553872013692292741815526305027991361460104475318155506539681869269366908207955790692'}]
+2025-12-17 02:12:34,705 INFO [root] [1] AVSS tag: 1-0-1-B-AVSS
+2025-12-17 02:12:34,705 INFO [root] [1] RBC tag: 1-0-1-B-RBC
+2025-12-17 02:12:34,872 INFO [root] self.msgmode: avss_without_proof
+2025-12-17 02:12:34,872 INFO [root] rbc_list: [1, 4, 5, 6, 7]
+2025-12-17 02:12:34,872 INFO [root] committee_size: 4
+2025-12-17 02:12:34,872 INFO [root] n: 5
+2025-12-17 02:12:34,872 INFO [root] f: 1
+2025-12-17 02:12:34,873 INFO [root] pid: 1
+2025-12-17 02:12:34,873 INFO [root] leader: 1
+2025-12-17 02:12:34,873 INFO [root] [1] Sending to 0: 4
+2025-12-17 02:12:34,873 INFO [root] [1] Sending to 1: 5
+2025-12-17 02:12:34,873 INFO [root] [1] Sending to 2: 6
+2025-12-17 02:12:34,873 INFO [root] [1] Sending to 3: 7
+2025-12-17 02:12:34,873 INFO [root] [1] Starting AVID disperse
+2025-12-17 02:12:34,873 INFO [root] layer ID: 0 acss_pre_time: 0.1687328815460205
+2025-12-17 02:12:34,873 INFO [root] layer ID: 0 layer_time: 0.16968369483947754
+2025-12-17 02:12:34,874 INFO [root] [1] Dispersed VAL message to committee
+my_send_id: 1 exec_time: 5.172271251678467
+2025-12-17 02:12:44,878 INFO [root] [1] Bytes Sent: A1:209832 which is 100.0%
+2025-12-17 02:12:44,878 INFO [root] [1] Total bytes sent out aa: 209832
+2025-12-17 02:12:44,880 INFO [benchmark_logger] Total bytes sent out: 209832
+2025-12-17 02:12:44,887 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-39' coro=<rbc_dyn() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py:411> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object rbc_dyn at 0x7fcde91eaf40>
 Traceback (most recent call last):
   File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py", line 411, in rbc_dyn
     sender, msg = await receive()
@@ -79,12 +42,40 @@ Traceback (most recent call last):
   File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
   File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
 RuntimeError: Event loop is closed
-2025-08-23 08:15:47,127 ERROR [asyncio] Task was destroyed but it is pending!
-task: <Task pending name='Task-113' coro=<AVID_DYNAMIC.disperse() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py:461> wait_for=<Future cancelled>>
-Exception ignored in: <coroutine object AVID_DYNAMIC.disperse at 0x7f6887c15b40>
+2025-12-17 02:12:44,889 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-41' coro=<AVID_DYNAMIC.disperse() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py:461> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object AVID_DYNAMIC.disperse at 0x7fcde91ee440>
 Traceback (most recent call last):
   File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
     sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:44,890 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-35' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7fcde91e84f0>()]>>
+2025-12-17 02:12:44,890 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-37' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7fcde91e8910>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7fcdebaa4bc0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7fcdeba71a40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
   File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
     getter.cancel()  # Just in case getter is not done yet.
   File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon

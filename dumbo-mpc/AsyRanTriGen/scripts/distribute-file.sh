@@ -20,7 +20,7 @@ cd ../
 cd conf
 # rm -rf admpc_4.tar.xz
 # tar Jcf hbmpc_300_4_16.tar.xz hbmpc_300_4_16
-tar Jcf admpc_0_8_16.tar.xz admpc_0_8_16
+tar Jcf mpc_4.tar.xz mpc_4
 
 
 # copy these files to each node
@@ -28,8 +28,8 @@ for i in $(seq 1 $NODE_NUM); do
     ssh_user_host="${NODE_SSH_USERNAME}@${NODE_IPS[$i - 1]}"
     # ssh "$ssh_user_host" -- "cd htadkg/conf && rm -rf admpc_4_cloud"
     # ssh "$ssh_user_host" -- "cd htadkg/conf && rm -rf admpc_4.tar.xz && rm -rf admpc_4"
-    scp "admpc_0_8_16.tar.xz" "$ssh_user_host:~/dumbo-mpc/dumbo-mpc/AsyRanTriGen/conf"
-    ssh "$ssh_user_host" -- "cd dumbo-mpc/dumbo-mpc/AsyRanTriGen/conf && tar Jxf admpc_0_8_16.tar.xz"
+    scp "mpc_4.tar.xz" "$ssh_user_host:~/dumbo-mpc/dumbo-mpc/AsyRanTriGen/conf"
+    ssh "$ssh_user_host" -- "cd dumbo-mpc/dumbo-mpc/AsyRanTriGen/conf && tar Jxf mpc_4.tar.xz"
     # scp "./dist/sdumoe-chain-ethermint.docker.image.tar.xz" "$ssh_user_host:~/sdumoe-docker/sdumoe-chain-ethermint.docker.image.tar.xz"
     # scp "./dist/sdumoe-chain-backend.docker.image.tar.xz" "$ssh_user_host:~/sdumoe-docker/sdumoe-chain-backend.docker.image.tar.xz"
 done

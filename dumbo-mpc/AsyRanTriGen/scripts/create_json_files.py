@@ -79,26 +79,17 @@ def main():
         acss_pk_layers.append(pk_list)
         acss_sk_layers.append(sk_list)
 
-    # 4) 构造 peers 列表：16 个真实 IP + 从 7001 开始的端口代表层号
-    ips = ["150.158.35.81",
-    "124.220.16.71",
-    "101.43.22.70",
-	"111.229.197.238",
-    "124.222.6.165",
-    "1.116.108.22",
-    "1.15.15.230",
-	"111.229.40.140",
-    "203.195.208.93",
-    "106.53.26.38",
-    "42.193.192.137",
-	"43.139.185.179",
-    "43.136.183.52",
-    "148.70.214.61",
-    "139.155.173.17",
-	"1.14.63.87"
-    ]
+    # 4) 构造 peers 列表：从 ip.txt 读取 IP + 从 7001 开始的端口代表层号
+    ip_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ip.txt")
+    if not os.path.exists(ip_file):
+        raise FileNotFoundError(f"未找到 IP 列表文件: {ip_file}")
+
+    with open(ip_file, "r", encoding="utf-8") as f:
+        # 去掉两侧空白，并过滤掉空行
+        ips = [line.strip() for line in f if line.strip()]
+
     if N > len(ips):
-        raise ValueError(f"N={N} 超过了 IP 列表长度 {len(ips)}")
+        raise ValueError(f"N={N} 超过了 ip.txt 中 IP 的数量 {len(ips)}")
 
     base_port = 7001
     peers = []

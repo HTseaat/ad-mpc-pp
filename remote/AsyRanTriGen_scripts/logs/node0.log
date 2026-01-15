@@ -1,368 +1,127 @@
 [DEBUG] Node ID 0 will use peer_port=7001
-Warning: Permanently added '124.222.219.14' (ECDSA) to the list of known hosts.
+Warning: Permanently added '124.223.223.105' (ECDSA) to the list of known hosts.
 Creating dumbo-mpc_dumbo-mpc_run ... 
 Creating dumbo-mpc_dumbo-mpc_run ... done
-2025-08-13 08:12:21,559 [INFO] [0] Starting AsyRanTriGen
-2025-08-13 08:12:21,559 [INFO] self.pkbls: <beaver.broadcast.crypto.boldyreva.TBLSPublicKey object at 0x7f62fff350a0>
-2025-08-13 08:12:21,559 [INFO] self.skbls: <beaver.broadcast.crypto.boldyreva.TBLSPrivateKey object at 0x7f62fff350d0>
-2025-08-13 08:12:21,560 [INFO] [0] Starting ACSS to share 500 secrets
-2025-08-13 08:12:21,560 [INFO] [0] [ACSS] Using tag R_A (mode=avss_without_proof)
-2025-08-13 08:12:23,083 [INFO] AVID retrieve called with sid: 7-0-B-AVSS, index: 0
-2025-08-13 08:12:23,084 [INFO] AVID retrieve called with sid: 11-0-B-AVSS, index: 0
-2025-08-13 08:12:23,085 [INFO] AVID retrieve called with sid: 14-0-B-AVSS, index: 0
-2025-08-13 08:12:23,086 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
-2025-08-13 08:12:23,087 [INFO] AVID retrieve called with sid: 6-0-B-AVSS, index: 0
-2025-08-13 08:12:23,089 [INFO] AVID retrieve called with sid: 12-0-B-AVSS, index: 0
-2025-08-13 08:12:23,094 [INFO] AVID retrieve called with sid: 4-0-B-AVSS, index: 0
-2025-08-13 08:12:23,096 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
-2025-08-13 08:12:23,146 [INFO] AVID retrieve called with sid: 5-0-B-AVSS, index: 0
-2025-08-13 08:12:23,152 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
-2025-08-13 08:12:23,192 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
-2025-08-13 08:12:23,215 [INFO] AVID retrieve called with sid: 10-0-B-AVSS, index: 0
-2025-08-13 08:12:23,216 [INFO] AVID retrieve called with sid: 15-0-B-AVSS, index: 0
-2025-08-13 08:12:23,217 [INFO] AVID retrieve called with sid: 13-0-B-AVSS, index: 0
-2025-08-13 08:12:23,241 [INFO] AVID retrieve called with sid: 9-0-B-AVSS, index: 0
-2025-08-13 08:12:23,253 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,253 [INFO] 6-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,255 [INFO] 4-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,255 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,256 [INFO] 7-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,298 [INFO] 11-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,298 [INFO] 12-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,324 [INFO] 14-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,332 [INFO] 5-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,335 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,343 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,428 [INFO] [0] [random shares] Starting ACS where node 1 is set as leader 
-2025-08-13 08:12:23,428 [INFO] [0] [random shares] The proposal of node 0 is [1, 6, 4, 3, 7, 12, 11, 5, 0, 14, 2]
-2025-08-13 08:12:23,428 [INFO] enter handle_message
-2025-08-13 08:12:23,441 [INFO] AVID retrieve called with sid: 8-0-B-AVSS, index: 0
-2025-08-13 08:12:23,441 [INFO] 15-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,444 [INFO] [0] value-self.acss_outputs.keys():dict_keys([1, 6, 4, 3, 7, 12, 11, 5, 0, 14, 2])
-2025-08-13 08:12:23,445 [INFO] [0] --Directly send the proposal!--
-2025-08-13 08:12:23,446 [INFO] 13-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,446 [INFO] 9-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,446 [INFO] 10-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,595 [INFO] 8-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:23,799 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:23,807 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:23,807 [INFO] [0] [random shares] The ACS set is [0, 1, 2, 3, 4, 5, 6, 7, 11, 12, 14]
-2025-08-13 08:12:23,807 [INFO] [0] Starting extract random shares
-2025-08-13 08:12:24,124 [INFO] [0] Obtaining total 3000 random shares!
-2025-08-13 08:12:24,125 [INFO] [0] Starting to generate beaver triples
-2025-08-13 08:12:24,125 [INFO] [0] [beaver triples] Starting to share random shares
+2026-01-14 09:02:10,338 [INFO] [0] Starting AsyRanTriGen
+2026-01-14 09:02:10,338 [INFO] self.pkbls: <beaver.broadcast.crypto.boldyreva.TBLSPublicKey object at 0x7f2b4616e490>
+2026-01-14 09:02:10,338 [INFO] self.skbls: <beaver.broadcast.crypto.boldyreva.TBLSPrivateKey object at 0x7f2b4616e790>
+2026-01-14 09:02:10,338 [INFO] [0] Starting ACSS to share 300 secrets
+2026-01-14 09:02:10,339 [INFO] [0] [ACSS] Using tag R_A (mode=avss_without_proof)
+2026-01-14 09:02:10,919 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
+2026-01-14 09:02:10,920 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
+2026-01-14 09:02:10,920 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
+2026-01-14 09:02:10,922 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:10,922 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:10,922 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:11,960 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
+2026-01-14 09:02:11,988 [INFO] [0] [random shares] Starting ACS where node 1 is set as leader 
+2026-01-14 09:02:11,988 [INFO] [0] [random shares] The proposal of node 0 is [2, 3, 1]
+2026-01-14 09:02:11,989 [INFO] enter handle_message
+2026-01-14 09:02:12,001 [INFO] [0] Broadcasting to 0
+2026-01-14 09:02:12,001 [INFO] [0] Broadcasting to 1
+2026-01-14 09:02:12,001 [INFO] [0] Broadcasting to 2
+2026-01-14 09:02:12,001 [INFO] [0] Broadcasting to 3
+2026-01-14 09:02:12,001 [INFO] [0] [random shares] The ACS set is [1, 2, 3]
+2026-01-14 09:02:12,001 [INFO] [0] Starting extract random shares
+2026-01-14 09:02:12,139 [INFO] [0] Obtaining total 600 random shares!
+2026-01-14 09:02:12,139 [INFO] [0] Starting to generate beaver triples
+2026-01-14 09:02:12,139 [INFO] [0] [beaver triples] Starting to share random shares
 hidden g = {[6679831729115696150 8653662730902241269 1535610680227111361 17342916647841752903 17135755455211762752 1297449291367578485] [13451288730302620273 10097742279870053774 15949884091978425806 5885175747529691540 1016841820992199104 845620083434234474]}
 hidden h = {[13794385998538644597 108816626937764141 12130603454454490125 6127379912259600201 17481961476035825978 950355161936836191] [10722765800778186391 17107915684035394744 11626309118465119103 5217919199071354366 6102759180633827794 660535627654889709]}
 hidden Equal? false
-2025/08/13 08:12:28 prodProofs size =  1744870
-2025/08/13 08:12:28 prodProofs count =  1500
-2025-08-13 08:12:28,440 [INFO] prodProofs size: 1773369 bytes
-2025-08-13 08:12:28,441 [INFO] prodProofs count: 1500
-2025-08-13 08:12:28,956 [INFO] AVID retrieve called with sid: 6-0-B-AVSS, index: 0
-2025-08-13 08:12:28,959 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
-2025-08-13 08:12:28,962 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
-2025-08-13 08:12:28,965 [INFO] AVID retrieve called with sid: 5-0-B-AVSS, index: 0
-2025-08-13 08:12:29,551 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
-2025-08-13 08:12:29,554 [INFO] AVID retrieve called with sid: 10-0-B-AVSS, index: 0
-2025-08-13 08:12:29,557 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
-2025-08-13 08:12:29,560 [INFO] AVID retrieve called with sid: 14-0-B-AVSS, index: 0
-2025-08-13 08:12:29,563 [INFO] AVID retrieve called with sid: 9-0-B-AVSS, index: 0
-2025-08-13 08:12:29,566 [INFO] AVID retrieve called with sid: 13-0-B-AVSS, index: 0
-2025-08-13 08:12:29,568 [INFO] AVID retrieve called with sid: 15-0-B-AVSS, index: 0
-2025-08-13 08:12:29,571 [INFO] AVID retrieve called with sid: 4-0-B-AVSS, index: 0
-2025-08-13 08:12:29,574 [INFO] AVID retrieve called with sid: 7-0-B-AVSS, index: 0
-2025-08-13 08:12:29,629 [INFO] AVID retrieve called with sid: 8-0-B-AVSS, index: 0
-2025-08-13 08:12:29,632 [INFO] AVID retrieve called with sid: 11-0-B-AVSS, index: 0
-2025-08-13 08:12:29,637 [INFO] AVID retrieve called with sid: 12-0-B-AVSS, index: 0
-2025-08-13 08:12:30,099 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,286 [INFO] 6-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,286 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,287 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,287 [INFO] 5-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,287 [INFO] 4-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,289 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,289 [INFO] 14-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,289 [INFO] 13-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,290 [INFO] 7-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,290 [INFO] 15-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,290 [INFO] 10-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:30,290 [INFO] 9-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:32,535 [INFO] 11-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:32,536 [INFO] 8-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:32,536 [INFO] 12-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:33,110 [INFO] [0] [beaver triples] Starting to ACS where 2 is set as leader 
-2025-08-13 08:12:33,110 [INFO] [0] [beaver triples] The proposal of node 0 is [3, 2, 6, 5, 1, 4, 13, 15, 7, 0, 9]
-2025-08-13 08:12:33,110 [INFO] enter handle_message
-2025-08-13 08:12:33,134 [INFO] [0] value-self.acss_outputs.keys():dict_keys([3, 2, 6, 5, 1, 4, 13, 15, 7, 0, 9, 10, 14])
-2025-08-13 08:12:33,135 [INFO] [0] --Directly send the proposal!--
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:34,024 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:34,025 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:34,025 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:34,025 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:34,025 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:34,025 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:34,025 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:34,025 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:34,033 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:34,033 [INFO] [0] [beaver triples] The ACS set is [0, 1, 2, 3, 4, 5, 6, 9, 13, 14, 15]
-2025-08-13 08:12:34,266 [INFO] [0] [beaver triples] Time taken for beaver_time: 12.707125186920166 seconds
-2025-08-13 08:12:34,266 [INFO] [0] [inputs] Start generating 200 public inputs via ACSS+ACS
-2025-08-13 08:12:34,267 [INFO] [0] [inputs] Starting ACSS to share 200 inputs
-2025-08-13 08:12:34,267 [INFO] [0] [ACSS] Using tag ACSS_INPUTS_AVSS (mode=avss_without_proof)
-2025-08-13 08:12:34,863 [INFO] AVID retrieve called with sid: 7-0-B-AVSS, index: 0
-2025-08-13 08:12:34,864 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
-2025-08-13 08:12:34,865 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
-2025-08-13 08:12:34,865 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
-2025-08-13 08:12:34,866 [INFO] AVID retrieve called with sid: 4-0-B-AVSS, index: 0
-2025-08-13 08:12:34,867 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
-2025-08-13 08:12:34,867 [INFO] AVID retrieve called with sid: 5-0-B-AVSS, index: 0
-2025-08-13 08:12:34,868 [INFO] AVID retrieve called with sid: 6-0-B-AVSS, index: 0
-2025-08-13 08:12:34,882 [INFO] AVID retrieve called with sid: 15-0-B-AVSS, index: 0
-2025-08-13 08:12:34,882 [INFO] AVID retrieve called with sid: 14-0-B-AVSS, index: 0
-2025-08-13 08:12:34,890 [INFO] AVID retrieve called with sid: 10-0-B-AVSS, index: 0
-2025-08-13 08:12:34,893 [INFO] AVID retrieve called with sid: 13-0-B-AVSS, index: 0
-2025-08-13 08:12:34,953 [INFO] 4-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,958 [INFO] 5-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,958 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,958 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,958 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,968 [INFO] AVID retrieve called with sid: 9-0-B-AVSS, index: 0
-2025-08-13 08:12:34,969 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,969 [INFO] 6-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,970 [INFO] 7-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:34,998 [INFO] 15-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:35,001 [INFO] 14-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:35,002 [INFO] 13-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:35,062 [INFO] [0] [inputs] Starting ACS (leader=0); proposal size=11
-2025-08-13 08:12:35,062 [INFO] enter handle_message
-2025-08-13 08:12:35,062 [INFO] [0] I am the leader, broadcasting my input
-2025-08-13 08:12:35,062 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:35,062 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:35,063 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:35,066 [INFO] [0] value-self.acss_outputs.keys():dict_keys([4, 5, 3, 0, 1, 2, 15, 13, 14, 6, 7])
-2025-08-13 08:12:35,067 [INFO] [0] --Directly send the proposal!--
-2025-08-13 08:12:35,130 [INFO] 10-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:35,164 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:35,165 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:35,165 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:35,165 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:35,173 [INFO] 9-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:35,291 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:35,291 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:35,292 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:35,307 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:35,308 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 0
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 1
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 2
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 3
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 4
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 5
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 6
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 7
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 8
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 9
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 10
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 11
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 12
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 13
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 14
-2025-08-13 08:12:35,316 [INFO] [0] Broadcasting to 15
-2025-08-13 08:12:35,316 [INFO] [0] [inputs] ACS set size=11; set=[0, 1, 2, 3, 4, 5, 6, 7, 13, 14, 15]
-2025-08-13 08:12:35,316 [INFO] [0] [inputs] Decoded 200 input shares from dealer 0
-2025-08-13 08:12:35,319 [INFO] len a_all: 500, len b_all: 500, len c_all: 500
-2025-08-13 08:12:35,319 [INFO] [0] [inputs] Time taken to inputs_time: 1.0533061027526855 seconds
-2025-08-13 08:12:35,320 [INFO] [0] [layer 0] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,325 [INFO] [BatchReconstruct] P1 Send: 0.003718852996826172
-2025-08-13 08:12:35,353 [INFO] [BatchReconstruct] P1 Reconstruct: 0.02761697769165039
-2025-08-13 08:12:35,353 [INFO] [BatchReconstruct] P2 Send: 5.078315734863281e-05
-2025-08-13 08:12:35,359 [INFO] [BatchReconstruct] P2 Reconstruct: 0.005692005157470703
-2025-08-13 08:12:35,359 [INFO] [0] [layer 0] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,359 [INFO] [0] [layer 0] Time taken for layer layer_time: 0.03992152214050293 seconds
-2025-08-13 08:12:35,359 [INFO] [0] [layer 1] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,361 [INFO] [BatchReconstruct] P1 Send: 0.00021886825561523438
-2025-08-13 08:12:35,384 [INFO] AVID retrieve called with sid: 11-0-B-AVSS, index: 0
-2025-08-13 08:12:35,388 [INFO] AVID retrieve called with sid: 8-0-B-AVSS, index: 0
-2025-08-13 08:12:35,392 [INFO] [BatchReconstruct] P1 Reconstruct: 0.030736446380615234
-2025-08-13 08:12:35,392 [INFO] [BatchReconstruct] P2 Send: 5.91278076171875e-05
-2025-08-13 08:12:35,400 [INFO] [BatchReconstruct] P2 Reconstruct: 0.007904291152954102
-2025-08-13 08:12:35,400 [INFO] [0] [layer 1] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,400 [INFO] [0] [layer 1] Time taken for layer layer_time: 0.04075264930725098 seconds
-2025-08-13 08:12:35,400 [INFO] [0] [layer 2] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,402 [INFO] [BatchReconstruct] P1 Send: 0.0002181529998779297
-2025-08-13 08:12:35,433 [INFO] [BatchReconstruct] P1 Reconstruct: 0.03093409538269043
-2025-08-13 08:12:35,433 [INFO] [BatchReconstruct] P2 Send: 5.412101745605469e-05
-2025-08-13 08:12:35,437 [INFO] AVID retrieve called with sid: 12-0-B-AVSS, index: 0
-2025-08-13 08:12:35,441 [INFO] [BatchReconstruct] P2 Reconstruct: 0.00838923454284668
-2025-08-13 08:12:35,442 [INFO] [0] [layer 2] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,442 [INFO] [0] [layer 2] Time taken for layer layer_time: 0.04176211357116699 seconds
-2025-08-13 08:12:35,442 [INFO] [0] [layer 3] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,443 [INFO] [BatchReconstruct] P1 Send: 0.00022029876708984375
-2025-08-13 08:12:35,471 [INFO] [BatchReconstruct] P1 Reconstruct: 0.027768611907958984
-2025-08-13 08:12:35,471 [INFO] [BatchReconstruct] P2 Send: 5.507469177246094e-05
-2025-08-13 08:12:35,484 [INFO] [BatchReconstruct] P2 Reconstruct: 0.013127565383911133
-2025-08-13 08:12:35,485 [INFO] [0] [layer 3] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,485 [INFO] [0] [layer 3] Time taken for layer layer_time: 0.04295229911804199 seconds
-2025-08-13 08:12:35,485 [INFO] [0] [layer 4] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,486 [INFO] [BatchReconstruct] P1 Send: 0.00023984909057617188
-2025-08-13 08:12:35,511 [INFO] [BatchReconstruct] P1 Reconstruct: 0.024851322174072266
-2025-08-13 08:12:35,511 [INFO] [BatchReconstruct] P2 Send: 5.6743621826171875e-05
-2025-08-13 08:12:35,527 [INFO] [BatchReconstruct] P2 Reconstruct: 0.01575326919555664
-2025-08-13 08:12:35,528 [INFO] [0] [layer 4] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,528 [INFO] [0] [layer 4] Time taken for layer layer_time: 0.04304146766662598 seconds
-2025-08-13 08:12:35,528 [INFO] [0] [layer 5] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,529 [INFO] [BatchReconstruct] P1 Send: 0.00021910667419433594
-2025-08-13 08:12:35,550 [INFO] [BatchReconstruct] P1 Reconstruct: 0.020218610763549805
-2025-08-13 08:12:35,550 [INFO] [BatchReconstruct] P2 Send: 5.364418029785156e-05
-2025-08-13 08:12:35,567 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0177001953125
-2025-08-13 08:12:35,568 [INFO] [0] [layer 5] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,568 [INFO] [0] [layer 5] Time taken for layer layer_time: 0.03994321823120117 seconds
-2025-08-13 08:12:35,568 [INFO] [0] [layer 6] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,569 [INFO] [BatchReconstruct] P1 Send: 0.00021958351135253906
-2025-08-13 08:12:35,589 [INFO] [BatchReconstruct] P1 Reconstruct: 0.020018815994262695
-2025-08-13 08:12:35,589 [INFO] [BatchReconstruct] P2 Send: 5.412101745605469e-05
-2025-08-13 08:12:35,607 [INFO] [BatchReconstruct] P2 Reconstruct: 0.01782679557800293
-2025-08-13 08:12:35,608 [INFO] [0] [layer 6] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,608 [INFO] [0] [layer 6] Time taken for layer layer_time: 0.03986978530883789 seconds
-2025-08-13 08:12:35,608 [INFO] [0] [layer 7] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,609 [INFO] [BatchReconstruct] P1 Send: 0.0002205371856689453
-2025-08-13 08:12:35,628 [INFO] [BatchReconstruct] P1 Reconstruct: 0.018448352813720703
-2025-08-13 08:12:35,628 [INFO] [BatchReconstruct] P2 Send: 5.1021575927734375e-05
-2025-08-13 08:12:35,646 [INFO] [BatchReconstruct] P2 Reconstruct: 0.01805567741394043
-2025-08-13 08:12:35,646 [INFO] [0] [layer 7] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,646 [INFO] [0] [layer 7] Time taken for layer layer_time: 0.03853654861450195 seconds
-2025-08-13 08:12:35,646 [INFO] [0] [layer 8] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,648 [INFO] [BatchReconstruct] P1 Send: 0.00022172927856445312
-2025-08-13 08:12:35,668 [INFO] [BatchReconstruct] P1 Reconstruct: 0.019789934158325195
-2025-08-13 08:12:35,668 [INFO] [BatchReconstruct] P2 Send: 5.435943603515625e-05
-2025-08-13 08:12:35,685 [INFO] [BatchReconstruct] P2 Reconstruct: 0.017680883407592773
-2025-08-13 08:12:35,686 [INFO] [0] [layer 8] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,686 [INFO] [0] [layer 8] Time taken for layer layer_time: 0.03948831558227539 seconds
-2025-08-13 08:12:35,686 [INFO] [0] [layer 9] Using 50 triples (a,b,c) for multiplication
-2025-08-13 08:12:35,687 [INFO] [BatchReconstruct] P1 Send: 0.00021886825561523438
-2025-08-13 08:12:35,706 [INFO] [BatchReconstruct] P1 Reconstruct: 0.018726348876953125
-2025-08-13 08:12:35,706 [INFO] [BatchReconstruct] P2 Send: 5.245208740234375e-05
-2025-08-13 08:12:35,724 [INFO] [BatchReconstruct] P2 Reconstruct: 0.017636775970458984
-2025-08-13 08:12:35,724 [INFO] [0] [layer 9] done: produced 100 outputs; next I size=200
-2025-08-13 08:12:35,724 [INFO] [0] [layer 9] Time taken for layer layer_time: 0.03839445114135742 seconds
-2025-08-13 08:12:35,724 [INFO] [0] [final] opening 100 outputs
-2025-08-13 08:12:35,725 [INFO] [BatchReconstruct] P1 Send: 0.00022029876708984375
-2025-08-13 08:12:35,746 [INFO] [BatchReconstruct] P1 Reconstruct: 0.020194053649902344
-2025-08-13 08:12:35,746 [INFO] [BatchReconstruct] P2 Send: 5.078315734863281e-05
-2025-08-13 08:12:35,764 [INFO] [BatchReconstruct] P2 Reconstruct: 0.017707109451293945
-2025-08-13 08:12:35,764 [INFO] [0] [final] reconstructed 100 values
-2025-08-13 08:12:35,764 [INFO] [0] [final] Time taken for reconstruction rec_time: 0.03943514823913574 seconds
-2025-08-13 08:12:35,764 [INFO] [0] [beaver triples] Finished! Node 0, total number: 1500, time: 14.205008029937744 (seconds)
-2025-08-13 08:12:35,764 [INFO] [0] Bytes Sent: R_A:23640655 which is 7.07%
-2025-08-13 08:12:35,764 [INFO] [0] Bytes Sent: ACS:8333148 which is 2.492%
-2025-08-13 08:12:35,764 [INFO] [0] Bytes Sent: B_A:302199911 which is 90.376%
-2025-08-13 08:12:35,764 [INFO] [0] Bytes Sent: OPE:206855 which is 0.062%
-2025-08-13 08:12:35,764 [INFO] [0] Total bytes sent out aa: 334380569
-2025-08-13 08:12:36,106 [INFO] 11-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:36,117 [INFO] 8-0-B-AVSS 0 RETRIEVE called.
-2025-08-13 08:12:36,145 [INFO] 12-0-B-AVSS 0 RETRIEVE called.
+2026/01/14 09:02:13 prodProofs size =  348984
+2026/01/14 09:02:13 prodProofs count =  300
+2026-01-14 09:02:13,133 [INFO] prodProofs size: 354683 bytes
+2026-01-14 09:02:13,133 [INFO] prodProofs count: 300
+2026-01-14 09:02:13,144 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
+2026-01-14 09:02:13,144 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
+2026-01-14 09:02:13,145 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
+2026-01-14 09:02:13,154 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,154 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,154 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,154 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,158 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
+2026-01-14 09:02:13,406 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,497 [INFO] [0] [beaver triples] Starting to ACS where 2 is set as leader 
+2026-01-14 09:02:13,497 [INFO] [0] [beaver triples] The proposal of node 0 is [2, 1, 3]
+2026-01-14 09:02:13,497 [INFO] enter handle_message
+2026-01-14 09:02:13,505 [INFO] [0] Broadcasting to 0
+2026-01-14 09:02:13,505 [INFO] [0] Broadcasting to 1
+2026-01-14 09:02:13,505 [INFO] [0] Broadcasting to 2
+2026-01-14 09:02:13,505 [INFO] [0] Broadcasting to 3
+2026-01-14 09:02:13,505 [INFO] [0] [beaver triples] The ACS set is [1, 2, 3]
+2026-01-14 09:02:13,531 [INFO] [0] [beaver triples] Time taken for beaver_time: 3.1935341358184814 seconds
+2026-01-14 09:02:13,531 [INFO] [0] [inputs] Start generating 200 public inputs via ACSS+ACS
+2026-01-14 09:02:13,532 [INFO] [0] [inputs] Starting ACSS to share 200 inputs
+2026-01-14 09:02:13,532 [INFO] [0] [ACSS] Using tag ACSS_INPUTS_AVSS (mode=avss_without_proof)
+2026-01-14 09:02:13,910 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
+2026-01-14 09:02:13,911 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
+2026-01-14 09:02:13,911 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
+2026-01-14 09:02:13,913 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,913 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,913 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,927 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
+2026-01-14 09:02:13,952 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
+2026-01-14 09:02:13,964 [INFO] [0] [inputs] Starting ACS (leader=0); proposal size=3
+2026-01-14 09:02:13,964 [INFO] enter handle_message
+2026-01-14 09:02:13,964 [INFO] [0] I am the leader, broadcasting my input
+2026-01-14 09:02:13,964 [INFO] [0] Broadcasting to 0
+2026-01-14 09:02:13,964 [INFO] [0] Broadcasting to 1
+2026-01-14 09:02:13,964 [INFO] [0] Broadcasting to 2
+2026-01-14 09:02:13,964 [INFO] [0] Broadcasting to 3
+2026-01-14 09:02:13,964 [INFO] [0] value-self.acss_outputs.keys():dict_keys([2, 1, 0])
+2026-01-14 09:02:13,965 [INFO] [0] --Directly send the proposal!--
+2026-01-14 09:02:13,997 [INFO] [0] Broadcasting to 0
+2026-01-14 09:02:13,997 [INFO] [0] Broadcasting to 1
+2026-01-14 09:02:13,997 [INFO] [0] Broadcasting to 2
+2026-01-14 09:02:13,997 [INFO] [0] Broadcasting to 3
+2026-01-14 09:02:14,045 [INFO] [0] Broadcasting to 0
+2026-01-14 09:02:14,045 [INFO] [0] Broadcasting to 1
+2026-01-14 09:02:14,045 [INFO] [0] Broadcasting to 2
+2026-01-14 09:02:14,045 [INFO] [0] Broadcasting to 3
+2026-01-14 09:02:14,060 [INFO] [0] Broadcasting to 0
+2026-01-14 09:02:14,060 [INFO] [0] Broadcasting to 1
+2026-01-14 09:02:14,060 [INFO] [0] Broadcasting to 2
+2026-01-14 09:02:14,060 [INFO] [0] Broadcasting to 3
+2026-01-14 09:02:14,068 [INFO] [0] Broadcasting to 0
+2026-01-14 09:02:14,068 [INFO] [0] Broadcasting to 1
+2026-01-14 09:02:14,068 [INFO] [0] Broadcasting to 2
+2026-01-14 09:02:14,068 [INFO] [0] Broadcasting to 3
+2026-01-14 09:02:14,068 [INFO] [0] [inputs] ACS set size=3; set=[0, 1, 2]
+2026-01-14 09:02:14,069 [INFO] [0] [inputs] Decoded 200 input shares from dealer 0
+2026-01-14 09:02:14,070 [INFO] len a_all: 300, len b_all: 300, len c_all: 300
+2026-01-14 09:02:14,070 [INFO] [0] [inputs] Time taken to inputs_time: 0.5386083126068115 seconds
+2026-01-14 09:02:14,070 [INFO] [0] [layer 0] Using 50 triples (a,b,c) for multiplication
+2026-01-14 09:02:14,080 [INFO] [BatchReconstruct] P1 Send: 0.0073816776275634766
+2026-01-14 09:02:14,081 [INFO] [BatchReconstruct] P1 Reconstruct: 0.0011374950408935547
+2026-01-14 09:02:14,081 [INFO] [BatchReconstruct] P2 Send: 2.4318695068359375e-05
+2026-01-14 09:02:14,083 [INFO] [BatchReconstruct] P2 Reconstruct: 0.002631664276123047
+2026-01-14 09:02:14,084 [INFO] [0] [layer 0] done: produced 100 outputs; next I size=200
+2026-01-14 09:02:14,084 [INFO] [0] [layer 0] Time taken for layer layer_time: 0.013989925384521484 seconds
+2026-01-14 09:02:14,084 [INFO] [0] [layer 1] Using 50 triples (a,b,c) for multiplication
+2026-01-14 09:02:14,085 [INFO] [BatchReconstruct] P1 Send: 0.00013709068298339844
+2026-01-14 09:02:14,086 [INFO] [BatchReconstruct] P1 Reconstruct: 0.0010073184967041016
+2026-01-14 09:02:14,086 [INFO] [BatchReconstruct] P2 Send: 2.1219253540039062e-05
+2026-01-14 09:02:14,089 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0021581649780273438
+2026-01-14 09:02:14,089 [INFO] [0] [layer 1] done: produced 100 outputs; next I size=200
+2026-01-14 09:02:14,089 [INFO] [0] [layer 1] Time taken for layer layer_time: 0.0050868988037109375 seconds
+2026-01-14 09:02:14,089 [INFO] [0] [layer 2] Using 50 triples (a,b,c) for multiplication
+2026-01-14 09:02:14,090 [INFO] [BatchReconstruct] P1 Send: 0.0001575946807861328
+2026-01-14 09:02:14,092 [INFO] [BatchReconstruct] P1 Reconstruct: 0.001238107681274414
+2026-01-14 09:02:14,092 [INFO] [BatchReconstruct] P2 Send: 2.3126602172851562e-05
+2026-01-14 09:02:14,094 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0021181106567382812
+2026-01-14 09:02:14,094 [INFO] [0] [layer 2] done: produced 100 outputs; next I size=200
+2026-01-14 09:02:14,094 [INFO] [0] [layer 2] Time taken for layer layer_time: 0.0052187442779541016 seconds
+2026-01-14 09:02:14,094 [WARNING] [0] [layer 3] Simulate offline: skip layer 3 (4th layer)
+2026-01-14 09:02:14,095 [INFO] [0] [layer 4] Using 50 triples (a,b,c) for multiplication
+2026-01-14 09:02:14,096 [INFO] [BatchReconstruct] P1 Send: 0.00014472007751464844
+2026-01-14 09:03:52,019 [INFO] self.received_prevoteQC is false
+2026-01-14 09:03:52,020 [INFO] [0] Broadcasting to 0
+2026-01-14 09:03:52,020 [INFO] [0] Broadcasting to 1
+2026-01-14 09:03:52,020 [INFO] [0] Broadcasting to 2
+2026-01-14 09:03:52,020 [INFO] [0] Broadcasting to 3
+2026-01-14 09:03:53,499 [INFO] self.received_prevoteQC is false
+2026-01-14 09:03:53,500 [INFO] [0] Broadcasting to 0
+2026-01-14 09:03:53,500 [INFO] [0] Broadcasting to 1
+2026-01-14 09:03:53,500 [INFO] [0] Broadcasting to 2
+2026-01-14 09:03:53,500 [INFO] [0] Broadcasting to 3

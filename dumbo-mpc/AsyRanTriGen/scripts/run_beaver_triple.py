@@ -29,12 +29,12 @@ lib.pySampleSecret.restype = c_char_p
 lib.VMmatrixGen.argtypes = [c_int]
 lib.VMmatrixGen.restype = c_char_p
 
-async def _run(peers, pbk, pvk, n, t, my_id, batchsize, pks, sk, srs, start_time):
+async def _run(peers, pbk, pvk, n, t, my_id, batchsize, layers, pks, sk, srs, start_time):
     matrices = lib.VMmatrixGen(t)
     
     async with ProcessProgramRunner(peers, n, t, my_id) as runner:
         send, recv = runner.get_send_recv("")
-        with BEAVER(pks, sk, pbk, pvk, n, t, srs, my_id, send, recv, matrices, batchsize) as beaver:
+        with BEAVER(pks, sk, pbk, pvk, n, t, srs, my_id, send, recv, matrices, batchsize, layers) as beaver:
             while True:
                 if time.time() > start_time:
                     break
@@ -80,6 +80,9 @@ if __name__ == "__main__":
     #     )
     # print("verification of connection are completed!")
 
+    batchsize = int(HbmpcConfig.extras["k"])
+    layers = int(HbmpcConfig.extras.get("layers", 10))
+
     try:
         loop.run_until_complete(
             _run(
@@ -89,7 +92,9 @@ if __name__ == "__main__":
                 HbmpcConfig.N,
                 HbmpcConfig.t,
                 HbmpcConfig.my_id,
-                HbmpcConfig.extras["k"],
+                # HbmpcConfig.extras["k"],
+                batchsize,
+                layers,
                 pks, 
                 sk,
                 srs,

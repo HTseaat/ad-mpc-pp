@@ -347,48 +347,53 @@ class ADMPC_Dynamic(ADMPC):
                 'proof': right_proof_inputs
             }
             
-            # # Split merged shares and commits into left and right inputs for addition gates
-            # total_add_proof = len(add_inputs['proof'])
-            # half_add_proof = total_add_proof // 2
-            # left_proof_inputs = add_inputs['proof'][:half_add_proof]
-            # right_proof_inputs = add_inputs['proof'][half_add_proof:]
+            # Split merged shares and commits into left and right inputs for addition gates
+            # 下面两行代码先临时这么写的，将我们的电路每层的加法门和乘法门的输入都设为相同的
+            add_inputs = add_left_inputs
+            mul_inputs = add_right_inputs
+            total_add_proof = len(add_inputs['proof'])
+            half_add_proof = total_add_proof // 2
+            left_proof_inputs = add_inputs['proof'][:half_add_proof]
+            right_proof_inputs = add_inputs['proof'][half_add_proof:]
 
-            # total_add_commit = len(add_inputs['commitment'])
-            # half_add_commit = total_add_commit // 2
-            # left_commit_inputs = add_inputs['commitment'][:half_add_commit]
-            # right_commit_inputs = add_inputs['commitment'][half_add_commit:]
-            # add_left_inputs = {
-            #     'commitment': left_commit_inputs,
-            #     'proof': left_proof_inputs
-            # }
-            # add_right_inputs = {
-            #     'commitment': right_commit_inputs,
-            #     'proof': right_proof_inputs
-            # }
+            total_add_commit = len(add_inputs['commitment'])
+            half_add_commit = total_add_commit // 2
+            left_commit_inputs = add_inputs['commitment'][:half_add_commit]
+            right_commit_inputs = add_inputs['commitment'][half_add_commit:]
+            add_left_inputs = {
+                'commitment': left_commit_inputs,
+                'proof': left_proof_inputs
+            }
+            add_right_inputs = {
+                'commitment': right_commit_inputs,
+                'proof': right_proof_inputs
+            }
 
-            # # Split merged shares and commits into left and right inputs for multiplication gates
-            # total_mul_proof = len(mul_inputs['proof'])
-            # half_mul_proof = total_mul_proof // 2
-            # left_proof_inputs = mul_inputs['proof'][:half_mul_proof]
-            # right_proof_inputs = mul_inputs['proof'][half_mul_proof:]
+            # Split merged shares and commits into left and right inputs for multiplication gates
+            total_mul_proof = len(mul_inputs['proof'])
+            half_mul_proof = total_mul_proof // 2
+            left_proof_inputs = mul_inputs['proof'][:half_mul_proof]
+            right_proof_inputs = mul_inputs['proof'][half_mul_proof:]
 
-            # total_mul_commit = len(mul_inputs['commitment'])
-            # half_mul_commit = total_mul_commit // 2
-            # left_commit_inputs = mul_inputs['commitment'][:half_mul_commit]
-            # right_commit_inputs = mul_inputs['commitment'][half_mul_commit:]
-            # mul_left_inputs = {
-            #     'commitment': left_commit_inputs,
-            #     'proof': left_proof_inputs
-            # }
-            # mul_right_inputs = {
-            #     'commitment': right_commit_inputs,
-            #     'proof': right_proof_inputs
-            # }
+            total_mul_commit = len(mul_inputs['commitment'])
+            half_mul_commit = total_mul_commit // 2
+            left_commit_inputs = mul_inputs['commitment'][:half_mul_commit]
+            right_commit_inputs = mul_inputs['commitment'][half_mul_commit:]
+            mul_left_inputs = {
+                'commitment': left_commit_inputs,
+                'proof': left_proof_inputs
+            }
+            mul_right_inputs = {
+                'commitment': right_commit_inputs,
+                'proof': right_proof_inputs
+            }
             
 
             logging.info(f"layer ID: {self.layer_ID} clients_input_shares length: {len(merged_shares)}")
             recv_input_time = time.time() - recv_input_time
             logging.info(f"layer ID: {self.layer_ID} recv_input_time: {recv_input_time}")
+            # 这行是用来测试存算传项目可信验证时间
+            logging.info(f"layer ID: {self.layer_ID} trusted_verification_time: {recv_input_time}")
             # logging.info("add_left_inputs: %s", add_left_inputs)
 
             # Execution stage step 1: perform computation of the current layer
@@ -423,16 +428,16 @@ class ADMPC_Dynamic(ADMPC):
             logging.info(f"layer ID: {self.layer_ID} trans_pre_time: {trans_pre_time}")
 
 
-            # mul_pre_time = time.time()
-            # multag = ADMPCMsgType.MUL + str(self.layer_ID+1)
-            # mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
-            # mul_pre = BatchMul_Pre(self.next_pks, self.private_key, 
-            #                         self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
-            #                         mulsend, mulrecv, cm, mul_left_inputs, mul_right_inputs, mpc_instance=self)
-            # mul_pre_task = asyncio.create_task(mul_pre.run_multiply())
-            # await mul_pre_task
-            # mul_pre_time = time.time() - mul_pre_time
-            # logging.info(f"layer ID: {self.layer_ID} mul_pre_time: {mul_pre_time}")
+            mul_pre_time = time.time()
+            multag = ADMPCMsgType.MUL + str(self.layer_ID+1)
+            mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
+            mul_pre = BatchMul_Pre(self.next_pks, self.private_key, 
+                                    self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
+                                    mulsend, mulrecv, cm, mul_left_inputs, mul_right_inputs, mpc_instance=self)
+            mul_pre_task = asyncio.create_task(mul_pre.run_multiply())
+            await mul_pre_task
+            mul_pre_time = time.time() - mul_pre_time
+            logging.info(f"layer ID: {self.layer_ID} mul_pre_time: {mul_pre_time}")
 
         else:   
             # the client step
@@ -449,16 +454,19 @@ class ADMPC_Dynamic(ADMPC):
                 trans_foll_time = time.time() - trans_foll_time
                 logging.info(f"layer ID: {self.layer_ID} trans_foll_time: {trans_foll_time}")
 
-                # mul_foll_time = time.time()
-                # multag = ADMPCMsgType.MUL + str(self.layer_ID)
-                # mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
-                # mul_foll = BatchMul_Foll(self.public_keys, self.private_key, 
-                #                 self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
-                #                 mulsend, mulrecv, cm, mpc_instance=self)
+                mul_foll_time = time.time()
+                multag = ADMPCMsgType.MUL + str(self.layer_ID)
+                mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
+                mul_foll = BatchMul_Foll(self.public_keys, self.private_key, 
+                                self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
+                                mulsend, mulrecv, cm, mpc_instance=self)
 
-                # new_mul_shares = await mul_foll.run_multiply(cm)
-                # mul_foll_time = time.time() - mul_foll_time
-                # logging.info(f"layer ID: {self.layer_ID} mul_foll_time: {mul_foll_time}")
+                new_mul_shares = await mul_foll.run_multiply(cm)
+                mul_foll_time = time.time() - mul_foll_time
+                logging.info(f"layer ID: {self.layer_ID} mul_foll_time: {mul_foll_time}")
+
+                # 这行是用来测试存算传项目可信验证时间
+                logging.info(f"layer ID: {self.layer_ID} trusted_verification_time: {trans_foll_time+mul_foll_time}")
 
                 # reconstruct final values from transfer and multiplication shares
                 raw_proofs = trans_shares['proof']
@@ -489,16 +497,19 @@ class ADMPC_Dynamic(ADMPC):
                 trans_foll_time = time.time() - trans_foll_time
                 logging.info(f"layer ID: {self.layer_ID} trans_foll_time: {trans_foll_time}")
 
-                # mul_foll_time = time.time()
-                # multag = ADMPCMsgType.MUL + str(self.layer_ID)
-                # mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
-                # mul_foll = BatchMul_Foll(self.public_keys, self.private_key, 
-                #                 self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
-                #                 mulsend, mulrecv, cm, mpc_instance=self)
+                mul_foll_time = time.time()
+                multag = ADMPCMsgType.MUL + str(self.layer_ID)
+                mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
+                mul_foll = BatchMul_Foll(self.public_keys, self.private_key, 
+                                self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
+                                mulsend, mulrecv, cm, mpc_instance=self)
 
-                # new_mul_shares = await mul_foll.run_multiply(cm)
-                # mul_foll_time = time.time() - mul_foll_time
-                # logging.info(f"layer ID: {self.layer_ID} mul_foll_time: {mul_foll_time}")
+                new_mul_shares = await mul_foll.run_multiply(cm)
+                mul_foll_time = time.time() - mul_foll_time
+                logging.info(f"layer ID: {self.layer_ID} mul_foll_time: {mul_foll_time}")
+
+                # 这行是用来测试存算传项目可信验证时间
+                logging.info(f"layer ID: {self.layer_ID} trusted_verification_time: {trans_foll_time+mul_foll_time}")
 
                 # Execution stage step 1: perform computation of the current layer
                 exec_time = time.time()
@@ -532,16 +543,16 @@ class ADMPC_Dynamic(ADMPC):
                 logging.info(f"layer ID: {self.layer_ID} trans_pre_time: {trans_pre_time}")
 
 
-                # mul_pre_time = time.time()
-                # multag = ADMPCMsgType.MUL + str(self.layer_ID+1)
-                # mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
-                # mul_pre = BatchMul_Pre(self.next_pks, self.private_key, 
-                #                         self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
-                #                         mulsend, mulrecv, cm, new_mul_shares, new_mul_shares, mpc_instance=self)
-                # mul_pre_task = asyncio.create_task(mul_pre.run_multiply())
-                # await mul_pre_task
-                # mul_pre_time = time.time() - mul_pre_time
-                # logging.info(f"layer ID: {self.layer_ID} mul_pre_time: {mul_pre_time}")
+                mul_pre_time = time.time()
+                multag = ADMPCMsgType.MUL + str(self.layer_ID+1)
+                mulsend, mulrecv = self.get_send(multag), self.subscribe_recv(multag)
+                mul_pre = BatchMul_Pre(self.next_pks, self.private_key, 
+                                        self.pkbls, self.skbls, self.n, self.t, self.srs, self.my_id, 
+                                        mulsend, mulrecv, cm, new_mul_shares, new_mul_shares, mpc_instance=self)
+                mul_pre_task = asyncio.create_task(mul_pre.run_multiply())
+                await mul_pre_task
+                mul_pre_time = time.time() - mul_pre_time
+                logging.info(f"layer ID: {self.layer_ID} mul_pre_time: {mul_pre_time}")
 
         layer_time = time.time() - layer_time
         logging.info(f"layer ID: {self.layer_ID} layer_time: {layer_time}")

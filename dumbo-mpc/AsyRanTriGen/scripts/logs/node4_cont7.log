@@ -1,139 +1,1214 @@
-Warning: Permanently added '111.229.197.238' (ECDSA) to the list of known hosts.
+Warning: Permanently added '111.231.28.183' (ECDSA) to the list of known hosts.
 Creating dumbo-mpc_dumbo-mpc_run ... 
 Creating dumbo-mpc_dumbo-mpc_run ... done
-2025-08-23 08:15:36,589 INFO [root] Running ADMPC ...
-2025-08-23 08:15:36,993 INFO [root] my_send_id: 81
-2025-08-23 08:15:37,073 INFO [root] ADMPC start time: 1755936937.0738556
-2025-08-23 08:15:37,074 INFO [root] [Layer 6] Reached run_admpc checkpoint
-2025-08-23 08:15:37,074 INFO [beaver.transfer] [3] Starting DynamicTransfer_Foll
-2025-08-23 08:15:37,074 INFO [beaver.transfer] [3] Starting ACSS to share 0 secrets
-2025-08-23 08:15:37,075 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 0, Client Mode: False
-2025-08-23 08:15:37,075 INFO [root] [3] AVSS tag: 0-0-6-B-AVSS
-2025-08-23 08:15:37,075 INFO [root] [3] RBC tag: 0-0-6-B-RBC
-2025-08-23 08:15:37,075 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 0, client_mode: False
-2025-08-23 08:15:37,075 INFO [root] rbc_list: [65, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,075 INFO [root] committee_size: 13
-2025-08-23 08:15:37,075 INFO [root] n: 14
-2025-08-23 08:15:37,075 INFO [root] f: 4
-2025-08-23 08:15:37,075 INFO [root] pid: 4
-2025-08-23 08:15:37,075 INFO [root] leader: 0
-2025-08-23 08:15:37,075 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 1, Client Mode: False
-2025-08-23 08:15:37,076 INFO [root] [3] AVSS tag: 1-0-6-B-AVSS
-2025-08-23 08:15:37,076 INFO [root] [3] RBC tag: 1-0-6-B-RBC
-2025-08-23 08:15:37,076 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 1, client_mode: False
-2025-08-23 08:15:37,076 INFO [root] rbc_list: [66, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,076 INFO [root] committee_size: 13
-2025-08-23 08:15:37,076 INFO [root] n: 14
-2025-08-23 08:15:37,076 INFO [root] f: 4
-2025-08-23 08:15:37,076 INFO [root] pid: 4
-2025-08-23 08:15:37,076 INFO [root] leader: 1
-2025-08-23 08:15:37,076 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 2, Client Mode: False
-2025-08-23 08:15:37,076 INFO [root] [3] AVSS tag: 2-0-6-B-AVSS
-2025-08-23 08:15:37,076 INFO [root] [3] RBC tag: 2-0-6-B-RBC
-2025-08-23 08:15:37,076 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 2, client_mode: False
-2025-08-23 08:15:37,076 INFO [root] rbc_list: [67, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,076 INFO [root] committee_size: 13
-2025-08-23 08:15:37,076 INFO [root] n: 14
-2025-08-23 08:15:37,076 INFO [root] f: 4
-2025-08-23 08:15:37,076 INFO [root] pid: 4
-2025-08-23 08:15:37,076 INFO [root] leader: 2
-2025-08-23 08:15:37,076 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 3, Client Mode: False
-2025-08-23 08:15:37,076 INFO [root] [3] AVSS tag: 3-0-6-B-AVSS
-2025-08-23 08:15:37,076 INFO [root] [3] RBC tag: 3-0-6-B-RBC
-2025-08-23 08:15:37,076 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 3, client_mode: False
-2025-08-23 08:15:37,076 INFO [root] rbc_list: [68, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,076 INFO [root] committee_size: 13
-2025-08-23 08:15:37,077 INFO [root] n: 14
-2025-08-23 08:15:37,077 INFO [root] f: 4
-2025-08-23 08:15:37,077 INFO [root] pid: 4
-2025-08-23 08:15:37,077 INFO [root] leader: 3
-2025-08-23 08:15:37,077 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 4, Client Mode: False
-2025-08-23 08:15:37,077 INFO [root] [3] AVSS tag: 4-0-6-B-AVSS
-2025-08-23 08:15:37,077 INFO [root] [3] RBC tag: 4-0-6-B-RBC
-2025-08-23 08:15:37,077 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 4, client_mode: False
-2025-08-23 08:15:37,077 INFO [root] rbc_list: [69, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,077 INFO [root] committee_size: 13
-2025-08-23 08:15:37,077 INFO [root] n: 14
-2025-08-23 08:15:37,077 INFO [root] f: 4
-2025-08-23 08:15:37,077 INFO [root] pid: 3
-2025-08-23 08:15:37,077 INFO [root] leader: 4
-2025-08-23 08:15:37,077 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 5, Client Mode: False
-2025-08-23 08:15:37,077 INFO [root] [3] AVSS tag: 5-0-6-B-AVSS
-2025-08-23 08:15:37,077 INFO [root] [3] RBC tag: 5-0-6-B-RBC
-2025-08-23 08:15:37,077 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 5, client_mode: False
-2025-08-23 08:15:37,077 INFO [root] rbc_list: [70, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,077 INFO [root] committee_size: 13
-2025-08-23 08:15:37,077 INFO [root] n: 14
-2025-08-23 08:15:37,077 INFO [root] f: 4
-2025-08-23 08:15:37,077 INFO [root] pid: 3
-2025-08-23 08:15:37,077 INFO [root] leader: 5
-2025-08-23 08:15:37,077 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 6, Client Mode: False
-2025-08-23 08:15:37,077 INFO [root] [3] AVSS tag: 6-0-6-B-AVSS
-2025-08-23 08:15:37,077 INFO [root] [3] RBC tag: 6-0-6-B-RBC
-2025-08-23 08:15:37,077 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 6, client_mode: False
-2025-08-23 08:15:37,078 INFO [root] rbc_list: [71, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,078 INFO [root] committee_size: 13
-2025-08-23 08:15:37,078 INFO [root] n: 14
-2025-08-23 08:15:37,078 INFO [root] f: 4
-2025-08-23 08:15:37,078 INFO [root] pid: 3
-2025-08-23 08:15:37,078 INFO [root] leader: 6
-2025-08-23 08:15:37,078 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 7, Client Mode: False
-2025-08-23 08:15:37,078 INFO [root] [3] AVSS tag: 7-0-6-B-AVSS
-2025-08-23 08:15:37,078 INFO [root] [3] RBC tag: 7-0-6-B-RBC
-2025-08-23 08:15:37,078 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 7, client_mode: False
-2025-08-23 08:15:37,078 INFO [root] rbc_list: [72, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,078 INFO [root] committee_size: 13
-2025-08-23 08:15:37,078 INFO [root] n: 14
-2025-08-23 08:15:37,078 INFO [root] f: 4
-2025-08-23 08:15:37,078 INFO [root] pid: 3
-2025-08-23 08:15:37,078 INFO [root] leader: 7
-2025-08-23 08:15:37,078 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 8, Client Mode: False
-2025-08-23 08:15:37,078 INFO [root] [3] AVSS tag: 8-0-6-B-AVSS
-2025-08-23 08:15:37,078 INFO [root] [3] RBC tag: 8-0-6-B-RBC
-2025-08-23 08:15:37,078 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 8, client_mode: False
-2025-08-23 08:15:37,078 INFO [root] rbc_list: [73, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,078 INFO [root] committee_size: 13
-2025-08-23 08:15:37,078 INFO [root] n: 14
-2025-08-23 08:15:37,078 INFO [root] f: 4
-2025-08-23 08:15:37,078 INFO [root] pid: 3
-2025-08-23 08:15:37,078 INFO [root] leader: 8
-2025-08-23 08:15:37,078 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 9, Client Mode: False
-2025-08-23 08:15:37,078 INFO [root] [3] AVSS tag: 9-0-6-B-AVSS
-2025-08-23 08:15:37,079 INFO [root] [3] RBC tag: 9-0-6-B-RBC
-2025-08-23 08:15:37,079 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 9, client_mode: False
-2025-08-23 08:15:37,079 INFO [root] rbc_list: [74, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,079 INFO [root] committee_size: 13
-2025-08-23 08:15:37,079 INFO [root] n: 14
-2025-08-23 08:15:37,079 INFO [root] f: 4
-2025-08-23 08:15:37,079 INFO [root] pid: 3
-2025-08-23 08:15:37,079 INFO [root] leader: 9
-2025-08-23 08:15:37,079 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 10, Client Mode: False
-2025-08-23 08:15:37,079 INFO [root] [3] AVSS tag: 10-0-6-B-AVSS
-2025-08-23 08:15:37,079 INFO [root] [3] RBC tag: 10-0-6-B-RBC
-2025-08-23 08:15:37,079 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 10, client_mode: False
-2025-08-23 08:15:37,079 INFO [root] rbc_list: [75, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,079 INFO [root] committee_size: 13
-2025-08-23 08:15:37,079 INFO [root] n: 14
-2025-08-23 08:15:37,079 INFO [root] f: 4
-2025-08-23 08:15:37,079 INFO [root] pid: 3
-2025-08-23 08:15:37,079 INFO [root] leader: 10
-2025-08-23 08:15:37,079 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 11, Client Mode: False
-2025-08-23 08:15:37,079 INFO [root] [3] AVSS tag: 11-0-6-B-AVSS
-2025-08-23 08:15:37,079 INFO [root] [3] RBC tag: 11-0-6-B-RBC
-2025-08-23 08:15:37,079 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 11, client_mode: False
-2025-08-23 08:15:37,080 INFO [root] rbc_list: [76, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,080 INFO [root] committee_size: 13
-2025-08-23 08:15:37,080 INFO [root] n: 14
-2025-08-23 08:15:37,080 INFO [root] f: 4
-2025-08-23 08:15:37,080 INFO [root] pid: 3
-2025-08-23 08:15:37,080 INFO [root] leader: 11
-2025-08-23 08:15:37,080 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 12, Client Mode: False
-2025-08-23 08:15:37,080 INFO [root] [3] AVSS tag: 12-0-6-B-AVSS
-2025-08-23 08:15:37,080 INFO [root] [3] RBC tag: 12-0-6-B-RBC
-2025-08-23 08:15:37,080 INFO [root] [3] Starting AVSS with shares_num: 0, dealer_id: 12, client_mode: False
-2025-08-23 08:15:37,080 INFO [root] rbc_list: [77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-2025-08-23 08:15:37,080 INFO [root] committee_size: 13
-2025-08-23 08:15:37,080 INFO [root] n: 14
-2025-08-23 08:15:37,080 INFO [root] f: 4
-2025-08-23 08:15:37,080 INFO [root] pid: 3
-2025-08-23 08:15:37,080 INFO [root] leader: 12
+2025-12-17 02:12:34,321 INFO [root] Running ADMPC ...
+2025-12-17 02:12:35,152 INFO [root] my_send_id: 27
+2025-12-17 02:12:35,175 INFO [root] ADMPC start time: 1765937555.1755126
+2025-12-17 02:12:35,175 INFO [root] [Layer 6] Reached run_admpc checkpoint
+2025-12-17 02:12:35,176 INFO [beaver.transfer] [3] Starting DynamicTransfer_Foll
+2025-12-17 02:12:35,176 INFO [beaver.transfer] [3] Starting ACSS to share 50 secrets
+2025-12-17 02:12:35,176 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 0, Client Mode: False
+2025-12-17 02:12:35,176 INFO [root] [3] AVSS tag: 0-0-6-B-AVSS
+2025-12-17 02:12:35,176 INFO [root] [3] RBC tag: 0-0-6-B-RBC
+2025-12-17 02:12:35,176 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 0, client_mode: False
+2025-12-17 02:12:35,176 INFO [root] rbc_list: [20, 24, 25, 26, 27]
+2025-12-17 02:12:35,176 INFO [root] committee_size: 4
+2025-12-17 02:12:35,176 INFO [root] n: 5
+2025-12-17 02:12:35,176 INFO [root] f: 1
+2025-12-17 02:12:35,176 INFO [root] pid: 4
+2025-12-17 02:12:35,176 INFO [root] leader: 0
+2025-12-17 02:12:35,176 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 1, Client Mode: False
+2025-12-17 02:12:35,176 INFO [root] [3] AVSS tag: 1-0-6-B-AVSS
+2025-12-17 02:12:35,176 INFO [root] [3] RBC tag: 1-0-6-B-RBC
+2025-12-17 02:12:35,176 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 1, client_mode: False
+2025-12-17 02:12:35,176 INFO [root] rbc_list: [21, 24, 25, 26, 27]
+2025-12-17 02:12:35,176 INFO [root] committee_size: 4
+2025-12-17 02:12:35,176 INFO [root] n: 5
+2025-12-17 02:12:35,176 INFO [root] f: 1
+2025-12-17 02:12:35,177 INFO [root] pid: 4
+2025-12-17 02:12:35,177 INFO [root] leader: 1
+2025-12-17 02:12:35,177 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 2, Client Mode: False
+2025-12-17 02:12:35,177 INFO [root] [3] AVSS tag: 2-0-6-B-AVSS
+2025-12-17 02:12:35,177 INFO [root] [3] RBC tag: 2-0-6-B-RBC
+2025-12-17 02:12:35,177 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 2, client_mode: False
+2025-12-17 02:12:35,177 INFO [root] rbc_list: [22, 24, 25, 26, 27]
+2025-12-17 02:12:35,177 INFO [root] committee_size: 4
+2025-12-17 02:12:35,177 INFO [root] n: 5
+2025-12-17 02:12:35,177 INFO [root] f: 1
+2025-12-17 02:12:35,177 INFO [root] pid: 4
+2025-12-17 02:12:35,177 INFO [root] leader: 2
+2025-12-17 02:12:35,177 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 3, Client Mode: False
+2025-12-17 02:12:35,177 INFO [root] [3] AVSS tag: 3-0-6-B-AVSS
+2025-12-17 02:12:35,177 INFO [root] [3] RBC tag: 3-0-6-B-RBC
+2025-12-17 02:12:35,177 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 3, client_mode: False
+2025-12-17 02:12:35,177 INFO [root] rbc_list: [23, 24, 25, 26, 27]
+2025-12-17 02:12:35,177 INFO [root] committee_size: 4
+2025-12-17 02:12:35,177 INFO [root] n: 5
+2025-12-17 02:12:35,177 INFO [root] f: 1
+2025-12-17 02:12:35,177 INFO [root] pid: 4
+2025-12-17 02:12:35,177 INFO [root] leader: 3
+2025-12-17 02:12:40,398 INFO [root] [4] Received VAL message from 23
+2025-12-17 02:12:40,398 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,398 INFO [root] [4] sender: 23, leader: 3
+2025-12-17 02:12:40,398 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,398 INFO [root] [4] Broadcasted ECHO message for roothash b'\x0b\xd6\x03>\x13\xa18\xff\xa2\xb6\xc7\xef\xfe\x1f\x98F\xf7,\xa9\xba\xbd\t\xa5ju\x97\nG\x9a\xcf\x1b\xd2'
+2025-12-17 02:12:40,398 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,398 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,398 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,398 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,398 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,399 INFO [root] [4] Received VAL message from 22
+2025-12-17 02:12:40,399 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,399 INFO [root] [4] sender: 22, leader: 2
+2025-12-17 02:12:40,399 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,399 INFO [root] [4] Broadcasted ECHO message for roothash b'B\xbd\xcd\xeb0\x01\xd7\x14\xfc\xd0\xec\xb5P(\xdc+h\xb5[1_\xf2\xd8\x1b\x0b\n\xdc`,\x95\x08\x99'
+2025-12-17 02:12:40,399 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,399 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,399 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,399 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,400 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,400 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,400 INFO [root] [4] Broadcasted READY message for roothash b'\x0b\xd6\x03>\x13\xa18\xff\xa2\xb6\xc7\xef\xfe\x1f\x98F\xf7,\xa9\xba\xbd\t\xa5ju\x97\nG\x9a\xcf\x1b\xd2'
+2025-12-17 02:12:40,400 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,400 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,400 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,400 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,400 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,400 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,400 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,400 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,400 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,401 INFO [root] [4] Broadcasted READY message for roothash b'B\xbd\xcd\xeb0\x01\xd7\x14\xfc\xd0\xec\xb5P(\xdc+h\xb5[1_\xf2\xd8\x1b\x0b\n\xdc`,\x95\x08\x99'
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,401 INFO [root] [4] Received VAL message from 20
+2025-12-17 02:12:40,401 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,401 INFO [root] [4] sender: 20, leader: 0
+2025-12-17 02:12:40,401 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,401 INFO [root] [4] Broadcasted ECHO message for roothash b'\x80\xf1\xa0\x14\xa6!\x17C\xe6\xf8Z\x83`\xb0\x12y\xa0\xd8n,\x1f<I5\r\xb1\x82-f#g\xac'
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,401 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,401 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,401 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,402 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,402 INFO [root] [4] Received READY message from 25
+2025-12-17 02:12:40,402 INFO [root] Decoding output for roothash: b'\x0b\xd6\x03>\x13\xa18\xff\xa2\xb6\xc7\xef\xfe\x1f\x98F\xf7,\xa9\xba\xbd\t\xa5ju\x97\nG\x9a\xcf\x1b\xd2'
+2025-12-17 02:12:40,402 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,402 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,402 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,402 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,403 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,403 INFO [root] [4] Received READY message from 24
+2025-12-17 02:12:40,403 INFO [root] Decoding output for roothash: b'B\xbd\xcd\xeb0\x01\xd7\x14\xfc\xd0\xec\xb5P(\xdc+h\xb5[1_\xf2\xd8\x1b\x0b\n\xdc`,\x95\x08\x99'
+2025-12-17 02:12:40,403 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,403 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,403 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,403 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,403 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,403 INFO [root] [4] Broadcasted READY message for roothash b'\x80\xf1\xa0\x14\xa6!\x17C\xe6\xf8Z\x83`\xb0\x12y\xa0\xd8n,\x1f<I5\r\xb1\x82-f#g\xac'
+2025-12-17 02:12:40,403 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,403 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,403 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,404 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,404 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,404 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,404 INFO [root] [4] Received VAL message from 21
+2025-12-17 02:12:40,404 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,404 INFO [root] [4] sender: 21, leader: 1
+2025-12-17 02:12:40,404 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,404 INFO [root] [4] Broadcasted ECHO message for roothash b'\xfc\xd5T\x8c=\xe2\xd2\x02U|\x1b\x13\xa0\xe9P[\x8cwK_\xbf;\xcfU\xf6\x84\x999\xa1/C\x08'
+2025-12-17 02:12:40,404 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,404 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,404 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,404 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,405 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,405 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,405 INFO [root] [4] Received READY message from 24
+2025-12-17 02:12:40,405 INFO [root] Decoding output for roothash: b'\x80\xf1\xa0\x14\xa6!\x17C\xe6\xf8Z\x83`\xb0\x12y\xa0\xd8n,\x1f<I5\r\xb1\x82-f#g\xac'
+2025-12-17 02:12:40,405 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,405 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,405 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,406 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,406 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,406 INFO [root] [4] Broadcasted READY message for roothash b'\xfc\xd5T\x8c=\xe2\xd2\x02U|\x1b\x13\xa0\xe9P[\x8cwK_\xbf;\xcfU\xf6\x84\x999\xa1/C\x08'
+2025-12-17 02:12:40,406 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,406 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,406 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,406 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,406 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,406 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,407 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,407 INFO [root] [4] Received READY message from 24
+2025-12-17 02:12:40,407 INFO [root] Decoding output for roothash: b'\xfc\xd5T\x8c=\xe2\xd2\x02U|\x1b\x13\xa0\xe9P[\x8cwK_\xbf;\xcfU\xf6\x84\x999\xa1/C\x08'
+2025-12-17 02:12:40,407 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,408 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,408 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,579 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,579 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,579 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,580 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,580 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,580 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,580 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,580 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,581 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,581 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,581 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,581 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,581 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,582 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,582 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,582 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,582 INFO [root] 2-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,582 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,582 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,582 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,582 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,582 INFO [root] 2-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,582 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,582 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,582 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 2
+2025-12-17 02:12:40,582 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,583 INFO [root] 2-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,583 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,583 INFO [root] retrieve msid: 2-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,583 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,583 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,583 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,583 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,584 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,585 INFO [root] 3-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,585 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,585 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,585 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,585 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,585 INFO [root] 3-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,585 INFO [root] 2-0-6-B-AVSS 3 AVID retrieve msg from 26
+2025-12-17 02:12:40,585 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,585 INFO [root] retrieve msid: 2-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,585 INFO [root] RESPONSE from 26
+2025-12-17 02:12:40,585 INFO [root] sender self.committee_size: 2
+2025-12-17 02:12:40,585 INFO [root] 2-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,585 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,585 INFO [root] Handling dealer messages for dealer_id: 2, tag: 2-0-6-B-AVSS
+2025-12-17 02:12:40,607 INFO [root] shares verified successfully
+2025-12-17 02:12:40,607 INFO [root] all_shares_valid: True
+2025-12-17 02:12:40,608 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:40,608 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:40,608 INFO [root] multicast to 24
+2025-12-17 02:12:40,608 INFO [root] multicast to 25
+2025-12-17 02:12:40,608 INFO [root] multicast to 26
+2025-12-17 02:12:40,608 INFO [root] multicast to 27
+2025-12-17 02:12:40,609 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,609 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,609 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 2
+2025-12-17 02:12:40,609 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,609 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,609 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,609 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,609 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,609 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:40,609 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:40,609 INFO [root] output: True
+2025-12-17 02:12:40,609 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:40,609 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:40,609 INFO [root] output: True
+2025-12-17 02:12:40,610 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,610 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,610 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,610 INFO [root] 3-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,610 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,610 INFO [root] retrieve msid: 3-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,610 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,610 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,611 INFO [root] 3-0-6-B-AVSS 3 AVID retrieve msg from 24
+2025-12-17 02:12:40,611 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,611 INFO [root] retrieve msid: 3-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,611 INFO [root] RESPONSE from 24
+2025-12-17 02:12:40,611 INFO [root] sender self.committee_size: 0
+2025-12-17 02:12:40,611 INFO [root] 3-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,611 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,611 INFO [root] Handling dealer messages for dealer_id: 3, tag: 3-0-6-B-AVSS
+2025-12-17 02:12:40,620 INFO [root] shares verified successfully
+2025-12-17 02:12:40,620 INFO [root] all_shares_valid: True
+2025-12-17 02:12:40,620 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:40,620 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:40,620 INFO [root] multicast to 24
+2025-12-17 02:12:40,620 INFO [root] multicast to 25
+2025-12-17 02:12:40,620 INFO [root] multicast to 26
+2025-12-17 02:12:40,620 INFO [root] multicast to 27
+2025-12-17 02:12:40,620 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:40,620 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:40,620 INFO [root] output: True
+2025-12-17 02:12:40,621 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:40,621 INFO [root] [3] OK set: {25, 26, 27}
+2025-12-17 02:12:40,621 INFO [root] output: True
+2025-12-17 02:12:40,621 INFO [root] 0-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,621 INFO [root] 0-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,621 INFO [root] 1-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,621 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,621 INFO [root] 1-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,621 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,621 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,621 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,621 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,621 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:40,621 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:40,622 INFO [root] output: True
+2025-12-17 02:12:40,622 INFO [root] 0-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,622 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,622 INFO [root] retrieve msid: 0-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,622 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,622 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,622 INFO [root] 1-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,622 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,622 INFO [root] retrieve msid: 1-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,622 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,622 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,623 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 2
+2025-12-17 02:12:40,623 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,623 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 2
+2025-12-17 02:12:40,623 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,623 INFO [root] 0-0-6-B-AVSS 3 AVID retrieve msg from 26
+2025-12-17 02:12:40,623 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,623 INFO [root] retrieve msid: 0-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,623 INFO [root] RESPONSE from 26
+2025-12-17 02:12:40,624 INFO [root] sender self.committee_size: 2
+2025-12-17 02:12:40,624 INFO [root] 0-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,624 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,624 INFO [root] Handling dealer messages for dealer_id: 0, tag: 0-0-6-B-AVSS
+2025-12-17 02:12:40,633 INFO [root] shares verified successfully
+2025-12-17 02:12:40,633 INFO [root] all_shares_valid: True
+2025-12-17 02:12:40,633 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:40,633 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:40,633 INFO [root] multicast to 24
+2025-12-17 02:12:40,633 INFO [root] multicast to 25
+2025-12-17 02:12:40,633 INFO [root] multicast to 26
+2025-12-17 02:12:40,633 INFO [root] multicast to 27
+2025-12-17 02:12:40,633 INFO [root] 1-0-6-B-AVSS 3 AVID retrieve msg from 26
+2025-12-17 02:12:40,633 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,633 INFO [root] retrieve msid: 1-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,633 INFO [root] RESPONSE from 26
+2025-12-17 02:12:40,633 INFO [root] sender self.committee_size: 2
+2025-12-17 02:12:40,634 INFO [root] 1-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,634 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,634 INFO [root] Handling dealer messages for dealer_id: 1, tag: 1-0-6-B-AVSS
+2025-12-17 02:12:40,642 INFO [root] shares verified successfully
+2025-12-17 02:12:40,642 INFO [root] all_shares_valid: True
+2025-12-17 02:12:40,642 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:40,642 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:40,643 INFO [root] multicast to 24
+2025-12-17 02:12:40,643 INFO [root] multicast to 25
+2025-12-17 02:12:40,643 INFO [root] multicast to 26
+2025-12-17 02:12:40,643 INFO [root] multicast to 27
+2025-12-17 02:12:40,643 INFO [root] key_proposal: [2, 3, 0, 1]
+2025-12-17 02:12:40,643 INFO [beaver.transfer] [3] [random shares] Starting ACS where node 1 is set as leader 
+2025-12-17 02:12:40,643 INFO [beaver.transfer] [3] [random shares] The proposal of node 3 is [2, 3, 0, 1]
+2025-12-17 02:12:40,643 INFO [root] enter handle_message
+2025-12-17 02:12:40,644 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:40,644 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:40,644 INFO [root] output: True
+2025-12-17 02:12:40,644 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:40,644 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:40,644 INFO [root] output: True
+2025-12-17 02:12:40,644 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:40,644 INFO [root] [3] OK set: {25, 26, 27}
+2025-12-17 02:12:40,644 INFO [root] output: True
+2025-12-17 02:12:40,644 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:40,644 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:40,644 INFO [root] output: True
+2025-12-17 02:12:40,644 INFO [root] [3] exit
+2025-12-17 02:12:40,644 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,644 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,644 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,644 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,644 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:40,644 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:40,644 INFO [root] output: True
+2025-12-17 02:12:40,644 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:40,644 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:40,644 INFO [root] output: True
+2025-12-17 02:12:40,645 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:40,645 INFO [root] [3] OK set: {25, 26, 27}
+2025-12-17 02:12:40,645 INFO [root] output: True
+2025-12-17 02:12:40,645 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:40,645 INFO [root] [3] OK set: {25, 26, 27}
+2025-12-17 02:12:40,645 INFO [root] output: True
+2025-12-17 02:12:40,646 INFO [root] [3] otmvba msg value
+2025-12-17 02:12:40,646 INFO [root] [3] otmvba handle value message
+2025-12-17 02:12:40,646 INFO [root] [3] value-self.acss_outputs.keys():dict_keys([2, 3, 0, 1])
+2025-12-17 02:12:40,647 INFO [root] [3] --Directly send the proposal!--
+2025-12-17 02:12:40,647 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,647 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,647 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:40,647 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:40,647 INFO [root] output: True
+2025-12-17 02:12:40,647 INFO [root] [3] exit
+2025-12-17 02:12:40,648 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,648 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,669 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:40,669 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:40,669 INFO [root] output: True
+2025-12-17 02:12:40,669 INFO [root] [3] exit
+2025-12-17 02:12:40,669 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:40,669 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:40,669 INFO [root] output: True
+2025-12-17 02:12:40,669 INFO [root] [3] exit
+2025-12-17 02:12:40,680 INFO [root] [3] otmvba msg PrevoteQC
+2025-12-17 02:12:40,680 INFO [root] [3] otmvba handle prevote qc message
+2025-12-17 02:12:40,735 INFO [root] [3] otmvba msg VoteQC
+2025-12-17 02:12:40,735 INFO [root] [3] otmvba handle vote qc message
+2025-12-17 02:12:40,742 INFO [root] [3] otmvba Broadcasting to 24
+2025-12-17 02:12:40,743 INFO [root] [3] otmvba Broadcasting to 25
+2025-12-17 02:12:40,743 INFO [root] [3] otmvba Broadcasting to 26
+2025-12-17 02:12:40,743 INFO [root] [3] otmvba Broadcasting to 27
+2025-12-17 02:12:40,743 INFO [root] [3] otmvba msg Terminate
+2025-12-17 02:12:40,743 INFO [root] [3] otmvba handle terminate message
+2025-12-17 02:12:40,751 INFO [root] [3] otmvba Broadcasting to 24
+2025-12-17 02:12:40,751 INFO [root] [3] otmvba Broadcasting to 25
+2025-12-17 02:12:40,751 INFO [root] [3] otmvba Broadcasting to 26
+2025-12-17 02:12:40,751 INFO [root] [3] otmvba Broadcasting to 27
+2025-12-17 02:12:40,751 INFO [beaver.transfer] [3] [random shares] The ACS set is [0, 1, 2, 3]
+2025-12-17 02:12:40,751 INFO [root] common: [0, 1, 2, 3]
+2025-12-17 02:12:40,783 INFO [beaver.transfer] [3] [asynchronous dynamic transfer] Finished! Node 3, total number: 50, time: 5.607264518737793 (seconds)
+2025-12-17 02:12:40,783 INFO [root] layer ID: 6 trans_foll_time: 5.607803821563721
+2025-12-17 02:12:40,783 INFO [beaver.batch_multiplication] [3] Starting BatchMultiplication
+2025-12-17 02:12:40,783 INFO [beaver.batch_multiplication] [3] Starting ACSS to evaluate 50 multiplication gates
+2025-12-17 02:12:40,784 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 0, Client Mode: False
+2025-12-17 02:12:40,784 INFO [root] [3] AVSS tag: 0-0-6-B-AVSS
+2025-12-17 02:12:40,784 INFO [root] [3] RBC tag: 0-0-6-B-RBC
+2025-12-17 02:12:40,784 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 0, client_mode: False
+2025-12-17 02:12:40,784 INFO [root] rbc_list: [20, 24, 25, 26, 27]
+2025-12-17 02:12:40,784 INFO [root] committee_size: 4
+2025-12-17 02:12:40,784 INFO [root] n: 5
+2025-12-17 02:12:40,784 INFO [root] f: 1
+2025-12-17 02:12:40,784 INFO [root] pid: 4
+2025-12-17 02:12:40,784 INFO [root] leader: 0
+2025-12-17 02:12:40,784 INFO [root] [4] Received VAL message from 20
+2025-12-17 02:12:40,784 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,784 INFO [root] [4] sender: 20, leader: 0
+2025-12-17 02:12:40,784 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,785 INFO [root] [4] Broadcasted ECHO message for roothash b':q7f\xed\xf8\x0f\x9cMVl0\x91\x9d\x90rH8\xe9\xe6,P~oT\x87\x028\xa6\xd7\xf2\x10'
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,785 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 1, Client Mode: False
+2025-12-17 02:12:40,785 INFO [root] [3] AVSS tag: 1-0-6-B-AVSS
+2025-12-17 02:12:40,785 INFO [root] [3] RBC tag: 1-0-6-B-RBC
+2025-12-17 02:12:40,785 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 1, client_mode: False
+2025-12-17 02:12:40,785 INFO [root] rbc_list: [21, 24, 25, 26, 27]
+2025-12-17 02:12:40,785 INFO [root] committee_size: 4
+2025-12-17 02:12:40,785 INFO [root] n: 5
+2025-12-17 02:12:40,785 INFO [root] f: 1
+2025-12-17 02:12:40,785 INFO [root] pid: 4
+2025-12-17 02:12:40,785 INFO [root] leader: 1
+2025-12-17 02:12:40,785 INFO [root] [4] Received VAL message from 21
+2025-12-17 02:12:40,785 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,785 INFO [root] [4] sender: 21, leader: 1
+2025-12-17 02:12:40,785 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,785 INFO [root] [4] Broadcasted ECHO message for roothash b'PR\xb9\xeb\xd4\x80\xea\x0c\xde\xdd\xbc\xea\x90\xa4s\xf6\xc9q\xfaL\x82\xcbY\x1a\xd7\x0b2X\xfda\x12\xe7'
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,785 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,785 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 2, Client Mode: False
+2025-12-17 02:12:40,785 INFO [root] [3] AVSS tag: 2-0-6-B-AVSS
+2025-12-17 02:12:40,785 INFO [root] [3] RBC tag: 2-0-6-B-RBC
+2025-12-17 02:12:40,786 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 2, client_mode: False
+2025-12-17 02:12:40,786 INFO [root] rbc_list: [22, 24, 25, 26, 27]
+2025-12-17 02:12:40,786 INFO [root] committee_size: 4
+2025-12-17 02:12:40,786 INFO [root] n: 5
+2025-12-17 02:12:40,786 INFO [root] f: 1
+2025-12-17 02:12:40,786 INFO [root] pid: 4
+2025-12-17 02:12:40,786 INFO [root] leader: 2
+2025-12-17 02:12:40,786 INFO [root] [4] Received VAL message from 22
+2025-12-17 02:12:40,786 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,786 INFO [root] [4] sender: 22, leader: 2
+2025-12-17 02:12:40,786 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,786 INFO [root] [4] Broadcasted ECHO message for roothash b'\x11\xfc\xd3t\xc8\xbc\x9e2\x80\x00v\x95\xcc\x18\x15\x86q\xc4vA\xd8\xf2ZJ\xc6DQ\xdeL\xaf\x82\xbc'
+2025-12-17 02:12:40,786 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,786 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,786 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,786 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,786 INFO [root] [3] Starting Batch AVSS. Id: 0, Dealer Id: 3, Client Mode: False
+2025-12-17 02:12:40,786 INFO [root] [3] AVSS tag: 3-0-6-B-AVSS
+2025-12-17 02:12:40,786 INFO [root] [3] RBC tag: 3-0-6-B-RBC
+2025-12-17 02:12:40,786 INFO [root] [3] Starting AVSS with shares_num: 50, dealer_id: 3, client_mode: False
+2025-12-17 02:12:40,786 INFO [root] rbc_list: [23, 24, 25, 26, 27]
+2025-12-17 02:12:40,786 INFO [root] committee_size: 4
+2025-12-17 02:12:40,786 INFO [root] n: 5
+2025-12-17 02:12:40,786 INFO [root] f: 1
+2025-12-17 02:12:40,786 INFO [root] pid: 4
+2025-12-17 02:12:40,786 INFO [root] leader: 3
+2025-12-17 02:12:40,786 INFO [root] [4] Received VAL message from 23
+2025-12-17 02:12:40,786 INFO [root] entering n == commitee_size + 1
+2025-12-17 02:12:40,786 INFO [root] [4] sender: 23, leader: 3
+2025-12-17 02:12:40,787 INFO [root] [4] Successfully validated VAL message
+2025-12-17 02:12:40,787 INFO [root] [4] Broadcasted ECHO message for roothash b'\xcf\x9a\xae\x97-\xd1O\xd0\x13\xabA(?\xbb\xd6\xd0\x95\x11\xcaQ_\xae.L\xe4YZ\x07+\xa3\xb7E'
+2025-12-17 02:12:40,787 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,787 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,787 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,787 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 27
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,788 INFO [root] [4] Broadcasted READY message for roothash b':q7f\xed\xf8\x0f\x9cMVl0\x91\x9d\x90rH8\xe9\xe6,P~oT\x87\x028\xa6\xd7\xf2\x10'
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,788 INFO [root] [4] Broadcasted READY message for roothash b'PR\xb9\xeb\xd4\x80\xea\x0c\xde\xdd\xbc\xea\x90\xa4s\xf6\xc9q\xfaL\x82\xcbY\x1a\xd7\x0b2X\xfda\x12\xe7'
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,788 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,788 INFO [root] [4] Broadcasted READY message for roothash b'\x11\xfc\xd3t\xc8\xbc\x9e2\x80\x00v\x95\xcc\x18\x15\x86q\xc4vA\xd8\xf2ZJ\xc6DQ\xdeL\xaf\x82\xbc'
+2025-12-17 02:12:40,788 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,789 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,789 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,789 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,789 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,789 INFO [root] [4] Received ECHO message from 24
+2025-12-17 02:12:40,789 INFO [root] [4] Received ECHO message from 25
+2025-12-17 02:12:40,789 INFO [root] [4] Broadcasted READY message for roothash b'\xcf\x9a\xae\x97-\xd1O\xd0\x13\xabA(?\xbb\xd6\xd0\x95\x11\xcaQ_\xae.L\xe4YZ\x07+\xa3\xb7E'
+2025-12-17 02:12:40,789 INFO [root] broadcast Sending to 1: 24
+2025-12-17 02:12:40,789 INFO [root] broadcast Sending to 2: 25
+2025-12-17 02:12:40,789 INFO [root] broadcast Sending to 3: 26
+2025-12-17 02:12:40,789 INFO [root] broadcast Sending to 4: 27
+2025-12-17 02:12:40,789 INFO [root] [4] Received ECHO message from 26
+2025-12-17 02:12:40,789 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,789 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,789 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,790 INFO [root] [4] Received READY message from 27
+2025-12-17 02:12:40,790 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,790 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,790 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,790 INFO [root] [4] Received READY message from 26
+2025-12-17 02:12:40,790 INFO [root] [4] Received READY message from 24
+2025-12-17 02:12:40,790 INFO [root] Decoding output for roothash: b':q7f\xed\xf8\x0f\x9cMVl0\x91\x9d\x90rH8\xe9\xe6,P~oT\x87\x028\xa6\xd7\xf2\x10'
+2025-12-17 02:12:40,790 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,790 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,791 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,791 INFO [root] [4] Received READY message from 24
+2025-12-17 02:12:40,791 INFO [root] Decoding output for roothash: b'PR\xb9\xeb\xd4\x80\xea\x0c\xde\xdd\xbc\xea\x90\xa4s\xf6\xc9q\xfaL\x82\xcbY\x1a\xd7\x0b2X\xfda\x12\xe7'
+2025-12-17 02:12:40,791 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,791 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,791 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,791 INFO [root] [4] Received READY message from 24
+2025-12-17 02:12:40,791 INFO [root] Decoding output for roothash: b'\x11\xfc\xd3t\xc8\xbc\x9e2\x80\x00v\x95\xcc\x18\x15\x86q\xc4vA\xd8\xf2ZJ\xc6DQ\xdeL\xaf\x82\xbc'
+2025-12-17 02:12:40,791 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,791 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,791 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,791 INFO [root] [4] Received READY message from 24
+2025-12-17 02:12:40,791 INFO [root] Decoding output for roothash: b'\xcf\x9a\xae\x97-\xd1O\xd0\x13\xabA(?\xbb\xd6\xd0\x95\x11\xcaQ_\xae.L\xe4YZ\x07+\xa3\xb7E'
+2025-12-17 02:12:40,791 INFO [root] [3] Received RBC message
+2025-12-17 02:12:40,792 INFO [root] multicast list: [24, 25, 26, 27]
+2025-12-17 02:12:40,792 INFO [root] before avid.retrieve
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,792 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,793 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,794 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,794 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,794 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,794 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,795 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,796 INFO [root] 0-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,796 INFO [root] 0-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,796 INFO [root] 1-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,796 INFO [root] 1-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,796 INFO [root] 2-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,796 INFO [root] 2-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,796 INFO [root] 3-0-6-B-AVSS 3 RETRIEVE called.
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 1: 24
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 2: 25
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 3: 26
+2025-12-17 02:12:40,796 INFO [root] AVID broadcast to 4: 27
+2025-12-17 02:12:40,796 INFO [root] 3-0-6-B-AVSS 3 RETRIEVE broadcasted.
+2025-12-17 02:12:40,797 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,797 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,797 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,797 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,797 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,797 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,797 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 3
+2025-12-17 02:12:40,797 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 3
+2025-12-17 02:12:40,797 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 2
+2025-12-17 02:12:40,797 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,798 INFO [root] 0-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,798 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,798 INFO [root] retrieve msid: 0-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,798 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,798 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,798 INFO [root] 1-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,798 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,798 INFO [root] retrieve msid: 1-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,798 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,798 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,798 INFO [root] 2-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,798 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,798 INFO [root] retrieve msid: 2-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,798 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,798 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,799 INFO [root] 3-0-6-B-AVSS 3 AVID retrieve msg from 27
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,799 INFO [root] retrieve msid: 3-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,799 INFO [root] RESPONSE from 27
+2025-12-17 02:12:40,799 INFO [root] sender self.committee_size: 3
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 2
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 1-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 1-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 0-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 0-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 2
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 2-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 2-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 2
+num_generators 50
+padded_num_generators 64
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 2
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 0
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 0
+2025-12-17 02:12:40,799 INFO [root] disperse msid: 3-0-6-B-AVSS, index: 1
+2025-12-17 02:12:40,799 INFO [root] AVID retrieve called with sid: 3-0-6-B-AVID, index: 1
+2025-12-17 02:12:40,800 INFO [root] 0-0-6-B-AVSS 3 AVID retrieve msg from 26
+2025-12-17 02:12:40,800 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,800 INFO [root] retrieve msid: 0-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,800 INFO [root] RESPONSE from 26
+2025-12-17 02:12:40,800 INFO [root] sender self.committee_size: 2
+2025-12-17 02:12:40,801 INFO [root] 0-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,801 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,801 INFO [root] Handling dealer messages for dealer_id: 0, tag: 0-0-6-B-AVSS
+2025-12-17 02:12:40,802 INFO [beaver.hbacss] [PedersenCommit] invoking pyPedersenCommit...
+2025-12-17 02:12:40,848 INFO [beaver.hbacss] verifier_result_json: {"verified":true}
+2025-12-17 02:12:40,852 INFO [root] inner product verified successfully
+2025-12-17 02:12:40,863 INFO [root] shares verified successfully
+2025-12-17 02:12:40,863 INFO [root] all_shares_valid: True
+2025-12-17 02:12:40,863 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:40,863 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:40,863 INFO [root] multicast to 24
+2025-12-17 02:12:40,863 INFO [root] multicast to 25
+2025-12-17 02:12:40,863 INFO [root] multicast to 26
+2025-12-17 02:12:40,863 INFO [root] multicast to 27
+2025-12-17 02:12:40,864 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:40,864 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:40,864 INFO [root] output: True
+2025-12-17 02:12:40,864 INFO [root] 1-0-6-B-AVSS 3 AVID retrieve msg from 26
+2025-12-17 02:12:40,864 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,864 INFO [root] retrieve msid: 1-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,864 INFO [root] RESPONSE from 26
+2025-12-17 02:12:40,864 INFO [root] sender self.committee_size: 2
+2025-12-17 02:12:40,864 INFO [root] 1-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,864 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,865 INFO [root] Handling dealer messages for dealer_id: 1, tag: 1-0-6-B-AVSS
+2025-12-17 02:12:40,865 INFO [beaver.hbacss] [PedersenCommit] invoking pyPedersenCommit...
+num_generators 50
+padded_num_generators 64
+2025-12-17 02:12:40,911 INFO [beaver.hbacss] verifier_result_json: {"verified":true}
+2025-12-17 02:12:40,915 INFO [root] inner product verified successfully
+2025-12-17 02:12:40,926 INFO [root] shares verified successfully
+2025-12-17 02:12:40,926 INFO [root] all_shares_valid: True
+2025-12-17 02:12:40,926 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:40,926 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:40,926 INFO [root] multicast to 24
+2025-12-17 02:12:40,926 INFO [root] multicast to 25
+2025-12-17 02:12:40,926 INFO [root] multicast to 26
+2025-12-17 02:12:40,926 INFO [root] multicast to 27
+2025-12-17 02:12:40,926 INFO [root] 2-0-6-B-AVSS 3 AVID retrieve msg from 26
+2025-12-17 02:12:40,926 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,926 INFO [root] retrieve msid: 2-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,926 INFO [root] RESPONSE from 26
+2025-12-17 02:12:40,926 INFO [root] sender self.committee_size: 2
+2025-12-17 02:12:40,927 INFO [root] 2-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,927 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,927 INFO [root] Handling dealer messages for dealer_id: 2, tag: 2-0-6-B-AVSS
+2025-12-17 02:12:40,927 INFO [beaver.hbacss] [PedersenCommit] invoking pyPedersenCommit...
+num_generators 50
+padded_num_generators 64
+2025-12-17 02:12:40,973 INFO [beaver.hbacss] verifier_result_json: {"verified":true}
+2025-12-17 02:12:40,978 INFO [root] inner product verified successfully
+2025-12-17 02:12:40,988 INFO [root] shares verified successfully
+2025-12-17 02:12:40,988 INFO [root] all_shares_valid: True
+2025-12-17 02:12:40,988 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:40,988 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:40,988 INFO [root] multicast to 24
+2025-12-17 02:12:40,988 INFO [root] multicast to 25
+2025-12-17 02:12:40,988 INFO [root] multicast to 26
+2025-12-17 02:12:40,988 INFO [root] multicast to 27
+2025-12-17 02:12:40,988 INFO [root] 3-0-6-B-AVSS 3 AVID retrieve msg from 26
+2025-12-17 02:12:40,988 INFO [root] AVID retrieve response received
+2025-12-17 02:12:40,988 INFO [root] retrieve msid: 3-0-6-B-AVID, response_index: 3
+2025-12-17 02:12:40,988 INFO [root] RESPONSE from 26
+2025-12-17 02:12:40,988 INFO [root] sender self.committee_size: 2
+2025-12-17 02:12:40,989 INFO [root] 3-0-6-B-AVSS 3 RETRIEVE complete.
+2025-12-17 02:12:40,989 INFO [root] after avid.retrieve dispersal_msg
+2025-12-17 02:12:40,989 INFO [root] Handling dealer messages for dealer_id: 3, tag: 3-0-6-B-AVSS
+2025-12-17 02:12:40,989 INFO [beaver.hbacss] [PedersenCommit] invoking pyPedersenCommit...
+num_generators 50
+padded_num_generators 64
+2025-12-17 02:12:41,035 INFO [beaver.hbacss] verifier_result_json: {"verified":true}
+2025-12-17 02:12:41,040 INFO [root] inner product verified successfully
+2025-12-17 02:12:41,050 INFO [root] shares verified successfully
+2025-12-17 02:12:41,050 INFO [root] all_shares_valid: True
+2025-12-17 02:12:41,050 INFO [root] after _handle_dealer_msgs, all_shares_valid
+2025-12-17 02:12:41,050 INFO [root] self.tagvars[tag]['all_shares_valid']: True
+2025-12-17 02:12:41,050 INFO [root] multicast to 24
+2025-12-17 02:12:41,050 INFO [root] multicast to 25
+2025-12-17 02:12:41,050 INFO [root] multicast to 26
+2025-12-17 02:12:41,050 INFO [root] multicast to 27
+2025-12-17 02:12:41,051 INFO [root] key_proposal: [0, 1, 2, 3]
+2025-12-17 02:12:41,051 INFO [beaver.batch_multiplication] [3] [random shares] Starting ACS where node 1 is set as leader 
+2025-12-17 02:12:41,051 INFO [beaver.batch_multiplication] [3] [random shares] The proposal of node 3 is [0, 1, 2, 3]
+2025-12-17 02:12:41,051 INFO [root] enter handle_message
+2025-12-17 02:12:41,051 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:41,051 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:41,051 INFO [root] output: True
+2025-12-17 02:12:41,051 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:41,051 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:41,051 INFO [root] output: True
+2025-12-17 02:12:41,051 INFO [root] [3] Received OK from [27]
+2025-12-17 02:12:41,052 INFO [root] [3] OK set: {27}
+2025-12-17 02:12:41,052 INFO [root] output: True
+2025-12-17 02:12:41,052 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:41,052 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:41,052 INFO [root] output: True
+2025-12-17 02:12:41,052 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:41,052 INFO [root] [3] OK set: {24, 26, 27}
+2025-12-17 02:12:41,052 INFO [root] output: True
+2025-12-17 02:12:41,052 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:41,052 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:41,052 INFO [root] output: True
+2025-12-17 02:12:41,052 INFO [root] [3] exit
+2025-12-17 02:12:41,053 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:41,053 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:41,053 INFO [root] output: True
+2025-12-17 02:12:41,053 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:41,053 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:41,053 INFO [root] output: True
+2025-12-17 02:12:41,053 INFO [root] [3] Received OK from [26]
+2025-12-17 02:12:41,053 INFO [root] [3] OK set: {26, 27}
+2025-12-17 02:12:41,053 INFO [root] output: True
+2025-12-17 02:12:41,054 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:41,054 INFO [root] [3] OK set: {24, 26, 27}
+2025-12-17 02:12:41,054 INFO [root] output: True
+2025-12-17 02:12:41,054 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:41,054 INFO [root] [3] OK set: {24, 26, 27}
+2025-12-17 02:12:41,054 INFO [root] output: True
+2025-12-17 02:12:41,054 INFO [root] [3] Received OK from [24]
+2025-12-17 02:12:41,054 INFO [root] [3] OK set: {24, 26, 27}
+2025-12-17 02:12:41,054 INFO [root] output: True
+2025-12-17 02:12:41,055 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:41,055 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:41,055 INFO [root] output: True
+2025-12-17 02:12:41,055 INFO [root] [3] exit
+2025-12-17 02:12:41,055 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:41,055 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:41,055 INFO [root] output: True
+2025-12-17 02:12:41,055 INFO [root] [3] exit
+2025-12-17 02:12:41,055 INFO [root] [3] Received OK from [25]
+2025-12-17 02:12:41,056 INFO [root] [3] OK set: {24, 25, 26, 27}
+2025-12-17 02:12:41,056 INFO [root] output: True
+2025-12-17 02:12:41,056 INFO [root] [3] exit
+2025-12-17 02:12:41,056 INFO [root] [3] otmvba msg value
+2025-12-17 02:12:41,056 INFO [root] [3] otmvba handle value message
+2025-12-17 02:12:41,056 INFO [root] [3] value-self.acss_outputs.keys():dict_keys([0, 1, 2, 3])
+2025-12-17 02:12:41,057 INFO [root] [3] --Directly send the proposal!--
+2025-12-17 02:12:41,098 INFO [root] [3] otmvba msg PrevoteQC
+2025-12-17 02:12:41,098 INFO [root] [3] otmvba handle prevote qc message
+2025-12-17 02:12:41,146 INFO [root] [3] otmvba msg VoteQC
+2025-12-17 02:12:41,146 INFO [root] [3] otmvba handle vote qc message
+2025-12-17 02:12:41,153 INFO [root] [3] otmvba Broadcasting to 24
+2025-12-17 02:12:41,153 INFO [root] [3] otmvba Broadcasting to 25
+2025-12-17 02:12:41,153 INFO [root] [3] otmvba Broadcasting to 26
+2025-12-17 02:12:41,153 INFO [root] [3] otmvba Broadcasting to 27
+2025-12-17 02:12:41,153 INFO [root] [3] otmvba msg Terminate
+2025-12-17 02:12:41,153 INFO [root] [3] otmvba handle terminate message
+2025-12-17 02:12:41,161 INFO [root] [3] otmvba Broadcasting to 24
+2025-12-17 02:12:41,161 INFO [root] [3] otmvba Broadcasting to 25
+2025-12-17 02:12:41,161 INFO [root] [3] otmvba Broadcasting to 26
+2025-12-17 02:12:41,161 INFO [root] [3] otmvba Broadcasting to 27
+2025-12-17 02:12:41,161 INFO [beaver.batch_multiplication] [3] [random shares] The ACS set is [0, 1, 2, 3]
+2025-12-17 02:12:41,161 INFO [root] common: [0, 1, 2, 3]
+2025-12-17 02:12:41,193 INFO [beaver.batch_multiplication] [3] [asynchronous batch multiplication] Finished! Node 3, total number: 50, time: 0.40885043144226074 (seconds)
+2025-12-17 02:12:41,193 INFO [root] layer ID: 6 mul_foll_time: 0.4099893569946289
+2025-12-17 02:12:41,193 INFO [root] layer ID: 6 trusted_verification_time: 6.01779317855835
+2025-12-17 02:12:41,196 INFO [root] layer ID: 6 add_outputs length: 50
+2025-12-17 02:12:41,196 INFO [root] layer ID: 6 exec_time: 0.0024728775024414062
+2025-12-17 02:12:41,196 INFO [beaver.transfer] [3] Starting DynamicTransfer
+2025-12-17 02:12:41,196 INFO [beaver.transfer] [3] Starting ACSS to share 50 secrets
+2025-12-17 02:12:41,197 INFO [root] [3] [asynchronous dynamic transfer] Layer ID: 6
+2025-12-17 02:12:41,197 INFO [root] public_keys: [{'X': '1236857393986543480195614639140149927364394661233498808420051002943762344022545395235873883799931702405139045354707', 'Y': '905942050299594713727172243522366235152030821943466015758350892075575604595260304219368843027467011965847303631356'}, {'X': '477982154194235365137969045409342666127279676811317170775367969892102179663087770051556912425772264017540541591042', 'Y': '3350209458340231612798624253044765510800011632868848920151634164337192337660577468408970205304346134143370917962432'}, {'X': '1670460684089803606601245454522070096519529722508479371103752048525302120153350772281489900356324053669259449049728', 'Y': '2644774699753629883133700821774356792262301865032026111635137894360663025391327515371179243376660744683930449649128'}, {'X': '3310109707310594379898396220801706045994071498039488378184282840348328185359266429585318117016163847789751878260239', 'Y': '1912019953312700213096142896493465851329001095291698369826078869247138995964916472183240326613870037319997851844815'}]
+2025-12-17 02:12:41,197 INFO [root] layer ID: 6 trans_pre_time: 0.0011188983917236328
+2025-12-17 02:12:41,197 INFO [root] [3] AVSS tag: 3-0-7-B-AVSS
+2025-12-17 02:12:41,197 INFO [root] [3] RBC tag: 3-0-7-B-RBC
+2025-12-17 02:12:41,197 INFO [root] enter avss_with_aggtransfer
+g = {[6679831729115696150 8653662730902241269 1535610680227111361 17342916647841752903 17135755455211762752 1297449291367578485] [13451288730302620273 10097742279870053774 15949884091978425806 5885175747529691540 1016841820992199104 845620083434234474]}
+h = {[13794385998538644597 108816626937764141 12130603454454490125 6127379912259600201 17481961476035825978 950355161936836191] [10722765800778186391 17107915684035394744 11626309118465119103 5217919199071354366 6102759180633827794 660535627654889709]}
+Equal? false
+num_generators 50
+2025-12-17 02:12:41,345 INFO [root] self.msgmode: avss_with_aggtransfer
+2025-12-17 02:12:41,345 INFO [beaver.batch_multiplication] [3] Starting BatchMultiplication
+2025-12-17 02:12:41,555 INFO [beaver.batch_multiplication] Proof hex length: 9288
+2025-12-17 02:12:41,555 INFO [beaver.batch_multiplication] Proof size (bytes): 4644
+2025-12-17 02:12:41,555 INFO [beaver.batch_multiplication] Proof size (strict bytes): 4644
+2025-12-17 02:12:41,555 INFO [beaver.batch_multiplication] [3] Starting ACSS to evaluate 50 multiplication gates
+2025-12-17 02:12:41,555 INFO [root] rbc_list: [27, 28, 29, 30, 31]
+2025-12-17 02:12:41,556 INFO [root] committee_size: 4
+2025-12-17 02:12:41,556 INFO [root] n: 5
+2025-12-17 02:12:41,556 INFO [root] f: 1
+2025-12-17 02:12:41,556 INFO [root] pid: 3
+2025-12-17 02:12:41,556 INFO [root] leader: 3
+2025-12-17 02:12:41,556 INFO [root] [3] Sending to 0: 28
+2025-12-17 02:12:41,556 INFO [root] [3] Sending to 1: 29
+2025-12-17 02:12:41,556 INFO [root] [3] Sending to 2: 30
+2025-12-17 02:12:41,556 INFO [root] [3] Sending to 3: 31
+2025-12-17 02:12:41,556 INFO [root] [3] Starting AVID disperse
+2025-12-17 02:12:41,556 INFO [root] public_keys: [{'X': '1236857393986543480195614639140149927364394661233498808420051002943762344022545395235873883799931702405139045354707', 'Y': '905942050299594713727172243522366235152030821943466015758350892075575604595260304219368843027467011965847303631356'}, {'X': '477982154194235365137969045409342666127279676811317170775367969892102179663087770051556912425772264017540541591042', 'Y': '3350209458340231612798624253044765510800011632868848920151634164337192337660577468408970205304346134143370917962432'}, {'X': '1670460684089803606601245454522070096519529722508479371103752048525302120153350772281489900356324053669259449049728', 'Y': '2644774699753629883133700821774356792262301865032026111635137894360663025391327515371179243376660744683930449649128'}, {'X': '3310109707310594379898396220801706045994071498039488378184282840348328185359266429585318117016163847789751878260239', 'Y': '1912019953312700213096142896493465851329001095291698369826078869247138995964916472183240326613870037319997851844815'}]
+2025-12-17 02:12:41,556 INFO [root] layer ID: 6 mul_pre_time: 0.35907936096191406
+2025-12-17 02:12:41,556 INFO [root] layer ID: 6 layer_time: 6.380742073059082
+2025-12-17 02:12:41,557 INFO [root] [3] Dispersed VAL message to committee
+2025-12-17 02:12:41,557 INFO [root] [3] AVSS tag: 3-0-7-B-AVSS
+2025-12-17 02:12:41,557 INFO [root] [3] RBC tag: 3-0-7-B-RBC
+g = {[6679831729115696150 8653662730902241269 1535610680227111361 17342916647841752903 17135755455211762752 1297449291367578485] [13451288730302620273 10097742279870053774 15949884091978425806 5885175747529691540 1016841820992199104 845620083434234474]}
+h = {[13794385998538644597 108816626937764141 12130603454454490125 6127379912259600201 17481961476035825978 950355161936836191] [10722765800778186391 17107915684035394744 11626309118465119103 5217919199071354366 6102759180633827794 660535627654889709]}
+Equal? false
+2025-12-17 02:12:41,733 INFO [root] self.msgmode: avss_with_aggbatch_multiplication
+2025-12-17 02:12:41,733 INFO [root] rbc_list: [27, 28, 29, 30, 31]
+2025-12-17 02:12:41,733 INFO [root] committee_size: 4
+2025-12-17 02:12:41,733 INFO [root] n: 5
+2025-12-17 02:12:41,733 INFO [root] f: 1
+2025-12-17 02:12:41,733 INFO [root] pid: 3
+2025-12-17 02:12:41,734 INFO [root] leader: 3
+2025-12-17 02:12:41,734 INFO [root] [3] Sending to 0: 28
+2025-12-17 02:12:41,734 INFO [root] [3] Sending to 1: 29
+2025-12-17 02:12:41,734 INFO [root] [3] Sending to 2: 30
+2025-12-17 02:12:41,734 INFO [root] [3] Sending to 3: 31
+2025-12-17 02:12:41,734 INFO [root] [3] Starting AVID disperse
+2025-12-17 02:12:41,735 INFO [root] [3] Dispersed VAL message to committee
+my_send_id: 27 exec_time: 11.3824622631073
+2025-12-17 02:12:51,558 INFO [root] [3] Bytes Sent: TR6:303036 which is 14.717%
+2025-12-17 02:12:51,558 INFO [root] [3] Bytes Sent: M6:652608 which is 31.693%
+2025-12-17 02:12:51,558 INFO [root] [3] Bytes Sent: TR7:318460 which is 15.466%
+2025-12-17 02:12:51,558 INFO [root] [3] Bytes Sent: M7:785020 which is 38.124%
+2025-12-17 02:12:51,558 INFO [root] [3] Total bytes sent out aa: 2059124
+2025-12-17 02:12:51,559 INFO [benchmark_logger] Total bytes sent out: 2059124
+2025-12-17 02:12:51,567 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-35' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038faf40>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f4706216bc0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,567 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-37' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038dbca0>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f470395b040>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,568 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-49' coro=<OptimalCommonSet.fallback_timer() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/otmvba_dyn.py:71> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038ced00>()]>>
+2025-12-17 02:12:51,568 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-50' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038f37c0>()]>>
+2025-12-17 02:12:51,568 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-52' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f470396e1f0>()]>>
+2025-12-17 02:12:51,568 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-60' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038fa400>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f470395b6c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f470395b0c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f47038c1dc0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,570 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-61' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038f3b50>()]>>
+2025-12-17 02:12:51,570 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-39' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f4703955970>()]>>
+2025-12-17 02:12:51,571 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-48' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f470395ffd0>()]>>
+2025-12-17 02:12:51,571 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-57' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47039553d0>()]>>
+2025-12-17 02:12:51,571 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-58' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f470396e790>()]>>
+2025-12-17 02:12:51,571 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-59' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038fa0a0>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f470395b2c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f4703957f40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f470396d540>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f470396d0c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f47038c1bc0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f47038c1ec0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,575 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-47' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f4703955df0>()]>>
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f470395b8c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,577 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-62' coro=<OptimalCommonSet.fallback_timer() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/otmvba_dyn.py:71> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038fa970>()]>>
+2025-12-17 02:12:51,577 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-44' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f470395fd60>()]>>
+2025-12-17 02:12:51,577 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-45' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038c77f0>()]>>
+2025-12-17 02:12:51,577 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-46' coro=<ACSS_Foll._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:3696> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f470395fdc0>()]>>
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f4703957740>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f4706216c40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object ACSS_Foll._recv_loop at 0x7f470395b3c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 3696, in _recv_loop
+    await avid.disperse(tag, self.my_id+1, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,580 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-76' coro=<rbc_dyn() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py:411> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object rbc_dyn at 0x7f47038e9140>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py", line 411, in rbc_dyn
+    sender, msg = await receive()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,581 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-78' coro=<AVID_DYNAMIC.disperse() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py:461> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object AVID_DYNAMIC.disperse at 0x7f4703037dc0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,581 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-63' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f470396e550>()]>>
+2025-12-17 02:12:51,581 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-66' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038ced90>()]>>
+2025-12-17 02:12:51,582 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-68' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038fac40>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f470306e840>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f47038e3340>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f47038e3740>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,583 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-74' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038f3520>()]>>
+2025-12-17 02:12:51,583 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-70' coro=<rbc_dyn() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py:411> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038fa910>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f47038e3b40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2025-12-17 02:12:51,583 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-73' coro=<AVID_DYNAMIC.disperse() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py:461> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f47038f3400>()]>>
+Exception ignored in: <coroutine object rbc_dyn at 0x7f47038e36c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py", line 411, in rbc_dyn
+    sender, msg = await receive()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object AVID_DYNAMIC.disperse at 0x7f47038e90c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed

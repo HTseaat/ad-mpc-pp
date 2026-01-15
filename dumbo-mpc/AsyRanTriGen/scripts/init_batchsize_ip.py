@@ -8,6 +8,9 @@ if __name__ == "__main__":
     
     parser.add_argument('--k', metavar='k', required=True,
                         help='batch size', type=int)
+
+    parser.add_argument('--layers', metavar='layers', default=10,
+                        help='number of circuit layers (default: 10)', type=int)
     args = parser.parse_args()
     
     N = args.N
@@ -20,8 +23,10 @@ if __name__ == "__main__":
         ip_addresses = [line.strip() for line in file.readlines()[:N]]
 
     for i in range(N):
-        # port = 10001 + i * 200
-        port = 7001
+        # 这行是要运行本地测试的时候解除注释
+        port = 10001 + i * 200
+        # 这行是要运行Dumbo-MPC真实环境的时候解除注释
+        # port = 7001
         ip_addresses[i] = f"{ip_addresses[i]}:{port}"
     
     for i in range(N):

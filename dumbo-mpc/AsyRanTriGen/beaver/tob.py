@@ -5,6 +5,7 @@ import hashlib
 import logging
 from typing import Dict, List, Tuple, Optional
 from ctypes import *
+import time
 
 from beaver.gather import YosoGather        # 你的 ΠSelectBlock / ACS 打包器
 from beaver.yosorbc import YosoRBC          # 你的单条可靠广播实现
@@ -188,6 +189,7 @@ class YosoTOB:
         prefix = f"BCAST_{self.my_id}_{tag_c}"
 
         rbc_sessions = {}
+        rbc_sender_start = time.time()
         for pid in range(self.n):
             prefix_i = f"BCAST_{pid}_{tag_c}"
             sess = YosoRBC(
@@ -204,14 +206,19 @@ class YosoTOB:
 
         # 仅本节点发起发送
         await rbc_sessions[self.my_id].sender(m)
+        rbc_sender_end = time.time()
+        logging.info(f"[RBC] node {self.my_id} RBC sender took {rbc_sender_end - rbc_sender_start:.3f} seconds")
 
         # 并行收集所有 dealer 的 RBC 输出
         for pid, sess in rbc_sessions.items():
+            rbc_start = time.time()
             async def _collect(sess=sess, pid=pid):
                 payload_bytes, _ = await sess.output_queue.get()
                 logging.info("[COLLECT] node %d collected message at c=%d",
                              pid, tag_c)
                 await self._schedule_message(pid, tag_c, payload_bytes)
+            rbc_end = time.time()
+            logging.info(f"[RBC] node {pid} RBC reactor took {rbc_end - rbc_start:.3f} seconds")
             self._bg_tasks.append(asyncio.create_task(_collect()))
 
     async def wait(self):
@@ -316,7 +323,10 @@ class YosoTOB:
             shared_subscribe=self._shared
         )
 
+        gather_start = time.time()
         await gather.run_gather(node_communicator=None)   # 若已有 wrapper，可传
+        gather_end = time.time()
+        logging.info(f"[GATHER] node {self.my_id} YosoGather took {gather_end - gather_start:.3f} seconds")
         await self._deliver_block(gather.final_block)
 
     async def _deliver_block(self, block_bytes: bytes):
@@ -367,6 +377,7 @@ class YosoTOB:
         """
         新谓词：对 Pending 里的每个 payload 用 PVTransferPayload.from_bytes 检查结构合法性，并验证每个 EncResult 的证明。
         """
+        predicate_start = time.time()
         import logging
         logging.info("[W-PRED] _default_W_predicate called with %d pending entries", len(P))
         from beaver.pvtransfer import PVTransferPayload
@@ -503,6 +514,8 @@ class YosoTOB:
         # —— 删除所有验证失败的项（倒序索引已保证安全） —— 
         for i in bad_idx:
             P.pop(i)
+        predicate_end = time.time()
+        logging.info(f"[W-PRED] Predicate processing took {predicate_end - predicate_start:.3f} seconds")
 
         # —— 返回结果给 monitor —— 
         if len(valid) >= thr:

@@ -31,6 +31,7 @@ import base64
 from ctypes import *
 from Crypto.Util.number import long_to_bytes
 import hashlib
+import time
 
 from beaver.utils.misc import wrap_send, subscribe_recv
 
@@ -280,8 +281,12 @@ class YosoGather:
         # 2) 等待 ≥ n-t 个 RBC-OUTPUT
         collected = {}
         while len(collected) < self.n - self.t:
+            collect_time_start = time.time()
+            rbc_output_time_start = time.time()
             done, _ = await asyncio.wait(output_tasks.keys(),
                                         return_when=asyncio.FIRST_COMPLETED)
+            rbc_output_time_end = time.time()
+            logger.info(f"[GATHER] round {r} RBC output wait took {rbc_output_time_end - rbc_output_time_start:.3f} seconds")
             logger.info("[GATHER] round %d  got %d RBC-OUTPUTs, waiting for %d more",
                         r, len(collected), self.n - self.t - len(collected))
             for fut in done:
@@ -301,6 +306,8 @@ class YosoGather:
                 collected[sid] = U_j
                 logger.info("[GATHER] round %d got RBC from %d  |U|=%d",
                             r, sid, len(U_j))
+            collect_time_end = time.time()
+            logger.info(f"[GATHER] round {r} collect step took {collect_time_end - collect_time_start:.3f} seconds")
 
         # 3) 并集形成 U_r
         new_U = {}
@@ -965,21 +972,33 @@ class YosoGather:
         # Short sleep so that peers have time to subscribe
         await asyncio.sleep(0.1)
 
+        yosorbc_start = time.time()
         for r in range(1, 4):           # r = 1, 2, 3
             # await self._one_round(r)
+            one_round_yosorbc_start = time.time()
             await self._one_round_yosorbc(r)
+            one_round_yosorbc_end = time.time()
+            logger.info(f"[GATHER] node {self.my_id} YOSORBC round {r} time: {one_round_yosorbc_end - one_round_yosorbc_start:.3f} seconds")
+
+        yosorbc_end = time.time()
+        logger.info(f"[GATHER] node {self.my_id} YOSORBC gather time: {yosorbc_end - yosorbc_start:.3f} seconds")
 
         logger.info("[GATHER] node %d completed 3 rounds – |U|=, |T|=",
                     self.my_id)
         # ---- extra causal‑cast round for graded gather ----
+        graded_start = time.time()
         await self._graded_gather_yosorbc()
+        graded_end = time.time()
+        logger.info(f"[GGATHER] node {self.my_id} YOSORBC graded gather time: {graded_end - graded_start:.3f} seconds")
         logger.info("[GGATHER] node %d completed ΠGradedGather – |U|=, |T|=",
                     self.my_id)
 
         # await self._weak_gradesel_yosorbc()
         # await self._strongly_stable_gradesel_yosorbc()
-        
+        select_start = time.time()
         await self._select_block_yosorbc()
+        select_end = time.time()
+        logger.info(f"[SELECT] node {self.my_id} YOSORBC select block time: {select_end - select_start:.3f} seconds")
         logger.info("[SELECT] node %d completed ΠSelectBlock – C=, g=%d",
                     self.my_id, self.g)
 

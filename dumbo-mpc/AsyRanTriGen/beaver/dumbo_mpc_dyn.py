@@ -33,7 +33,7 @@ class BeaverMsgType:
     ACS2 = "ACS2"
     
 class BEAVER:
-    def __init__(self, public_keys,  private_key, pkbls, skbls, n, t, srs, my_id, send, recv, matrices, batchsize):
+    def __init__(self, public_keys,  private_key, pkbls, skbls, n, t, srs, my_id, send, recv, matrices, batchsize, layers=10):
 
         global logger 
         logfile = f'./log/logs-{my_id}.log'
@@ -55,6 +55,7 @@ class BEAVER:
         self.subscribe_recv_task, self.subscribe_recv = subscribe_recv(recv)
         self.matrix = matrices
         self.batchsize = batchsize
+        self.layers = int(layers)
 
         # Create a mechanism to split the `send` channels based on `tag`
         def _send(tag):
@@ -294,9 +295,15 @@ class BEAVER:
 
         inputs_time = time.time()
 
-        layers = 10
+        # layers = 10
+        layers = self.layers
         total_cm = self.batchsize
         cm =  total_cm // layers
+        if cm <= 0:
+            raise ValueError(
+                f"Invalid params: batchsize={total_cm}, layers={layers} -> cm={cm}. "
+                f"Need batchsize >= layers (and preferably divisible) to proceed."
+            )
         w = cm * 2
 
         # === Generate public inputs via ACSS+ACS and linear combination ===
@@ -471,6 +478,11 @@ class BEAVER:
         logger.info(f"[{self.my_id}] [inputs] Time taken to inputs_time: {inputs_time} seconds")
 
         for L in range(layers):
+            # # 第4层(从1开始数) => L==3；让 0/1 号节点跳过该层以模拟“下线/不参与”
+            # if self.my_id in (0, 1) and L == 3:
+            #     logger.warning(f"[{self.my_id}] [layer {L}] Simulate offline: skip layer {L} (4th layer)")
+            #     continue
+
             # triples slice for this layer
             layer_time = time.time()
             take = cm

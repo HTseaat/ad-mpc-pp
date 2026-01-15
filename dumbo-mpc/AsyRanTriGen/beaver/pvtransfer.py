@@ -584,7 +584,10 @@ class DynamicPVTransfer:
             logging.info("sk_hex_map: %s", self.sk_hex_map)
 
         # ——业务进程——
+        prepare_start = time.time()
         self._prepare_pvtransfer(serialized_initial_comandproofs)
+        prepare_end = time.time()
+        logging.info(f"[PVTRANSFER] prepare_pvtransfer took {prepare_end - prepare_start:.3f} seconds")
         # # --- ① 单条触发的等待谓词 ------------------------------------
         # def W_single(L, P):                  # noqa: E306
         #     return len(P) >= 1
@@ -592,10 +595,13 @@ class DynamicPVTransfer:
         # tob.set_wait_predicate(W_single)
 
         # --- ② 广播 & 等待 Deliver -----------------------------------
+        tob_broadcast_start = time.time()
         await tob.broadcast(self.pvtransfer_bytes)
         # —— ③ 等待至少一个区块写入 L_P 并获取内容 ——
         height, block_messages = await tob.wait()            # 返回 (height, List[bytes])
         logging.info(f"[PVTRANSFER] Delivered block height={height}, msg count={len(block_messages)}")
+        tob_broadcast_end = time.time()
+        logging.info(f"[PVTRANSFER] tob.broadcast + wait took {tob_broadcast_end - tob_broadcast_start:.3f} seconds")
 
         # —— 额外：也可直接通过 get_last_block() 获取最新区块 —— 
         last_block = tob.get_last_block() or []
@@ -605,6 +611,8 @@ class DynamicPVTransfer:
         # —— 初始化存储本节点收到的（dealer_id, C1, C2, cipher_shares） ——
         self.received_entries = []      # List[Dict[str, Any]]
 
+        # —— 解析区块内所有消息，提取本节点相关密文 ——
+        decode_start = time.time()
         for idx, raw_entry in enumerate(last_block):
             try:
                 pv_obj = PVTransferPayload.from_bytes(raw_entry)
@@ -714,6 +722,9 @@ class DynamicPVTransfer:
         # 3. 调用外部 C 接口进行插值
         interpolated_sym = lib.pyInterpolateShareswithTransfer(ser_common, ser_commit, ser_share)
         logging.info("[PVTRANSFER] interpolated symmetric shares: %s", interpolated_sym.decode("utf-8"))
+
+        decode_end = time.time()
+        logging.info(f"[PVTRANSFER] decode and interpolation took {decode_end - decode_start:.3f} seconds")
 
         # --- ③ 优雅关闭 ---------------------------------------------
         await tob.stop()             # 兼容别名 kill()
