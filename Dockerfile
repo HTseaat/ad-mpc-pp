@@ -15,7 +15,7 @@
     
     # 安装 Python 全局依赖
     RUN pip3 install --no-cache-dir \
-            cffi Cython pycryptodome pyzmq pyyaml psutil \
+            cffi Cython==0.29.36 pycryptodome pyzmq pyyaml psutil \
             reedsolo numpy pytest pyparsing hypothesis
     
     WORKDIR /opt/dumbo-mpc
