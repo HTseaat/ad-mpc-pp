@@ -1,0 +1,12 @@
+*.so
+*.o
+*.pyc
+*.pyo
+*.DS_Store
+build/*
+zfec.egg-info
+dist/*
+.cabal-sandbox/
+cabal.sandbox.config
+.tox/
+.eggs/

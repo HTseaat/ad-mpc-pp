@@ -1,0 +1,74 @@
+User visible changes in zfec.           -*- outline -*-
+
+* Release 1.6.0.0 (2024-11-15)
+
+** Speed doubled (thanks itamarst)
+** Python 3.7 is no longer supported
+** MacOS 11 is no longer supported
+** manylinux 2.28 is now the minimum (with arch x86-64-v2 now required)
+
+* Release 1.5.7.4 (2023-10-23)
+
+** Python 3.7 is no longer supported.
+** Python 3.12 is now supported.
+** Binary packages for the macOS "universal2" and "arm64" architectures are now provided.
+** The benchmark tool has been ported to Python 3.
+** The GIL is now released for zfec.Encoder and zfec.Decoder initialization and for encode and decode operations.
+   This enables multithreaded use of zfec to use multiple CPU cores for increased aggregate throughput.
+
+* Release 1.5.5 (2020-11-12)
+
+** Upload wheel packages to the Python Package Index.
+   Wheel packages for Python 2.7/Windows turned out to be broken
+   (issue #34).  Version 1.5.5 is simply an update to address this.
+   No changes to zfec itself.
+
+* Release 1.5.4 (2020-09-17)
+
+** Upload wheel packages to the Python Package Index.
+   Wheel packages are now built for Python 2.7, 3.5, 3.7, 3.8, PyPy2,
+   and PyPy3, for macOS, GNU/Linux, and Windows platforms, using
+   cibuildwheel on GitHub Actions.  No changes to zfec itself.
+
+* Release 1.5.3 (2018-04-07)
+
+** Fix setup.py problem that broke builds on slackware (or other systems with
+   setuptools-22.0.5, which is too old to know that "name" might come from
+   the setup.cfg metadata section)
+
+
+* Release 1.5.2 (2018-02-06)
+
+** Add Appveyor (CI for Windows)
+** Use older C syntax to appease the Windows compilers we use on Appveyor.
+   The previous release just didn't compile there, which broke Tahoe builds.
+
+
+* Release 1.5.1 (2018-02-04)
+
+** stop using PBR, it interacts badly with Versioneer, causing bad version
+   strings like "0+unknown" after pip install (#11)
+
+
+* Release 1.5.0 (2018-02-02)
+
+** Add support for python3.5/3.6/3.7 (#1, #4, #9)
+** switch to PBR for packagine (#5)
+** fix unclosed-file and illegal-seek errors (#3, #6)
+** fix memory leak in fec.c (#7)
+** remove unused stdeb.cfg
+
+Thanks to alekibango, iammer, george-hopkins, copyninja, and theqf for bug
+reports and patches in this release.
+
+
+* Release 1.4.5 (2009-06-17)
+
+** Bug fixes
+
+*** Fix seg fault if the Python classes Encoder or Decoder are constructed
+    with k or m less than 1, greater than 256, or with k greater m.
+*** Fix several compiler warnings, add unit tests, improve Python packaging,
+    set up more buildbots to run the unit tests on more platforms.
+
+For details about older releases, see the version control history.

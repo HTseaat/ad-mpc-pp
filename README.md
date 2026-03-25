@@ -1,217 +1,220 @@
-# Running AD-MPC++
+# Continuum: Concretely Efficient Asynchronous Dynamic MPC with Guaranteed Output Delivery
 
-<!-- Fully asynchronous multi-party computation (MPC) has superior robustness in realizing privacy and guaranteed output delivery (GOD) against asynchronous adversaries that can arbitrarily delay communications. We design an efficient fully asynchronous MPC—Dumbo-MPC with entire GOD and optimal resilience against 𝑡 < 𝑛/3 corruptions (where 𝑛 is the total number of parties). The codebase includes the implementation for Dumbo-MPC.
+This repository contains the implementation and experiment scripts for the paper Continuum: Concretely Efficient Asynchronous Dynamic MPC with Guaranteed Output Delivery.
 
-## Setup
+The codebase combines three protocol paths in one reproducible workspace:
 
-To run the benchmarks at your machine (with Ubuntu 20.04 LTS), first install all dependencies as follows:
+- AD-MPC implementation (`/opt/admpc`)
+- Continuum / AsyRanTriGen / Dumbo-MPC path (`/opt/dumbo-mpc`)
+- Unified local and distributed orchestration scripts (`/opt/unified`)
 
-1. Install System Dependencies
+## Repository layout
 
-```bash
-sudo apt-get update
-sudo apt-get install -y --no-install-recommends make bison flex libgmp-dev libmpc-dev libntl-dev libflint-dev python3 python3-dev python3-pip libssl-dev wget git build-essential curl tmux
-```
+- `/opt/admpc`: AD-MPC code and scripts
+- `/opt/dumbo-mpc`: Continuum and Dumbo-MPC related code
+- `/opt/unified`: unified helpers for local and distributed runs
+- `/opt/unified/distributed`: distributed benchmark runner
+- `/opt/papers`: paper PDFs and related material
+- `/opt/benchmark-distributed`: archived distributed experiment outputs
 
-2. Install Python Dependencies
-```bash
-pip install cffi Cython gmpy2 pycryptodome pyzmq pyyaml psutil reedsolo numpy pytest
-```
+## 1. Deployment
 
-3. Install zfec
-```bash
-./install_zfec.sh
-```
+### 1.1 Build unified Docker image
 
-
-4. Install Rustup
+Run from project root:
 
 ```bash
-curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
-source $HOME/.cargo/env
-rustup --version
-export PATH="$HOME/.cargo/bin:$PATH"
+cd /opt
+./unified/build_unified_image.sh mpc-unified:latest
 ```
 
-5. Install pbc:
+### 1.2 Start container
 
 ```bash
-wget https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz
-tar -xvf pbc-0.5.14.tar.gz
-cd pbc-0.5.14
-sudo ./configure
-sudo make
-sudo make install
-cd ..
-sudo ldconfig /usr/local/lib
+cd /opt
+./unified/run_unified_container.sh mpc-unified:latest mpc-bench
 ```
 
-6. Install Charm-Crypto:
+Inside the container, the project root is `/opt`.
+
+### 1.3 Python environments
+
+- Continuum runtime: `/opt/venv/continuum`
+- AD-MPC runtime: `/opt/venv/admpc`
+
+Convenience commands available in PATH:
+
+- `enter-continuum`
+- `enter-admpc`
+- `run-continuum-local`
+- `run-admpc-local`
+- `run-dumbo-mpc-local`
+- `run-compare-local`
+
+Command notes:
+
+- `enter-continuum`: activate `/opt/venv/continuum`, set `PYTHONPATH=/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen`, and `cd /opt/dumbo-mpc`.
+- `enter-admpc`: activate `/opt/venv/admpc`, set `PYTHONPATH=/opt/admpc`, and `cd /opt/admpc`.
+- `run-*-local`: one-command wrappers that prepare the correct runtime environment and launch the target protocol test.
+
+## 2. Local testing
+
+### 2.1 AD-MPC local tests
 
 ```bash
-git clone https://github.com/JHUISI/charm.git
-cd charm
-sudo ./configure.sh
-sudo make 
-sudo make install 
-sudo make test
-cd ..
+run-admpc-local admpc 4 1 8 300
+run-admpc-local admpc-linear 4 1 8 300
+run-admpc-local admpc-nonlinear 4 1 8 300
 ```
 
-7. Install pairing
-```bash
-cd dumbo-mpc/OptRanTriGen/pairing/
-pip install --upgrade setuptools setuptools_rust
-pip install .
-cd ..
-```
-
-8. Install remaining pip dependencies here
-```bash
-sudo sed -i '30c #include "flint/flint.h"' /usr/include/flint/flintxx/flint_classes.h
-pip install .
-ln -sf /usr/bin/python3 /usr/bin/python
-python setup.py build_ext --inplace
-
-cd hbmpc/
-python setup.py build_ext --inplace
-```
-
-## Running Dumbo-MPC at your local machine
-1. A quick start to run Dumbo-MPC (where fast path (OptRanTriGen) and pessimistic path (AsyRanTriGen) are both with a batch size of 200)  for 4 nodes can be:
-```bash
-./run_local_network_test.sh dumbo-mpc 4 200
-```
-We simulate an check failure at a specific round (e.g., round 10) during the OptRanTriGen phase, and subsequently begin executing the AsyRanTriGen after secure fallback. The experiment logs are shown at `Dumbo-MPC/dumbo-mpc/dualmode/log`.
-
-2. Run asy_random to generate random shares using AsyRanShGen algorithm:
-```bash
-./run_local_network_test.sh asy-random 4 200
-```
-The experiment logs are shown at `Dumbo-MPC/dumbo-mpc/AsyRanTriGen/log`.
-
-3. Run asy_triple to generate Beaver triples using AsyRanTriGen algorithm:
-```bash
-./run_local_network_test.sh asy-triple 4 200
-```
-The experiment logs are shown at `Dumbo-MPC/dumbo-mpc/AsyRanTriGen/log`.
-
-4. Run opt_triple to generate Beaver triples using OptRanTriGen algorithm:
-```bash
-./run_local_network_test.sh opt-triple 4 200
-```
-The experiment logs are shown at `Dumbo-MPC/dumbo-mpc/OptRanTriGen/log`.
-
-5. Shuffle 16 inputs using butterfly network:
-
-    First, Prepare random shares and Beaver Triples:
-    ```bash
-    cd Dumbo-MPC/dumbo-mpc/online
-    ./preprocessing.sh 4 16
-    ```
-    All preprocessed data are stored at `dumbo-mpc/online/sharedata_test`.
-
-    Then,  Execute the shuffle task: 
-    ```bash
-    ./scripts/local_test.sh butterfly_network.py 4 16
-    ```
-
-    The experiment logs are shown at `Dumbo-MPC/dumbo-mpc/online/log`.
-
-
-
-5. Modify and build Cython code from gnark-crypto library
-
-First, install go (>1.18). The code is built from the file `/gnark-crypto/kzg_ped_bls12-381/kzg_ped_out.go`. If you have to modify this code, please rebuild the Cython code. This can be done by running `./build_shared_library.sh` from `/gnark-crypto/kzg_ped_bls12-381/`.
-
-
-
-## Running GS23 at your local machine
-```bash
-cd Dumbo-MPC/GS23
-```
-1. Generate random share:
-```bash
-./scripts/local_test.sh scripts/run_random.py 4 200
-```
-2. Generate beaver triple:
-```bash
-./scripts/local_test.sh scripts/run_beaver.py 4 200
-```
-
-
-## Running Dumbo-MPC on AWS
-
-### 1. Setting up your AWS credentials
-
-Set up your AWS credentials to enable programmatic access to your account from your local machine. These credentials will authorize your machine to create, delete, and edit instances on your AWS account programmatically. First of all, [find your 'access key id' and 'secret access key'](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-creds). Then, create a file `~/.aws/credentials` with the following content:
+Command format:
 
 ```bash
-[default]
-aws_access_key_id = YOUR_ACCESS_KEY_ID
-aws_secret_access_key = YOUR_SECRET_ACCESS_KEY
+run-admpc-local [admpc|admpc-linear|admpc-nonlinear|fluid1|fluid2|hbmpc|hbmpc_attack] <n> <t> <layers> <total_cm>
 ```
 
-### 2. Adding your SSH publlic key to your AWS account
+Parameter meanings:
 
-You must now [add your SSH public key to your AWS account](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). This operation is manual (AWS exposes little APIs to manipulate keys) and needs to be repeated for each AWS region that you plan to use. Upon importing your key, AWS requires you to choose a 'name' for your key; ensure you set the same name on all AWS regions. This SSH key will be used by the python scripts to execute commands and upload/download files to your AWS instances.If you don't have an SSH key, you can create one using [ssh-keygen](https://www.ssh.com/ssh/keygen/):
+- `n`: number of parties.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
+- `layers`: total circuit layers used by the local runner.
+- `total_cm`: total multiplication-gate budget for the experiment.
+- `admpc-linear`: linear-gate-heavy variant.
+- `admpc-nonlinear`: nonlinear/multiplication-gate-heavy variant.
+
+### 2.2 Continuum local tests
 
 ```bash
-ssh-keygen -f ~/.ssh/aws
+run-continuum-local 4 1 8 300
+run-continuum-local 4 1 8 300 linear
+run-continuum-local 4 1 8 300 nonlinear
 ```
 
-### 3. Deploying Dumbo-MPC on AWS
-
-Launch an instance on AWS (with Ubuntu 20.04 LTS). If you are not familiar with AWS, you can visit Get started with Amazon EC2 Linux instances to get some help.To connect to the launched instance you, use SSH:
+Command format:
 
 ```bash
-ssh -i your_ssh_key_path ubuntu@public_ip_of_instance
+run-continuum-local <n> <t> <layers> <total_cm> [mixed|linear|nonlinear]
 ```
 
-Then, upload codes of Dumbo-MPC into instance.
+The optional mode selects which continuum variant is launched:
+
+- `mixed`: mixed gates (default)
+- `linear`: linear-heavy
+- `nonlinear`: multiplication-heavy
+
+### 2.3 Dumbo-MPC local test (AsyRanTriGen path)
 
 ```bash
-scp -i your_ssh_key_path -r DumboMPC_code_path ubuntu@public_ip_of_instance:~/
+run-dumbo-mpc-local 4 1 300 full 10
 ```
 
-Then you should install dependencies according to the steps mentioned earlier.
+Arguments:
 
-Create an image using this instance. If you are not familiar with AWS, you can visit [Create an AMI from an Amazon EC2 Instance](https://docs.aws.amazon.com/toolkit-for-visual-studio/latest/user-guide/tkv-create-ami-from-instance.html) to get some help.
+- `<n> <t> <k> [full|drop-epoch4] [layers]`
+- `k`: batch size used by `asy-triple` (for your common setup, `width=100, depth=6`, use `k=300`).
+- `full`: normal full run.
+- `drop-epoch4`: dropout test mode that injects node-drop behavior at epoch/layer 4 for robustness testing.
+- `layers`: computation layer count for this run (default `10`).
 
-### 4. Running Dumbo-MPC on AWS
-
-Run an AWS instance from the AMI and modify the `awsinit.sh` in `remote/ `.
+### 2.4 One-command local comparison
 
 ```bash
-cd remote
-vim ./awsinit.sh
+run-compare-local 4 1 8 300 admpc
 ```
+
+Outputs are stored under:
+
+- `/opt/benchmark-compare/<timestamp>_...`
+
+## 3. Distributed deployment and experiments
+
+All distributed orchestration is under:
 
 ```bash
---image-id replace with your image id
---instance-type instance type, we recommend c6a.8xlarge or better
---key-name your ssh key name
---security-group-ids you can delete this option if you are not familiar with it
+cd /opt/unified/distributed
 ```
 
-Then, start 4 instances:
+### 3.1 Configure cluster
 
 ```bash
-./awsinit.sh 4
+cp cluster.env.example cluster.env
 ```
 
-Run the Dumbo-MPC with a batch size of 5000 for 4 nodes:
+Edit `cluster.env`:
+
+- `NODE_SSH_USERNAME`
+- `CLUSTER_IPS` (ordered node list)
+- `REMOTE_WORKSPACE_DIR` (for layouts like `~/Continuum/admpc`)
+- `MPC_IMAGE` (default `continuum:latest`)
+
+### 3.2 Smoke tests (recommended first)
+
+AD-MPC + Continuum (`exp1`, `n=4` only):
 
 ```bash
-cd Dumbo-MPC_scripts
-./changeconfig.sh
-./launch_dumboMPC.sh 4 5000
+./run_exp1_smoke_n4.sh
 ```
 
-After benchmark, you can read the running results by connecting these instances and viewing these logs or by running `scplog.sh`.
+This sequentially runs:
+
+- `run_suite.sh admpc exp1 --only-n 4`
+- `run_suite.sh continuum exp1 --only-n 4`
+
+Dumbo-MPC 4-node smoke (fixed `width=100`, `depth=6`, so default `k=300`):
 
 ```bash
-./scplog.sh 4 5000
+./run_dumbo_smoke_n4_d6.sh
 ```
 
-These logs will be stored in `./log_4_8x`. -->
+Default for this dumbo smoke:
+
+- `n=4`, `t=1`
+- `width=100`, `depth=6`
+- `k=300`
+- `mode=full`
+
+### 3.3 Full distributed presets
+
+Unified entry:
+
+```bash
+./run_suite.sh <admpc|continuum|dumbo> <exp1|exp2|exp3|exp4>
+```
+
+Protocol shortcuts:
+
+```bash
+./run_admpc_dist.sh <exp1|exp2|exp3|exp4>
+./run_continuum_dist.sh <exp1|exp2|exp3|exp4>
+./run_dumbo_dist.sh <exp3|exp4>
+```
+
+Preset summary:
+
+- `exp1`: linear, `w=100`, `d=6`, `(n,t) = (4,1),(8,2),(12,3),(16,5)`
+- `exp2`: nonlinear, `w=100`, `d=6`, `(n,t) = (4,1),(8,2),(12,3),(16,5)`
+- `exp3`: mixed, `w=100`, fixed `n=16,t=5`, `d in {2,4,6,8,10}`
+- `exp4`: mixed, `w=100`, fixed `n=16,t=5,d=6` (dumbo uses `drop-epoch4`)
+
+Useful options:
+
+```bash
+--only-n <n>
+--sync-code
+--timeout <seconds>
+--dumbo-timeout <seconds>
+--skip-remote-cleanup
+--sleep-between-case <seconds>
+```
+
+### 3.4 Outputs
+
+Distributed run results are archived under:
+
+- `/opt/benchmark-distributed/<timestamp>_<protocol>_<exp>/...`
+
+Each case contains:
+
+- `metadata.env`
+- copied runtime logs
+- generated config snapshot

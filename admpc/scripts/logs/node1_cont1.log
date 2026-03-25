@@ -1,0 +1,89 @@
+Warning: Permanently added '101.35.81.206' (ECDSA) to the list of known hosts.
+time="2026-03-25T14:21:06+08:00" level=warning msg="/root/Continuum/admpc/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ Container admpc-htadkg_adkg-run-96e352f233fe Creating 
+ Container admpc-htadkg_adkg-run-96e352f233fe Created 
+2026-03-25 06:21:07,150:[admpc_dynamic_linear_run.py:77]:[INFO]: Running ADMPC ...
+my_send_id: 0
+2026-03-25 06:21:07,183:[admpc_dynamic_linear_run.py:58]:[INFO]: ADMPC start time: 1774419667.1835408
+run_admpc layer_ID: 0, mode: linear, cm: 50, w: 100, total_cm: 300
+inputs_num: 51, n: 4, w: 100
+layer ID: 0 acss_pre_time: 0.6415112018585205
+layer ID: 0 rand_pre_time: 0.0013952255249023438
+layer ID: 0 aprep_pre skipped (linear mode)
+layer ID: 0 layer_time: 0.6431210041046143
+my_send_id: 0 exec_time: 1.150109052658081
+2026-03-25 06:21:58,340:[admpc_dynamic_linear_run.py:72]:[INFO]: [0] Bytes Sent: A:213972 which is 39.235%
+2026-03-25 06:21:58,340:[admpc_dynamic_linear_run.py:72]:[INFO]: [0] Bytes Sent: G:331388 which is 60.765%
+2026-03-25 06:21:58,340:[admpc_dynamic_linear_run.py:73]:[INFO]: [0] Total bytes sent out aa: 545360
+Exception ignored in: <coroutine object Queue.get at 0x7fa4b7455f40>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Queue.get at 0x7fa4b746ed40>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2026-03-25 06:21:58,350:[queues.py:165]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-41' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future cancelled>>
+2026-03-25 06:21:58,351:[queues.py:165]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-44' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future cancelled>>
+2026-03-25 06:21:58,351:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-35' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future cancelled>>
+2026-03-25 06:21:58,352:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-36' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7fa4b7463f10>()]>>
+2026-03-25 06:21:58,352:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-38' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7fa4b7370640>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+ValueError: coroutine already executing
+Exception ignored in: <coroutine object Queue.get at 0x7fa4b74662c0>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7fa4b73708c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+ValueError: coroutine already executing
+Exception ignored in: <coroutine object Queue.get at 0x7fa4b746ef40>
+Traceback (most recent call last):
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7fa4b7360940>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed

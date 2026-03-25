@@ -1,0 +1,244 @@
+Warning: Permanently added '42.192.8.61' (ECDSA) to the list of known hosts.
+time="2026-03-25T14:21:06+08:00" level=warning msg="/root/Continuum/admpc/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ Container admpc-htadkg_adkg-run-8d8a695cff44 Creating 
+ Container admpc-htadkg_adkg-run-8d8a695cff44 Created 
+2026-03-25 06:21:07,527:[admpc_dynamic_linear_run.py:77]:[INFO]: Running ADMPC ...
+my_send_id: 26
+2026-03-25 06:21:07,587:[admpc_dynamic_linear_run.py:58]:[INFO]: ADMPC start time: 1774419667.587131
+run_admpc layer_ID: 6, mode: linear, cm: 50, w: 100, total_cm: 300
+layer ID: 6 trans_foll_time: 13.329336166381836
+rand_foll run_rand: w=100, rounds=34
+layer ID: 6 rand_foll_time: 0.7918705940246582
+layer ID: 6 aprep_foll skipped (linear mode)
+layer ID: 6 run_computation finished
+layer ID: 6 exec_time: 0.000301361083984375
+layer ID: 6 trans_pre_time: 0.00021195411682128906
+layer ID: 6 layer_time: 14.12178349494934
+my_send_id: 26 exec_time: 14.123103380203247
+2026-03-25 06:22:11,712:[admpc_dynamic_linear_run.py:72]:[INFO]: [2] Bytes Sent: T:443241 which is 97.801%
+2026-03-25 06:22:11,712:[admpc_dynamic_linear_run.py:72]:[INFO]: [2] Bytes Sent: G:9965 which is 2.199%
+2026-03-25 06:22:11,712:[admpc_dynamic_linear_run.py:73]:[INFO]: [2] Total bytes sent out aa: 453206
+2026-03-25 06:22:11,721:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-35' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c0fd0>()]>>
+2026-03-25 06:22:11,721:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-36' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a16efffa0>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a16eefac0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+2026-03-25 06:22:11,722:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-121' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c0520>()]>>
+2026-03-25 06:22:11,722:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-117' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c0e50>()]>>
+2026-03-25 06:22:11,723:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-118' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a17144730>()]>>
+2026-03-25 06:22:11,724:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-38' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c06d0>()]>>
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a17238940>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a171df2c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a1710d9c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a1710d8c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2026-03-25 06:22:11,724:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-78' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c05e0>()]>>
+2026-03-25 06:22:11,724:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-39' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a1710c7c0>()]>>
+2026-03-25 06:22:11,724:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-41' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a17195ac0>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a16eefb40>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a171df440>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2026-03-25 06:22:11,725:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-43' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a17111c70>()]>>
+2026-03-25 06:22:11,725:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-45' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a1710cbe0>()]>>
+2026-03-25 06:22:11,725:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-47' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171445b0>()]>>
+2026-03-25 06:22:11,725:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-80' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c0fa0>()]>>
+2026-03-25 06:22:11,725:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-86' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c0e20>()]>>
+2026-03-25 06:22:11,725:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-84' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c0eb0>()]>>
+2026-03-25 06:22:11,725:[(unknown file):0]:[ERROR]: Task was destroyed but it is pending!
+task: <Task pending name='Task-82' coro=<subscribe_recv.<locals>._recv_loop() running at /usr/src/adkg/adkg/utils/misc.py:92> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f6a171c0e80>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a16f06f40>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a1710d4c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a1710d5c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a1710d6c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a1710d7c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a171df8c0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a171dfdc0>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a171df840>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f6a171dfb40>
+Traceback (most recent call last):
+  File "/usr/src/adkg/adkg/utils/misc.py", line 92, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed

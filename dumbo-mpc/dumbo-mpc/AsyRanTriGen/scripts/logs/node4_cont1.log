@@ -1,0 +1,92 @@
+Warning: Permanently added '111.229.49.33' (ECDSA) to the list of known hosts.
+time="2026-03-25T14:11:10+08:00" level=warning msg="/root/Continuum/dumbo-mpc/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ Container dumbo-mpc-dumbo-mpc-run-ad3b86308acf Creating 
+ Container dumbo-mpc-dumbo-mpc-run-ad3b86308acf Created 
+2026-03-25 06:11:11,560 INFO [root] Running ADMPC ...
+2026-03-25 06:11:12,381 INFO [root] my_send_id: 3
+2026-03-25 06:11:12,394 INFO [root] ADMPC start time: 1774419072.3944395
+2026-03-25 06:11:12,395 INFO [root] [Layer 0] Reached run_admpc checkpoint
+2026-03-25 06:11:12,395 INFO [root] layer ID: 0 inputs_num: 50, n: 4, w: 100
+2026-03-25 06:11:12,411 INFO [root] public_keys: [{'X': '2695811550873615721653673985427791778072040310782486281426887012458416514208582471715750013895495192781746506803416', 'Y': '3205511368160674488362583091344542127452743631689515705062880582529832499308926751535414479595944889484479488464237'}, {'X': '2939285529900528238071488363633108324778252825227735364995938127854097057387854606214050612602930672214442422083384', 'Y': '3492409383027787889071830074500180897446094682385516729197454966236476556135233068064642624482505538019391614683729'}, {'X': '1042308791055594789010848901428030251675981459378098296526193043567471227172221427202939036976128578468153538856587', 'Y': '1497545331422287654370842631778080388452243501162503235003921056805671923153884292004465606875746167108650958101316'}, {'X': '1066740994107821317052280802282859252684783183142372935275679862659373742933422597301721854763650342792003419262747', 'Y': '1110062224602100726533770829126198616439591042535832523306313923090963674817537183976883446759656999610588251927934'}]
+2026-03-25 06:11:12,413 INFO [root] [3] AVSS tag: 3-0-1-B-AVSS
+2026-03-25 06:11:12,413 INFO [root] [3] RBC tag: 3-0-1-B-RBC
+2026-03-25 06:11:12,908 INFO [root] enter avss_without_proof mode
+2026-03-25 06:11:12,925 INFO [root] enter avss_without_proof mode
+2026-03-25 06:11:12,925 INFO [root] enter avss_without_proof mode
+2026-03-25 06:11:12,926 INFO [root] enter avss_without_proof mode
+2026-03-25 06:11:12,927 INFO [root] [3] Starting reliable broadcast
+2026-03-25 06:11:12,927 INFO [root] self.msgmode: avss_without_proof
+2026-03-25 06:11:12,927 INFO [root] rbc_list: [3, 4, 5, 6, 7]
+2026-03-25 06:11:12,927 INFO [root] committee_size: 4
+2026-03-25 06:11:12,928 INFO [root] n: 5
+2026-03-25 06:11:12,928 INFO [root] f: 1
+2026-03-25 06:11:12,928 INFO [root] pid: 3
+2026-03-25 06:11:12,928 INFO [root] leader: 3
+2026-03-25 06:11:12,928 INFO [root] [3] Sending to 0: 4
+2026-03-25 06:11:12,928 INFO [root] [3] Sending to 1: 5
+2026-03-25 06:11:12,928 INFO [root] [3] Sending to 2: 6
+2026-03-25 06:11:12,928 INFO [root] [3] Sending to 3: 7
+2026-03-25 06:11:12,928 INFO [root] [3] Starting AVID disperse
+2026-03-25 06:11:12,928 INFO [root] layer ID: 0 acss_pre_time: 0.5171153545379639
+2026-03-25 06:11:12,928 INFO [root] layer ID: 0 layer_time: 0.5330867767333984
+2026-03-25 06:11:12,929 INFO [root] [3] Dispersed VAL message to committee
+my_send_id: 3 exec_time: 5.539739370346069
+2026-03-25 06:11:22,936 INFO [root] [3] Bytes Sent: A1:209860 which is 100.0%
+2026-03-25 06:11:22,936 INFO [root] [3] Total bytes sent out aa: 209860
+2026-03-25 06:11:22,938 INFO [benchmark_logger] Total bytes sent out: 209860
+2026-03-25 06:11:22,946 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-35' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7fd880053850>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7fd8800457c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2026-03-25 06:11:22,946 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-39' coro=<rbc_dyn() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py:411> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object rbc_dyn at 0x7fd880059b40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py", line 411, in rbc_dyn
+    sender, msg = await receive()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2026-03-25 06:11:22,947 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-41' coro=<AVID_DYNAMIC.disperse() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py:461> wait_for=<Future cancelled>>
+Exception ignored in: <coroutine object AVID_DYNAMIC.disperse at 0x7fd880126040>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 461, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed
+2026-03-25 06:11:22,948 ERROR [asyncio] Task was destroyed but it is pending!
+task: <Task pending name='Task-37' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7fd880053be0>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7fd86478b640>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "uvloop/loop.pyx", line 1281, in uvloop.loop.Loop.call_soon
+  File "uvloop/loop.pyx", line 669, in uvloop.loop.Loop._call_soon
+  File "uvloop/loop.pyx", line 678, in uvloop.loop.Loop._call_soon_handle
+  File "uvloop/loop.pyx", line 673, in uvloop.loop.Loop._append_ready_handle
+  File "uvloop/loop.pyx", line 705, in uvloop.loop.Loop._check_closed
+RuntimeError: Event loop is closed

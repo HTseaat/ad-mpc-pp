@@ -1,0 +1,587 @@
+[DEBUG] Node ID 0 will use peer_port=7001
+Warning: Permanently added '101.35.81.206' (ECDSA) to the list of known hosts.
+time="2026-03-25T14:36:25+08:00" level=warning msg="/root/Continuum/dumbo-mpc/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+ Container dumbo-mpc-dumbo-mpc-run-5001d206deb4 Creating 
+ Container dumbo-mpc-dumbo-mpc-run-5001d206deb4 Created 
+2026-03-25 06:36:25,790 [INFO] Using dumbo mode: full (beaver.dumbo_mpc_dyn)
+2026-03-25 06:36:25,792 [INFO] [0] Starting AsyRanTriGen
+2026-03-25 06:36:25,792 [INFO] self.pkbls: <beaver.broadcast.crypto.boldyreva.TBLSPublicKey object at 0x7f0d141e8580>
+2026-03-25 06:36:25,792 [INFO] self.skbls: <beaver.broadcast.crypto.boldyreva.TBLSPrivateKey object at 0x7f0d141e84f0>
+2026-03-25 06:36:25,792 [INFO] [0] Starting ACSS to share 300 secrets
+2026-03-25 06:36:25,793 [INFO] [0] [ACSS] Using tag R_A (mode=avss_without_proof)
+2026-03-25 06:36:26,355 [INFO] after pyCommit commitmentlistandprooflist
+2026-03-25 06:36:26,377 [INFO] before return dumps
+2026-03-25 06:36:26,377 [INFO] before reliablebroadcast
+2026-03-25 06:36:26,378 [INFO] before reliablebroadcast
+2026-03-25 06:36:26,378 [INFO] before reliablebroadcast
+2026-03-25 06:36:26,378 [INFO] before reliablebroadcast
+2026-03-25 06:36:26,387 [INFO] after reliablebroadcast
+2026-03-25 06:36:26,387 [INFO] enter _process_avss_msg
+2026-03-25 06:36:26,387 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
+2026-03-25 06:36:26,390 [INFO] after reliablebroadcast
+2026-03-25 06:36:26,391 [INFO] enter _process_avss_msg
+2026-03-25 06:36:26,391 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
+2026-03-25 06:36:26,392 [INFO] after reliablebroadcast
+2026-03-25 06:36:26,392 [INFO] enter _process_avss_msg
+2026-03-25 06:36:26,392 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
+2026-03-25 06:36:26,408 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:26,409 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:26,409 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:26,424 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:26,437 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:26,449 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:26,450 [INFO] [0] [random shares] Starting ACS where node 1 is set as leader 
+2026-03-25 06:36:26,450 [INFO] [0] [random shares] The proposal of node 0 is [0, 3, 1]
+2026-03-25 06:36:26,450 [INFO] enter handle_message
+2026-03-25 06:36:26,452 [INFO] [0] value-self.acss_outputs.keys():dict_keys([0, 3, 1])
+2026-03-25 06:36:26,453 [INFO] [0] --Directly send the proposal!--
+2026-03-25 06:36:26,456 [INFO] after reliablebroadcast
+2026-03-25 06:36:26,456 [INFO] enter _process_avss_msg
+2026-03-25 06:36:26,456 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
+2026-03-25 06:36:26,506 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:26,521 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:26,533 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:26,533 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:26,533 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:26,533 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:26,541 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:26,541 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:26,541 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:26,541 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:26,541 [INFO] [0] [random shares] The ACS set is [0, 1, 3]
+2026-03-25 06:36:26,541 [INFO] [0] Starting extract random shares
+2026-03-25 06:36:26,692 [INFO] [0] Obtaining total 600 random shares!
+2026-03-25 06:36:26,692 [INFO] [0] Starting to generate beaver triples
+2026-03-25 06:36:26,692 [INFO] [0] [beaver triples] Starting to share random shares
+hidden g = {[6679831729115696150 8653662730902241269 1535610680227111361 17342916647841752903 17135755455211762752 1297449291367578485] [13451288730302620273 10097742279870053774 15949884091978425806 5885175747529691540 1016841820992199104 845620083434234474]}
+hidden h = {[13794385998538644597 108816626937764141 12130603454454490125 6127379912259600201 17481961476035825978 950355161936836191] [10722765800778186391 17107915684035394744 11626309118465119103 5217919199071354366 6102759180633827794 660535627654889709]}
+hidden Equal? false
+2026/03/25 06:36:27 prodProofs size =  348950
+2026/03/25 06:36:27 prodProofs count =  300
+2026-03-25 06:36:27,700 [INFO] prodProofs size: 354649 bytes
+2026-03-25 06:36:27,701 [INFO] prodProofs count: 300
+2026-03-25 06:36:27,712 [INFO] before return dumps
+2026-03-25 06:36:27,713 [INFO] before reliablebroadcast
+2026-03-25 06:36:27,713 [INFO] before reliablebroadcast
+2026-03-25 06:36:27,713 [INFO] before reliablebroadcast
+2026-03-25 06:36:27,713 [INFO] before reliablebroadcast
+2026-03-25 06:36:27,716 [INFO] after reliablebroadcast
+2026-03-25 06:36:27,716 [INFO] enter _process_avss_msg
+2026-03-25 06:36:27,716 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
+2026-03-25 06:36:27,716 [INFO] after reliablebroadcast
+2026-03-25 06:36:27,716 [INFO] enter _process_avss_msg
+2026-03-25 06:36:27,716 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
+2026-03-25 06:36:27,717 [INFO] after reliablebroadcast
+2026-03-25 06:36:27,718 [INFO] enter _process_avss_msg
+2026-03-25 06:36:27,718 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
+2026-03-25 06:36:27,754 [INFO] after reliablebroadcast
+2026-03-25 06:36:27,754 [INFO] enter _process_avss_msg
+2026-03-25 06:36:27,754 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
+2026-03-25 06:36:27,771 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:27,774 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:27,880 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:27,988 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:27,990 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:27,991 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:28,143 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:28,143 [INFO] [0] [beaver triples] Starting to ACS where 2 is set as leader 
+2026-03-25 06:36:28,143 [INFO] [0] [beaver triples] The proposal of node 0 is [3, 2, 1]
+2026-03-25 06:36:28,143 [INFO] enter handle_message
+2026-03-25 06:36:28,144 [INFO] [0] value-self.acss_outputs.keys():dict_keys([3, 2, 1])
+2026-03-25 06:36:28,145 [INFO] [0] --Directly send the proposal!--
+2026-03-25 06:36:28,229 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:28,238 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:28,238 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:28,238 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:28,238 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:28,245 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:28,246 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:28,246 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:28,246 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:28,246 [INFO] [0] [beaver triples] The ACS set is [1, 2, 3]
+2026-03-25 06:36:28,264 [INFO] [0] [beaver triples] Time taken for beaver_time: 2.472263813018799 seconds
+2026-03-25 06:36:28,264 [INFO] [0] [inputs] Start generating 200 public inputs via ACSS+ACS
+2026-03-25 06:36:28,265 [INFO] [0] [inputs] Starting ACSS to share 200 inputs
+2026-03-25 06:36:28,265 [INFO] [0] [ACSS] Using tag ACSS_INPUTS_AVSS (mode=avss_without_proof)
+2026-03-25 06:36:28,653 [INFO] after pyCommit commitmentlistandprooflist
+2026-03-25 06:36:28,658 [INFO] before return dumps
+2026-03-25 06:36:28,658 [INFO] before reliablebroadcast
+2026-03-25 06:36:28,659 [INFO] before reliablebroadcast
+2026-03-25 06:36:28,659 [INFO] before reliablebroadcast
+2026-03-25 06:36:28,659 [INFO] before reliablebroadcast
+2026-03-25 06:36:28,662 [INFO] after reliablebroadcast
+2026-03-25 06:36:28,663 [INFO] enter _process_avss_msg
+2026-03-25 06:36:28,663 [INFO] AVID retrieve called with sid: 3-0-B-AVSS, index: 0
+2026-03-25 06:36:28,663 [INFO] after reliablebroadcast
+2026-03-25 06:36:28,663 [INFO] enter _process_avss_msg
+2026-03-25 06:36:28,663 [INFO] AVID retrieve called with sid: 1-0-B-AVSS, index: 0
+2026-03-25 06:36:28,664 [INFO] after reliablebroadcast
+2026-03-25 06:36:28,664 [INFO] enter _process_avss_msg
+2026-03-25 06:36:28,664 [INFO] AVID retrieve called with sid: 2-0-B-AVSS, index: 0
+2026-03-25 06:36:28,665 [INFO] 3-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:28,665 [INFO] 1-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:28,666 [INFO] 2-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:28,666 [INFO] after reliablebroadcast
+2026-03-25 06:36:28,666 [INFO] enter _process_avss_msg
+2026-03-25 06:36:28,666 [INFO] AVID retrieve called with sid: 0-0-B-AVSS, index: 0
+2026-03-25 06:36:28,680 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:28,689 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:28,698 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:28,699 [INFO] [0] [inputs] Starting ACS (leader=0); proposal size=3
+2026-03-25 06:36:28,699 [INFO] enter handle_message
+2026-03-25 06:36:28,699 [INFO] [0] I am the leader, broadcasting my input
+2026-03-25 06:36:28,699 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:28,699 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:28,699 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:28,699 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:28,700 [INFO] [0] value-self.acss_outputs.keys():dict_keys([3, 1, 2])
+2026-03-25 06:36:28,701 [INFO] [0] --Directly send the proposal!--
+2026-03-25 06:36:28,701 [INFO] 0-0-B-AVSS 0 RETRIEVE called.
+2026-03-25 06:36:28,733 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:28,733 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:28,733 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:28,733 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:28,750 [INFO] after self._handle_dealer_msgs
+2026-03-25 06:36:28,790 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:28,791 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:28,791 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:28,791 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:28,806 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:28,806 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:28,806 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:28,806 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:28,814 [INFO] [0] Broadcasting to 0
+2026-03-25 06:36:28,814 [INFO] [0] Broadcasting to 1
+2026-03-25 06:36:28,814 [INFO] [0] Broadcasting to 2
+2026-03-25 06:36:28,814 [INFO] [0] Broadcasting to 3
+2026-03-25 06:36:28,814 [INFO] [0] [inputs] ACS set size=3; set=[1, 2, 3]
+2026-03-25 06:36:28,815 [INFO] [0] [inputs] Decoded 200 input shares from dealer 0
+2026-03-25 06:36:28,816 [INFO] len a_all: 300, len b_all: 300, len c_all: 300
+2026-03-25 06:36:28,816 [INFO] [0] [inputs] Time taken to inputs_time: 0.5518233776092529 seconds
+2026-03-25 06:36:28,816 [INFO] [0] [layer 0] Using 50 triples (a,b,c) for multiplication
+2026-03-25 06:36:28,818 [INFO] [BatchReconstruct] P1 Send: 0.00024580955505371094
+2026-03-25 06:36:28,820 [INFO] [BatchReconstruct] P1 Reconstruct: 0.0020051002502441406
+2026-03-25 06:36:28,820 [INFO] [BatchReconstruct] P2 Send: 2.5272369384765625e-05
+2026-03-25 06:36:28,821 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0010044574737548828
+2026-03-25 06:36:28,822 [INFO] [0] [layer 0] done: produced 100 outputs; next I size=200
+2026-03-25 06:36:28,822 [INFO] [0] [layer 0] Time taken for layer layer_time: 0.005665302276611328 seconds
+2026-03-25 06:36:28,822 [INFO] [0] [layer 1] Using 50 triples (a,b,c) for multiplication
+2026-03-25 06:36:28,823 [INFO] [BatchReconstruct] P1 Send: 0.00014543533325195312
+2026-03-25 06:36:28,824 [INFO] [BatchReconstruct] P1 Reconstruct: 0.001239776611328125
+2026-03-25 06:36:28,824 [INFO] [BatchReconstruct] P2 Send: 2.1696090698242188e-05
+2026-03-25 06:36:28,826 [INFO] [BatchReconstruct] P2 Reconstruct: 0.001329660415649414
+2026-03-25 06:36:28,826 [INFO] [0] [layer 1] done: produced 100 outputs; next I size=200
+2026-03-25 06:36:28,827 [INFO] [0] [layer 1] Time taken for layer layer_time: 0.0047605037689208984 seconds
+2026-03-25 06:36:28,827 [INFO] [0] [layer 2] Using 50 triples (a,b,c) for multiplication
+2026-03-25 06:36:28,828 [INFO] [BatchReconstruct] P1 Send: 0.0001437664031982422
+2026-03-25 06:36:28,829 [INFO] [BatchReconstruct] P1 Reconstruct: 0.0007619857788085938
+2026-03-25 06:36:28,829 [INFO] [BatchReconstruct] P2 Send: 2.5033950805664062e-05
+2026-03-25 06:36:28,830 [INFO] [BatchReconstruct] P2 Reconstruct: 0.001279592514038086
+2026-03-25 06:36:28,831 [INFO] [0] [layer 2] done: produced 100 outputs; next I size=200
+2026-03-25 06:36:28,831 [INFO] [0] [layer 2] Time taken for layer layer_time: 0.004189729690551758 seconds
+2026-03-25 06:36:28,831 [INFO] [0] [layer 3] Using 50 triples (a,b,c) for multiplication
+2026-03-25 06:36:28,832 [INFO] [BatchReconstruct] P1 Send: 0.0001480579376220703
+2026-03-25 06:36:28,833 [INFO] [BatchReconstruct] P1 Reconstruct: 0.0011556148529052734
+2026-03-25 06:36:28,833 [INFO] [BatchReconstruct] P2 Send: 2.2172927856445312e-05
+2026-03-25 06:36:28,835 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0011646747589111328
+2026-03-25 06:36:28,835 [INFO] [0] [layer 3] done: produced 100 outputs; next I size=200
+2026-03-25 06:36:28,835 [INFO] [0] [layer 3] Time taken for layer layer_time: 0.004285097122192383 seconds
+2026-03-25 06:36:28,835 [INFO] [0] [layer 4] Using 50 triples (a,b,c) for multiplication
+2026-03-25 06:36:28,836 [INFO] [BatchReconstruct] P1 Send: 0.00016307830810546875
+2026-03-25 06:36:28,838 [INFO] [BatchReconstruct] P1 Reconstruct: 0.001065969467163086
+2026-03-25 06:36:28,838 [INFO] [BatchReconstruct] P2 Send: 2.7418136596679688e-05
+2026-03-25 06:36:28,839 [INFO] [BatchReconstruct] P2 Reconstruct: 0.0011835098266601562
+2026-03-25 06:36:28,840 [INFO] [0] [layer 4] done: produced 100 outputs; next I size=200
+2026-03-25 06:36:28,840 [INFO] [0] [layer 4] Time taken for layer layer_time: 0.004550457000732422 seconds
+2026-03-25 06:36:28,840 [INFO] [0] [layer 5] Using 50 triples (a,b,c) for multiplication
+2026-03-25 06:36:28,841 [INFO] [BatchReconstruct] P1 Send: 0.00016236305236816406
+2026-03-25 06:36:28,842 [INFO] [BatchReconstruct] P1 Reconstruct: 0.00079345703125
+2026-03-25 06:36:28,842 [INFO] [BatchReconstruct] P2 Send: 2.6464462280273438e-05
+2026-03-25 06:36:28,843 [INFO] [BatchReconstruct] P2 Reconstruct: 0.001352548599243164
+2026-03-25 06:36:28,844 [INFO] [0] [layer 5] done: produced 100 outputs; next I size=200
+2026-03-25 06:36:28,844 [INFO] [0] [layer 5] Time taken for layer layer_time: 0.004275798797607422 seconds
+2026-03-25 06:36:28,844 [INFO] [0] [final] opening 100 outputs
+2026-03-25 06:36:28,845 [INFO] [BatchReconstruct] P1 Send: 0.0001633167266845703
+2026-03-25 06:36:28,846 [INFO] [BatchReconstruct] P1 Reconstruct: 0.001051187515258789
+2026-03-25 06:36:28,846 [INFO] [BatchReconstruct] P2 Send: 2.7179718017578125e-05
+2026-03-25 06:36:28,848 [INFO] [BatchReconstruct] P2 Reconstruct: 0.001233816146850586
+2026-03-25 06:36:28,848 [INFO] [0] [final] reconstructed 100 values
+2026-03-25 06:36:28,848 [INFO] [0] [final] Time taken for reconstruction rec_time: 0.004038095474243164 seconds
+2026-03-25 06:36:28,848 [INFO] [0] [beaver triples] Finished! Node 0, total number: 300, time: 3.0563528537750244 (seconds)
+2026-03-25 06:36:28,848 [INFO] [0] Bytes Sent: R_A:2203602 which is 17.064%
+2026-03-25 06:36:28,848 [INFO] [0] Bytes Sent: ACS:1476766 which is 11.436%
+2026-03-25 06:36:28,848 [INFO] [0] Bytes Sent: B_A:9159914 which is 70.932%
+2026-03-25 06:36:28,848 [INFO] [0] Bytes Sent: OPE:73443 which is 0.569%
+2026-03-25 06:36:28,848 [INFO] [0] Total bytes sent out aa: 12913725
+2026-03-25 06:36:28,849 [INFO] Total bytes sent out: 12913725
+2026-03-25 06:36:29,859 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-10' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41b4dc0>()]>>
+2026-03-25 06:36:29,859 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-11' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41acf70>()]>>
+2026-03-25 06:36:29,859 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-12' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41b4910>()]>>
+2026-03-25 06:36:29,859 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-13' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41b4760>()]>>
+2026-03-25 06:36:29,860 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-14' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0d141e85e0>()]>>
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f0ce40d21c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5f23040>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+2026-03-25 06:36:29,865 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-18' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41bf850>()]>>
+2026-03-25 06:36:29,865 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-20' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41bf910>()]>>
+2026-03-25 06:36:29,865 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-15' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc5f22490>()]>>
+2026-03-25 06:36:29,865 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-17' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41a5ca0>()]>>
+2026-03-25 06:36:29,865 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-16' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc5f22040>()]>>
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5f230c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5f23140>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5f231c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f0cc5f23ec0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc5f23540>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0ce40d2ec0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+2026-03-25 06:36:29,867 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-19' coro=<OptimalCommonSet.fallback_timer() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/otmvba.py:70> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41bf040>()]>>
+2026-03-25 06:36:29,867 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-22' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41b4eb0>()]>>
+2026-03-25 06:36:29,868 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-23' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc5dfe5e0>()]>>
+2026-03-25 06:36:29,868 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-24' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc5dfef10>()]>>
+2026-03-25 06:36:29,868 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-25' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc5dfed60>()]>>
+2026-03-25 06:36:29,868 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-26' coro=<Hbacss0.avss() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:1912> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc5dfe880>()]>>
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0ce40d2bc0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0ce40d2a40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f0cc5dfc1c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5dfc2c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5dfc340>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5dfc3c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0.avss at 0x7f0cc5dfc440>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 1912, in avss
+    await self._process_avss_msg(avss_id, dealer_id, rbc_msg, avid)   
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 333, in _process_avss_msg
+    sender, avss_msg = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+2026-03-25 06:36:29,871 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-30' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc43842e0>()]>>
+2026-03-25 06:36:29,871 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-31' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41b40a0>()]>>
+2026-03-25 06:36:29,872 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-27' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41acd60>()]>>
+2026-03-25 06:36:29,872 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-28' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41bffa0>()]>>
+2026-03-25 06:36:29,872 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-29' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc4384130>()]>>
+2026-03-25 06:36:29,874 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-32' coro=<OptimalCommonSet.fallback_timer() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/otmvba.py:70> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc4384100>()]>>
+2026-03-25 06:36:29,874 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-42' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41c4490>()]>>
+2026-03-25 06:36:29,874 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-43' coro=<subscribe_recv.<locals>._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py:89> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc5f4d730>()]>>
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc4189840>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f0cc4189040>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc5dfc840>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc5dfcac0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc5dfc7c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc5df94c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+2026-03-25 06:36:29,875 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-39' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41c4b80>()]>>
+2026-03-25 06:36:29,875 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-40' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc4384160>()]>>
+2026-03-25 06:36:29,875 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-41' coro=<Hbacss0._recv_loop() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:165> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc43847f0>()]>>
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object subscribe_recv.<locals>._recv_loop at 0x7f0cc4189140>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/utils/misc.py", line 89, in _recv_loop
+    j, (tag, o) = await recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc41895c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+2026-03-25 06:36:29,877 [ERROR] Task was destroyed but it is pending!
+task: <Task pending name='Task-44' coro=<OptimalCommonSet.fallback_timer() running at /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/otmvba.py:70> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f0cc41c4f40>()]>>
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc41899c0>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+Exception ignored in: <coroutine object Hbacss0._recv_loop at 0x7f0cc4192c40>
+Traceback (most recent call last):
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py", line 165, in _recv_loop
+    await avid.disperse(tag, self.my_id, dispersal_msg_list)
+  File "/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py", line 182, in disperse
+    sender, msg = await self.recv()
+  File "/usr/lib/python3.8/asyncio/queues.py", line 165, in get
+    getter.cancel()  # Just in case getter is not done yet.
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 719, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.8/asyncio/base_events.py", line 508, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed

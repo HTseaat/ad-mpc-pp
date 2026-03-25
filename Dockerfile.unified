@@ -1,0 +1,300 @@
+FROM ubuntu:20.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG APT_MIRROR=
+ARG GO_MIRROR=
+ARG GO_VERSION=1.20.14
+
+ENV TZ=Etc/UTC \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    LIBRARY_PATH=/usr/local/lib \
+    LD_LIBRARY_PATH=/usr/local/lib \
+    LIBRARY_INCLUDE_PATH=/usr/local/include \
+    CONTINUUM_HOME=/opt/dumbo-mpc \
+    ADMPC_HOME=/opt/admpc \
+    CONTINUUM_VENV=/opt/venv/continuum \
+    ADMPC_VENV=/opt/venv/admpc \
+    PATH=/usr/local/go/bin:/root/.cargo/bin:$PATH
+
+RUN set -eux; \
+    printf 'Acquire::Retries "8";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' > /etc/apt/apt.conf.d/80-retries
+
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN set -eux; \
+    if [ -n "${APT_MIRROR}" ]; then \
+      sed -i "s|http://ports.ubuntu.com/ubuntu-ports|${APT_MIRROR}|g" /etc/apt/sources.list; \
+      sed -i "s|http://archive.ubuntu.com/ubuntu|${APT_MIRROR}|g" /etc/apt/sources.list; \
+      sed -i "s|http://security.ubuntu.com/ubuntu|${APT_MIRROR}|g" /etc/apt/sources.list; \
+    fi
+
+RUN apt-get update && apt-get install -y --fix-missing --no-install-recommends \
+    autoconf \
+    automake \
+    bash \
+    bison \
+    build-essential \
+    ca-certificates \
+    cmake \
+    curl \
+    flex \
+    git \
+    iproute2 \
+    libffi-dev \
+    libflint-dev \
+    libgmp-dev \
+    libmpc-dev \
+    libmpfr-dev \
+    libntl-dev \
+    libssl-dev \
+    libtool \
+    m4 \
+    make \
+    openssh-server \
+    openssl \
+    pkg-config \
+    psmisc \
+    python3 \
+    python3-dev \
+    python3-gmpy2 \
+    python3-pip \
+    python3-venv \
+    sudo \
+    tmux \
+    wget \
+    xz-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN ln -sf bash /bin/sh && ln -sf /usr/bin/python3 /usr/bin/python
+
+# Rust toolchain (required by pairing builds)
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly
+
+# Go toolchain (required by continuum)
+RUN arch="$(dpkg --print-architecture)" \
+    && case "$arch" in \
+        amd64) go_arch=amd64 ;; \
+        arm64) go_arch=arm64 ;; \
+        *) echo "Unsupported architecture: $arch"; exit 1 ;; \
+    esac \
+    && go_tgz="go${GO_VERSION}.linux-${go_arch}.tar.gz" \
+    && go_tmp="/tmp/${go_tgz}" \
+    && urls="" \
+    && if [ -n "${GO_MIRROR}" ]; then urls="${urls} ${GO_MIRROR%/}/${go_tgz}"; fi \
+    && urls="${urls} https://go.dev/dl/${go_tgz} https://golang.google.cn/dl/${go_tgz} https://dl.google.com/go/${go_tgz} https://mirrors.aliyun.com/golang/${go_tgz} https://mirrors.cloud.tencent.com/golang/${go_tgz} https://mirrors.tuna.tsinghua.edu.cn/golang/${go_tgz}" \
+    && ok=0 \
+    && for u in ${urls}; do \
+         echo "Trying Go download: ${u}"; \
+         rm -f "${go_tmp}"; \
+         if curl -fL --retry 10 --retry-delay 2 --connect-timeout 20 --max-time 900 -o "${go_tmp}" "${u}"; then \
+           if tar -tzf "${go_tmp}" >/dev/null 2>&1; then \
+             ok=1; \
+             break; \
+           fi; \
+         fi; \
+       done \
+    && [ "${ok}" -eq 1 ] \
+    && rm -rf /usr/local/go \
+    && tar -C /usr/local -xzf "${go_tmp}" \
+    && rm -f "${go_tmp}"
+
+# NTL from source (align with AD-MPC build expectations)
+RUN curl -sL https://www.libntl.org/ntl-11.3.2.tar.gz | tar xz \
+    && cd /ntl-11.3.2/src \
+    && ./configure CXXFLAGS="-g -O2 -fPIC -pthread -std=c++11" \
+    && make -j"$(nproc)" \
+    && make install \
+    && ldconfig \
+    && cd / \
+    && rm -rf /ntl-11.3.2
+
+# PBC for pairing/charm dependent paths
+RUN wget -q https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz \
+    && tar -xzf pbc-0.5.14.tar.gz \
+    && cd pbc-0.5.14 \
+    && ./configure \
+    && make -j"$(nproc)" \
+    && make install \
+    && ldconfig \
+    && cd / \
+    && rm -rf /pbc-0.5.14 /pbc-0.5.14.tar.gz
+
+# Flint header compatibility fix used in both original Dockerfiles
+RUN sed -i '30c #include "flint/flint.h"' /usr/include/flint/flintxx/flint_classes.h
+
+WORKDIR /opt
+COPY dumbo-mpc ${CONTINUUM_HOME}
+COPY admpc ${ADMPC_HOME}
+COPY unified /opt/unified
+
+# Build KZG shared library during image build so runtime ctypes loads succeed.
+RUN set -eux; \
+    mkdir -p /tmp/go-build-cache /tmp/go/pkg/mod; \
+    cd ${CONTINUUM_HOME}/gnark-crypto/kzg_ped_bls12-381; \
+    GOCACHE=/tmp/go-build-cache GOPATH=/tmp/go GOMODCACHE=/tmp/go/pkg/mod bash ./build_shared_library.sh; \
+    cp -f kzg_ped_out.so ${CONTINUUM_HOME}/kzg_ped_out.so; \
+    test -f ${CONTINUUM_HOME}/dumbo-mpc/AsyRanTriGen/kzg_ped_out.so
+
+# Build bulletproof shared library during image build and copy to runtime path.
+RUN set -eux; \
+    mkdir -p /tmp/cargo-home; \
+    cd ${CONTINUUM_HOME}/bulletproofs-amcl; \
+    CARGO_HOME=/tmp/cargo-home cargo build --release; \
+    cp -f target/release/libbulletproofs_amcl.so ${CONTINUUM_HOME}/dumbo-mpc/AsyRanTriGen/libbulletproofs_amcl.so; \
+    cp -f target/release/libbulletproofs_amcl.so ${CONTINUUM_HOME}/libbulletproofs_amcl.so; \
+    test -f ${CONTINUUM_HOME}/dumbo-mpc/AsyRanTriGen/libbulletproofs_amcl.so
+
+RUN python3 -m venv ${CONTINUUM_VENV} \
+    && python3 -m venv ${ADMPC_VENV}
+
+# Continuum environment build
+RUN CFLAGS="-march=x86-64" CXXFLAGS="-march=x86-64" ${CONTINUUM_VENV}/bin/pip install --upgrade \
+        pip==24.0 \
+        setuptools==68.2.2 \
+        wheel==0.41.3 \
+        setuptools_rust==1.8.1 \
+    && CFLAGS="-march=x86-64" CXXFLAGS="-march=x86-64" ${CONTINUUM_VENV}/bin/pip install \
+        cffi \
+        Cython==0.29.36 \
+        gmpy2 \
+        hypothesis \
+        numpy \
+        psutil \
+        pycryptodome \
+        pyparsing \
+        pyyaml \
+        pyzmq \
+        pytest \
+        reedsolo \
+        uvloop
+
+# zfec 1.6.0.0 source includes -march=x86-64-v2 in setup.py, which GCC 9
+# (Ubuntu 20.04 toolchain) does not recognize. Patch to x86-64 before install.
+RUN set -eux; \
+    t="$(mktemp -d)"; \
+    "${CONTINUUM_VENV}/bin/pip" download --no-binary=:all: --no-deps zfec==1.6.0.0 -d "${t}"; \
+    tar -xzf "${t}/zfec-1.6.0.0.tar.gz" -C "${t}"; \
+    sed -i 's/x86-64-v2/x86-64/g' "${t}/zfec-1.6.0.0/setup.py"; \
+    CFLAGS="-march=x86-64" CXXFLAGS="-march=x86-64" "${CONTINUUM_VENV}/bin/pip" install "${t}/zfec-1.6.0.0"; \
+    rm -rf "${t}"
+
+RUN ${CONTINUUM_VENV}/bin/python - <<'PY'
+import email
+import shutil
+import site
+from pathlib import Path
+
+for sp in site.getsitepackages():
+    root = Path(sp)
+    if not root.exists():
+        continue
+    for meta_dir in list(root.glob("*.dist-info")) + list(root.glob("*.egg-info")):
+        meta_file = meta_dir / "METADATA"
+        if not meta_file.exists():
+            meta_file = meta_dir / "PKG-INFO"
+        if not meta_file.exists():
+            continue
+        try:
+            msg = email.message_from_string(meta_file.read_text(errors="ignore"))
+            name = msg.get("Name")
+        except Exception:
+            name = None
+        if not isinstance(name, str) or not name.strip():
+            print(f"Removing malformed metadata directory: {meta_dir}")
+            shutil.rmtree(meta_dir, ignore_errors=True)
+PY
+
+RUN rm -rf ${CONTINUUM_HOME}/dumbo-mpc/OptRanTriGen/pairing/.eggs \
+    && cd ${CONTINUUM_HOME}/dumbo-mpc/OptRanTriGen/pairing \
+    && ${CONTINUUM_VENV}/bin/pip install . \
+    && cd ${CONTINUUM_HOME}/dumbo-mpc/OptRanTriGen \
+    && ${CONTINUUM_VENV}/bin/pip install --no-deps . \
+    && ${CONTINUUM_VENV}/bin/python setup.py build_ext --inplace \
+    && cd ${CONTINUUM_HOME}/hbMPC \
+    && ${CONTINUUM_VENV}/bin/python setup.py build_ext --inplace
+
+# AD-MPC environment build
+# Use --no-deps to avoid forcing legacy pycrypto on Python 3.8.
+RUN CFLAGS="-march=x86-64" CXXFLAGS="-march=x86-64" ${ADMPC_VENV}/bin/pip install --upgrade \
+        pip==24.0 \
+        setuptools==68.2.2 \
+        wheel==0.41.3 \
+        setuptools_rust==1.8.1 \
+    && CFLAGS="-march=x86-64" CXXFLAGS="-march=x86-64" ${ADMPC_VENV}/bin/pip install \
+        cffi \
+        Cython==0.29.36 \
+        doc8 \
+        gmpy2 \
+        numpy \
+        psutil \
+        pycryptodome \
+        pyyaml \
+        pyzmq \
+        reedsolo \
+        uvloop
+
+# zfec 1.6.0.0 source includes -march=x86-64-v2 in setup.py, which GCC 9
+# (Ubuntu 20.04 toolchain) does not recognize. Patch to x86-64 before install.
+RUN set -eux; \
+    for v in "${ADMPC_VENV}"; do \
+      t="$(mktemp -d)"; \
+      "${v}/bin/pip" download --no-binary=:all: --no-deps zfec==1.6.0.0 -d "${t}"; \
+      tar -xzf "${t}/zfec-1.6.0.0.tar.gz" -C "${t}"; \
+      sed -i 's/x86-64-v2/x86-64/g' "${t}/zfec-1.6.0.0/setup.py"; \
+      CFLAGS="-march=x86-64" CXXFLAGS="-march=x86-64" "${v}/bin/pip" install "${t}/zfec-1.6.0.0"; \
+      rm -rf "${t}"; \
+    done
+
+RUN ${ADMPC_VENV}/bin/python - <<'PY'
+import email
+import shutil
+import site
+from pathlib import Path
+
+for sp in site.getsitepackages():
+    root = Path(sp)
+    if not root.exists():
+        continue
+    for meta_dir in list(root.glob("*.dist-info")) + list(root.glob("*.egg-info")):
+        meta_file = meta_dir / "METADATA"
+        if not meta_file.exists():
+            meta_file = meta_dir / "PKG-INFO"
+        if not meta_file.exists():
+            continue
+        try:
+            msg = email.message_from_string(meta_file.read_text(errors="ignore"))
+            name = msg.get("Name")
+        except Exception:
+            name = None
+        if not isinstance(name, str) or not name.strip():
+            print(f"Removing malformed metadata directory: {meta_dir}")
+            shutil.rmtree(meta_dir, ignore_errors=True)
+PY
+
+RUN rm -rf ${ADMPC_HOME}/pairing/.eggs \
+    && cd ${ADMPC_HOME}/pairing \
+    && ${ADMPC_VENV}/bin/pip install . \
+    && ${ADMPC_VENV}/bin/pip install --no-deps -e ${ADMPC_HOME}
+
+# Install Charm after all setuptools-based builds are done.
+# Some Charm install metadata can interfere with later setup.py egg_info scans.
+RUN git clone https://github.com/JHUISI/charm.git /tmp/charm \
+    && cd /tmp/charm \
+    && PATH="${CONTINUUM_VENV}/bin:${PATH}" ./configure.sh \
+    && PATH="${CONTINUUM_VENV}/bin:${PATH}" make -j"$(nproc)" \
+    && PATH="${CONTINUUM_VENV}/bin:${PATH}" make install \
+    && rm -rf /tmp/charm
+
+RUN chmod +x /opt/unified/*.sh \
+    && ln -sf /opt/unified/enter_continuum.sh /usr/local/bin/enter-continuum \
+    && ln -sf /opt/unified/enter_admpc.sh /usr/local/bin/enter-admpc \
+    && ln -sf /opt/unified/run_continuum_local.sh /usr/local/bin/run-continuum-local \
+    && ln -sf /opt/unified/run_dumbo_mpc_local.sh /usr/local/bin/run-dumbo-mpc-local \
+    && ln -sf /opt/unified/run_admpc_local.sh /usr/local/bin/run-admpc-local \
+    && ln -sf /opt/unified/run_compare_local.sh /usr/local/bin/run-compare-local
+
+WORKDIR /opt
+ENTRYPOINT ["/bin/bash"]

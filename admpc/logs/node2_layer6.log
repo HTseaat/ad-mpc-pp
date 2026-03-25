@@ -1,0 +1,21 @@
+my_send_id: 22
+2026-03-24 02:28:39,654:[admpc_dynamic_nonlinear_run.py:58]:[INFO]: ADMPC start time: 1774319319.6541293
+run_admpc layer_ID: 5, mode: nonlinear, cm: 50, w: 50, total_cm: 300
+layer ID: 5 trans_foll_time: 28.18054485321045
+rand_foll run_rand: w=50, rounds=17
+layer ID: 5 rand_foll_time: 0.5428445339202881
+aprep_foll run_aprep cm: 50
+rand_foll run_rand: w=200, rounds=67
+layer ID: 5 aprep_foll_time: 2.713198184967041
+layer ID: 5 run_computation finished
+layer ID: 5 exec_time: 0.005150318145751953
+layer ID: 5 rand_pre_time: 8.487701416015625e-05
+layer ID: 5 aprep_pre_time: 6.961822509765625e-05
+layer ID: 5 trans_pre_time: 5.078315734863281e-05
+layer ID: 5 layer_time: 31.442204236984253
+my_send_id: 22 exec_time: 31.443759202957153
+2026-03-24 02:30:01,124:[admpc_dynamic_nonlinear_run.py:72]:[INFO]: [2] Bytes Sent: T:230341 which is 11.27%
+2026-03-24 02:30:01,126:[admpc_dynamic_nonlinear_run.py:72]:[INFO]: [2] Bytes Sent: G:179141 which is 8.765%
+2026-03-24 02:30:01,126:[admpc_dynamic_nonlinear_run.py:72]:[INFO]: [2] Bytes Sent: A:1622808 which is 79.399%
+2026-03-24 02:30:01,126:[admpc_dynamic_nonlinear_run.py:72]:[INFO]: [2] Bytes Sent: R:11565 which is 0.566%
+2026-03-24 02:30:01,127:[admpc_dynamic_nonlinear_run.py:73]:[INFO]: [2] Total bytes sent out aa: 2043855
