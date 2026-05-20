@@ -3,10 +3,11 @@ set -e
 
 usage() {
     echo "Usage:"
-    echo "  $0 ad-mpc2|ad-mpc2-linear|ad-mpc2-nonlinear <committee_size> <layers> <total_cm>"
+    echo "  $0 ad-mpc2|ad-mpc2-linear|ad-mpc2-nonlinear|ad-mpc2-bgw-aggtrans|ad-mpc2-shuffle|ad-mpc2-shuffle-bgw-static|ad-mpc2-dumbo-shuffle-beaver <committee_size> <layers> <total_cm>"
     echo "  $0 <task_name> <committee_size> <k>"
     echo "  $0 asy-triple <committee_size> <k> [full|drop-epoch4] [layers]"
-    echo "Valid task names: ad-mpc2, ad-mpc2-linear, ad-mpc2-nonlinear, asy-random, asy-triple, dumbo-mpc, opt-triple, dyn-transfer, dyn-aggtransfer, dyn-pvtransfer, bat-multiplication, bat-pvmul, yoso-rbc, yoso-gather, yoso-gradedgather"
+    echo "  $0 dumbo-bgw-direct <committee_size> <k> [layers]"
+    echo "Valid task names: ad-mpc2, ad-mpc2-linear, ad-mpc2-nonlinear, ad-mpc2-bgw-aggtrans, ad-mpc2-shuffle, ad-mpc2-shuffle-bgw-static, ad-mpc2-dumbo-shuffle-beaver, asy-random, asy-triple, dumbo-bgw-direct, dumbo-mpc, opt-triple, dyn-transfer, dyn-aggtransfer, dyn-pvtransfer, bat-multiplication, bat-pvmul, yoso-rbc, yoso-gather, yoso-gradedgather"
     exit 1
 }
 
@@ -18,7 +19,7 @@ TASK_NAME=$1
 shift
 
 case "$TASK_NAME" in
-    "ad-mpc2"|"ad-mpc2-linear"|"ad-mpc2-nonlinear")
+    "ad-mpc2"|"ad-mpc2-linear"|"ad-mpc2-nonlinear"|"ad-mpc2-bgw-aggtrans"|"ad-mpc2-shuffle"|"ad-mpc2-shuffle-bgw-static"|"ad-mpc2-dumbo-shuffle-beaver")
         if [ $# -lt 3 ]; then
             echo "Error: ${TASK_NAME} requires 3 arguments"
             usage
@@ -36,6 +37,22 @@ case "$TASK_NAME" in
                 ;;
             "ad-mpc2-nonlinear")
                 MODULE="scripts/admpc2_dynamic_nonlinear_run.py"
+                ;;
+            "ad-mpc2-bgw-aggtrans")
+                MODULE="scripts/admpc2_dynamic_bgw_aggtrans_run.py"
+                export FINISHED_PATTERN="exec_time"
+                ;;
+            "ad-mpc2-shuffle")
+                MODULE="scripts/admpc2_dynamic_shuffle_run.py"
+                export FINISHED_PATTERN="Shuffle Finished!"
+                ;;
+            "ad-mpc2-shuffle-bgw-static")
+                MODULE="scripts/admpc2_dynamic_shuffle_bgw_static_run.py"
+                export FINISHED_PATTERN="Shuffle Finished!"
+                ;;
+            "ad-mpc2-dumbo-shuffle-beaver")
+                MODULE="scripts/admpc2_dynamic_dumbo_shuffle_beaver_run.py"
+                export FINISHED_PATTERN="Shuffle Finished!"
                 ;;
         esac
 
@@ -81,6 +98,23 @@ case "$TASK_NAME" in
         cd ./dumbo-mpc/AsyRanTriGen
         # python scripts/init_batchsize_ip.py --N ${N} --k ${k}
         ./scripts/local_test.sh scripts/run_beaver_triple.py "${N}" "${K}" "${DUMBO_MODE}" "${LAYERS}"
+        ;;
+
+    "dumbo-bgw-direct")
+        if [ $# -lt 2 ]; then
+            echo "Error: dumbo-bgw-direct requires 2 arguments"
+            usage
+        fi
+        N=$1
+        K=$2
+        LAYERS=${3:-10}
+        if ! [[ "$LAYERS" =~ ^[0-9]+$ ]] || [ "$LAYERS" -le 0 ]; then
+            echo "Error: layers must be a positive integer, got '${LAYERS}'."
+            usage
+        fi
+        echo "Running run_dumbo_bgw_direct.py (layers=${LAYERS})"
+        cd ./dumbo-mpc/AsyRanTriGen
+        ./scripts/local_test.sh scripts/run_dumbo_bgw_direct.py "${N}" "${K}" "full" "${LAYERS}"
         ;;
     
     "dumbo-mpc")

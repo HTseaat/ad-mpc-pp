@@ -206,6 +206,9 @@ fi
     fi
     if [[ "$rc" -eq 124 ]]; then
       echo "Dumbo launch hit timeout (${DUMBO_TIMEOUT}s)."
+      if [[ "$MODE" == "drop-epoch4" ]]; then
+        echo "[DUMBO-BASELINE] Expected blocking observed: in drop-epoch4 mode, nodes 0/1 go offline at the 4th circuit layer (L==3), so the remaining nodes may block waiting for reconstruction/opening messages."
+      fi
     fi
   else
     ./launch_asyrantrigen.sh "$N" "$K" "$DEPTH" "$MODE"

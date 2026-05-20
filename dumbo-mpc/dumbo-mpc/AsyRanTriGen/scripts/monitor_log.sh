@@ -7,6 +7,7 @@ if [ $# -lt 1 ]; then
 fi
 
 NUM_NODES=$1
+FINISHED_PATTERN=${2:-"${FINISHED_PATTERN:-Finished}"}
 LOG_DIR="../AsyRanTriGen/log"  # Adjust the path to your logs directory if needed
 
 # Check if the log directory exists
@@ -23,8 +24,7 @@ for ID in $(seq 0 $((NUM_NODES - 1))); do
     log_status[$ID]=false
 done
 
-# Monitor logs until 'Finished' is found in all log files
-# echo "Monitoring logs for 'Finished'..."
+# Monitor logs until the finished marker is found in all log files.
 
 # Loop to check logs
 while true; do
@@ -33,8 +33,8 @@ while true; do
     for ID in $(seq 0 $((NUM_NODES - 1))); do
         LOG_FILE="$LOG_DIR/logs-${ID}.log"
         
-        # Check if the 'Finished' keyword appears in the log file
-        if grep -q "Finished" "$LOG_FILE"; then
+        # Check if the finished marker appears in the log file
+        if grep -q -E "$FINISHED_PATTERN" "$LOG_FILE"; then
             # echo "'Finished' found in $LOG_FILE"
             log_status[$ID]=true
         fi

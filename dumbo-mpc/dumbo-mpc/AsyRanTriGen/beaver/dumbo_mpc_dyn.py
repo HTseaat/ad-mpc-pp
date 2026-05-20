@@ -483,7 +483,15 @@ class BEAVER:
 
         for L in range(layers):
             if self._should_skip_layer(L):
-                logger.warning(f"[{self.my_id}] [layer {L}] Experimental skip is enabled; skipping this layer")
+                logger.warning(
+                    f"[{self.my_id}] [layer {L}] [DROP-EPOCH4] "
+                    "This node intentionally goes offline at the 4th circuit layer "
+                    "(0-indexed layer L==3) for the Dumbo-MPC dropout baseline."
+                )
+                logger.warning(
+                    f"[{self.my_id}] [layer {L}] [DROP-EPOCH4] "
+                    "Subsequent nodes may block waiting for BatchReconstruct/opening messages."
+                )
                 continue
 
             # triples slice for this layer

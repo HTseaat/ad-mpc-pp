@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [[ $# -lt 3 || $# -gt 5 ]]; then
-  echo "Usage: run-dumbo-mpc-local <n> <t> <k> [full|drop-epoch4] [layers]" >&2
+  echo "Usage: run-dumbo-mpc-local <n> <t> <k> [full|drop-epoch4|bgw-direct] [layers]" >&2
   exit 1
 fi
 
@@ -13,9 +13,9 @@ mode="${4:-full}"
 layers="${5:-10}"
 
 case "$mode" in
-  full|drop-epoch4) ;;
+  full|drop-epoch4|bgw-direct) ;;
   *)
-    echo "Invalid mode: ${mode}. Expected one of: full, drop-epoch4" >&2
+    echo "Invalid mode: ${mode}. Expected one of: full, drop-epoch4, bgw-direct" >&2
     exit 1
     ;;
 esac
@@ -27,4 +27,8 @@ cd /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen
 python3 scripts/run_key_gen.py --N "$n" --f "$t"
 
 cd /opt/dumbo-mpc
+if [[ "$mode" == "bgw-direct" ]]; then
+  exec ./run_local_network_test.sh dumbo-bgw-direct "$n" "$k" "$layers"
+fi
+
 exec ./run_local_network_test.sh asy-triple "$n" "$k" "$mode" "$layers"

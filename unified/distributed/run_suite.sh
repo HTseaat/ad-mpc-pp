@@ -10,10 +10,10 @@ usage() {
 Usage: $0 <protocol> <experiment> [options]
 
 Protocols:
-  admpc | continuum | dumbo
+  admpc | continuum | bgw-aggtrans | shuffle | shuffle-bgw-static | dumbo-shuffle-beaver | dumbo | dumbo-bgw-direct
 
 Experiments:
-  exp1 | exp2 | exp3 | exp4
+  exp1 | exp2 | exp3 | exp4 | exp-shuffle
 
 Options:
   --cluster-env <path>    Cluster env file (default: distributed/cluster.env)
@@ -21,6 +21,7 @@ Options:
   --timeout <seconds>     control-node timeout for admpc/continuum (default: 12)
   --dumbo-timeout <sec>   launch timeout for dumbo runs (default: 600)
   --only-n <n>            Only run cases with this N (exp1/exp2 use-case filter)
+  --only-d <d>            Only run exp3 cases with this circuit depth d
   --skip-remote-cleanup   Skip automatic remote container cleanup before each case
   --sleep-between-case <seconds>
                            Pause between cases to collect data (default: 30)
@@ -29,7 +30,12 @@ Options:
 Examples:
   $0 admpc exp1
   $0 continuum exp2 --timeout 20
+  $0 bgw-aggtrans exp2 --timeout 20
+  $0 shuffle exp-shuffle --timeout 30
+  $0 shuffle-bgw-static exp-shuffle --timeout 30
+  $0 dumbo-shuffle-beaver exp-shuffle --timeout 30
   $0 dumbo exp4 --dumbo-timeout 900
+  $0 dumbo-bgw-direct exp2 --dumbo-timeout 900
 USAGE
 }
 
@@ -48,6 +54,7 @@ SLEEP_BETWEEN_CASE=30
 SYNC_CODE=0
 RESULTS_ROOT="$RESULTS_ROOT_DEFAULT"
 ONLY_N=""
+ONLY_D=""
 REMOTE_CLEANUP=1
 CONTINUUM_PYTHON="${CONTINUUM_PYTHON:-/opt/venv/continuum/bin/python3}"
 
@@ -72,6 +79,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --only-n)
       ONLY_N="$2"
+      shift 2
+      ;;
+    --only-d)
+      ONLY_D="$2"
       shift 2
       ;;
     --skip-remote-cleanup)
@@ -99,7 +110,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$PROTOCOL" in
-  admpc|continuum|dumbo) ;;
+  admpc|continuum|bgw-aggtrans|shuffle|shuffle-bgw-static|dumbo-shuffle-beaver|dumbo|dumbo-bgw-direct) ;;
   *)
     echo "Invalid protocol: $PROTOCOL" >&2
     usage
@@ -108,7 +119,7 @@ case "$PROTOCOL" in
 esac
 
 case "$EXP_ID" in
-  exp1|exp2|exp3|exp4) ;;
+  exp1|exp2|exp3|exp4|exp-shuffle) ;;
   *)
     echo "Invalid experiment: $EXP_ID" >&2
     usage
@@ -126,8 +137,18 @@ if [[ -n "$ONLY_N" ]] && ! [[ "$ONLY_N" =~ ^[0-9]+$ ]]; then
   exit 1
 fi
 
+if [[ -n "$ONLY_D" ]] && ! [[ "$ONLY_D" =~ ^[0-9]+$ ]]; then
+  echo "Invalid --only-d: ${ONLY_D}" >&2
+  exit 1
+fi
+
 if [[ -n "$ONLY_N" ]] && [[ "$EXP_ID" == "exp3" || "$EXP_ID" == "exp4" ]] && [[ "$ONLY_N" != "16" ]]; then
   echo "--only-n=${ONLY_N} does not match ${EXP_ID} preset (fixed n=16)." >&2
+  exit 1
+fi
+
+if [[ -n "$ONLY_D" && "$EXP_ID" != "exp3" ]]; then
+  echo "--only-d is only supported for exp3." >&2
   exit 1
 fi
 
@@ -136,10 +157,25 @@ if [[ "$PROTOCOL" == "dumbo" ]] && [[ "$EXP_ID" == "exp1" || "$EXP_ID" == "exp2"
   exit 1
 fi
 
+if [[ "$PROTOCOL" == "dumbo-bgw-direct" ]] && [[ "$EXP_ID" == "exp1" ]]; then
+  echo "dumbo-bgw-direct evaluates multiplication layers; supported: exp2, exp3, exp4" >&2
+  exit 1
+fi
+
+if [[ ( "$PROTOCOL" == "shuffle" || "$PROTOCOL" == "shuffle-bgw-static" || "$PROTOCOL" == "dumbo-shuffle-beaver" ) && "$EXP_ID" != "exp-shuffle" ]]; then
+  echo "Shuffle protocol uses exp-shuffle." >&2
+  exit 1
+fi
+
+if [[ "$PROTOCOL" != "shuffle" && "$PROTOCOL" != "shuffle-bgw-static" && "$PROTOCOL" != "dumbo-shuffle-beaver" && "$EXP_ID" == "exp-shuffle" ]]; then
+  echo "exp-shuffle is only supported with protocol=shuffle, shuffle-bgw-static, or dumbo-shuffle-beaver." >&2
+  exit 1
+fi
+
 load_cluster_env
 require_tools bash python3 ssh ssh-keygen scp tar timeout
 
-if [[ "$PROTOCOL" == "continuum" || "$PROTOCOL" == "dumbo" ]]; then
+if [[ "$PROTOCOL" == "continuum" || "$PROTOCOL" == "bgw-aggtrans" || "$PROTOCOL" == "shuffle" || "$PROTOCOL" == "shuffle-bgw-static" || "$PROTOCOL" == "dumbo-shuffle-beaver" || "$PROTOCOL" == "dumbo" || "$PROTOCOL" == "dumbo-bgw-direct" ]]; then
   if [[ ! -x "$CONTINUUM_PYTHON" ]]; then
     echo "Continuum python not found or not executable: ${CONTINUUM_PYTHON}" >&2
     echo "Set CONTINUUM_PYTHON env or ensure /opt/venv/continuum exists." >&2
@@ -159,6 +195,9 @@ mkdir -p "$SESSION_DIR"
 echo "Run session: $SESSION_DIR"
 if [[ -n "$ONLY_N" ]]; then
   echo "Case filter enabled: n=${ONLY_N}"
+fi
+if [[ -n "$ONLY_D" ]]; then
+  echo "Case filter enabled: d=${ONLY_D}"
 fi
 
 SSH_SETUP_DONE_NS=()
@@ -239,7 +278,7 @@ ensure_ssh_setup_for_n() {
     admpc)
       setup_script="${ADMPC_DIR}/scripts/setup_ssh_keys.sh"
       ;;
-    continuum|dumbo)
+    continuum|bgw-aggtrans|shuffle|shuffle-bgw-static|dumbo-shuffle-beaver|dumbo|dumbo-bgw-direct)
       setup_script="${ASY_SCRIPTS_DIR}/setup_ssh_keys.sh"
       ;;
     *)
@@ -263,6 +302,14 @@ cleanup_remote_before_case() {
   if [[ "$REMOTE_CLEANUP" -eq 0 ]]; then
     return
   fi
+  local cleanup_protocol="$PROTOCOL"
+  if [[ "$cleanup_protocol" == "bgw-aggtrans" ]]; then
+    cleanup_protocol="continuum"
+  elif [[ "$cleanup_protocol" == "shuffle" || "$cleanup_protocol" == "shuffle-bgw-static" || "$cleanup_protocol" == "dumbo-shuffle-beaver" ]]; then
+    cleanup_protocol="continuum"
+  elif [[ "$cleanup_protocol" == "dumbo-bgw-direct" ]]; then
+    cleanup_protocol="dumbo"
+  fi
 
   local cleanup_script="${SCRIPT_DIR}/cleanup_remote_ports.sh"
   if [[ ! -x "$cleanup_script" ]]; then
@@ -270,11 +317,11 @@ cleanup_remote_before_case() {
     exit 1
   fi
 
-  echo "Cleaning remote leftover containers for protocol=${PROTOCOL}, N=${n}"
+  echo "Cleaning remote leftover containers for protocol=${cleanup_protocol}, N=${n}"
   if [[ -n "${CLUSTER_ENV:-}" ]]; then
-    CLUSTER_ENV="$CLUSTER_ENV" "$cleanup_script" --protocol "$PROTOCOL" --n "$n"
+    CLUSTER_ENV="$CLUSTER_ENV" "$cleanup_script" --protocol "$cleanup_protocol" --n "$n"
   else
-    "$cleanup_script" --protocol "$PROTOCOL" --n "$n"
+    "$cleanup_script" --protocol "$cleanup_protocol" --n "$n"
   fi
 }
 
@@ -336,11 +383,15 @@ run_continuum_case() {
 
   local layers_total=$((d + 2))
   local protocol_override
-  protocol_override="$(continuum_protocol_name "$gate_mode")"
+  if [[ "$PROTOCOL" == "bgw-aggtrans" ]]; then
+    protocol_override="admpc2-bgw-aggtrans"
+  else
+    protocol_override="$(continuum_protocol_name "$gate_mode")"
+  fi
   local conf_dir="admpc_${total_cm}_${layers_total}_${n}"
   local outdir="${SESSION_DIR}/${case_name}"
 
-  echo "[continuum] ${case_name}: mode=${gate_mode}, n=${n}, t=${t}, d=${d}, layers=${layers_total}, total_cm=${total_cm}"
+  echo "[${PROTOCOL}] ${case_name}: mode=${gate_mode}, n=${n}, t=${t}, d=${d}, layers=${layers_total}, total_cm=${total_cm}"
   sync_cluster_for_n "$n"
   ensure_ssh_setup_for_n "$n"
   cleanup_remote_before_case "$n"
@@ -360,7 +411,235 @@ run_continuum_case() {
   )
 
   mkdir -p "$outdir"
-  save_metadata "$outdir" "continuum" "$EXP_ID" "$n" "$t" "$d" "$layers_total" "$total_cm"
+  save_metadata "$outdir" "$PROTOCOL" "$EXP_ID" "$n" "$t" "$d" "$layers_total" "$total_cm"
+  cp -r "${ASY_SCRIPTS_DIR}/logs" "${outdir}/logs" 2>/dev/null || true
+  cp -r "${ASY_DIR}/conf/${conf_dir}" "${outdir}/conf" 2>/dev/null || true
+  collect_raw_logs_placeholder "$outdir"
+}
+
+shuffle_switch_layers() {
+  local k="$1"
+  local mode="${2:-single}"
+  local rounds=0
+  local value="$k"
+  while (( value > 1 )); do
+    if (( value % 2 != 0 )); then
+      echo "shuffle k must be a power of two: ${k}" >&2
+      exit 1
+    fi
+    value=$(( value / 2 ))
+    rounds=$(( rounds + 1 ))
+  done
+  case "$mode" in
+    single) echo "$rounds" ;;
+    iterated) echo $(( rounds * rounds )) ;;
+    *)
+      echo "Invalid SHUFFLE_MODE=${mode}; expected single or iterated" >&2
+      exit 1
+      ;;
+  esac
+}
+
+shuffle_handoff_interval() {
+  local switch_layers="$1"
+  local raw="${SHUFFLE_HANDOFF_INTERVAL:-1}"
+  raw="$(printf '%s' "$raw" | tr '[:upper:]' '[:lower:]')"
+  case "$raw" in
+    static|none|no-handoff|nohandoff|inf|infinity)
+      echo "$switch_layers"
+      ;;
+    *)
+      if ! [[ "$raw" =~ ^[0-9]+$ ]]; then
+        echo "Invalid SHUFFLE_HANDOFF_INTERVAL=${SHUFFLE_HANDOFF_INTERVAL:-}" >&2
+        exit 1
+      fi
+      if (( raw <= 0 )); then
+        echo "Invalid SHUFFLE_HANDOFF_INTERVAL=${SHUFFLE_HANDOFF_INTERVAL:-}" >&2
+        exit 1
+      fi
+      if (( raw > switch_layers )); then
+        echo "$switch_layers"
+      else
+        echo "$raw"
+      fi
+      ;;
+  esac
+}
+
+shuffle_compute_blocks() {
+  local switch_layers="$1"
+  local handoff_interval="$2"
+  echo $(( (switch_layers + handoff_interval - 1) / handoff_interval ))
+}
+
+bgw_batch_verify_flag() {
+  local env_name="$1"
+  local env_value="${!env_name-}"
+  if [[ "${BGW_UNBATCHED_BATCH_ALL_VERIFY:-}" == "1" || "$env_value" == "1" ]]; then
+    echo 1
+  else
+    echo 0
+  fi
+}
+
+bgw_batch_verify_summary() {
+  printf 'all=%s,share=%s,hidden=%s,zero=%s,prod=%s,batch_path_unbatched_prod=%s' \
+    "${BGW_UNBATCHED_BATCH_ALL_VERIFY:-0}" \
+    "$(bgw_batch_verify_flag BGW_UNBATCHED_BATCH_SHARE_VERIFY)" \
+    "$(bgw_batch_verify_flag BGW_UNBATCHED_BATCH_HIDDEN_VERIFY)" \
+    "$(bgw_batch_verify_flag BGW_UNBATCHED_BATCH_ZERO_VERIFY)" \
+    "$(bgw_batch_verify_flag BGW_UNBATCHED_BATCH_PROD_VERIFY)" \
+    "${BGW_BATCH_UNBATCHED_PROD_VERIFY:-0}"
+}
+
+dumbo_beaver_mix_suffix() {
+  if [[ "${BGW_UNBATCHED_BATCH_ALL_VERIFY:-}" == "1" ]]; then
+    echo "_mixed_all_batch"
+    return
+  fi
+
+  local suffix=""
+  if [[ "${BGW_UNBATCHED_BATCH_SHARE_VERIFY:-}" == "1" ]]; then
+    suffix="${suffix}_share"
+  fi
+  if [[ "${BGW_UNBATCHED_BATCH_HIDDEN_VERIFY:-}" == "1" ]]; then
+    suffix="${suffix}_hidden"
+  fi
+  if [[ "${BGW_UNBATCHED_BATCH_ZERO_VERIFY:-}" == "1" ]]; then
+    suffix="${suffix}_zero"
+  fi
+  if [[ "${BGW_UNBATCHED_BATCH_PROD_VERIFY:-}" == "1" ]]; then
+    suffix="${suffix}_prod"
+  fi
+
+  if [[ -n "$suffix" ]]; then
+    echo "_mixed${suffix}_batch"
+  fi
+}
+
+batch_path_mix_suffix() {
+  if [[ "${BGW_BATCH_UNBATCHED_PROD_VERIFY:-}" == "1" ]]; then
+    echo "_batch_prod_unbatched"
+  fi
+}
+
+run_shuffle_case() {
+  local case_name="$1"
+  local n="$2"
+  local t="$3"
+  local k="$4"
+  local mode="${5:-single}"
+
+  local switch_layers
+  switch_layers="$(shuffle_switch_layers "$k" "$mode")"
+  local handoff_interval
+  handoff_interval="$(shuffle_handoff_interval "$switch_layers")"
+  local compute_blocks
+  compute_blocks="$(shuffle_compute_blocks "$switch_layers" "$handoff_interval")"
+  local layers_total=$((compute_blocks + 2))
+  local conf_dir="admpc_${k}_${layers_total}_${n}"
+  local outdir="${SESSION_DIR}/${case_name}"
+
+  echo "[shuffle] ${case_name}: mode=${mode}, h=${handoff_interval}, n=${n}, t=${t}, k=${k}, switch_layers=${switch_layers}, compute_blocks=${compute_blocks}, layers=${layers_total}"
+  sync_cluster_for_n "$n"
+  ensure_ssh_setup_for_n "$n"
+  cleanup_remote_before_case "$n"
+
+  (
+    cd "${ASY_DIR}"
+    PYTHONPATH="${ASY_DIR}:${PYTHONPATH:-}" \
+      "$CONTINUUM_PYTHON" scripts/create_json_files.py admpc "$n" "$t" "$layers_total" "$k"
+
+    cd "${ASY_SCRIPTS_DIR}"
+    ./distribute-admpc.sh
+    if [[ "$SYNC_CODE" -eq 1 ]]; then
+      ./distribute-docker.sh
+    fi
+    ./distribute-file.sh "$conf_dir"
+    SHUFFLE_MODE="$mode" SHUFFLE_HANDOFF_INTERVAL="$handoff_interval" ./control-node.sh "$conf_dir" "admpc2-shuffle" "$TIMEOUT"
+  )
+
+  mkdir -p "$outdir"
+  save_metadata "$outdir" "shuffle" "$EXP_ID" "$n" "$t" "$switch_layers" "$layers_total" "$k"
+  cp -r "${ASY_SCRIPTS_DIR}/logs" "${outdir}/logs" 2>/dev/null || true
+  cp -r "${ASY_DIR}/conf/${conf_dir}" "${outdir}/conf" 2>/dev/null || true
+  collect_raw_logs_placeholder "$outdir"
+}
+
+run_shuffle_bgw_static_case() {
+  local case_name="$1"
+  local n="$2"
+  local t="$3"
+  local k="$4"
+  local mode="${5:-single}"
+
+  local switch_layers
+  switch_layers="$(shuffle_switch_layers "$k" "$mode")"
+  local layers_total=3
+  local conf_dir="admpc_${k}_${layers_total}_${n}"
+  local outdir="${SESSION_DIR}/${case_name}"
+
+  echo "[shuffle-bgw-static] ${case_name}: mode=${mode}, n=${n}, t=${t}, k=${k}, switch_layers=${switch_layers}, layers=${layers_total}"
+  sync_cluster_for_n "$n"
+  ensure_ssh_setup_for_n "$n"
+  cleanup_remote_before_case "$n"
+
+  (
+    cd "${ASY_DIR}"
+    PYTHONPATH="${ASY_DIR}:${PYTHONPATH:-}" \
+      "$CONTINUUM_PYTHON" scripts/create_json_files.py admpc "$n" "$t" "$layers_total" "$k"
+
+    cd "${ASY_SCRIPTS_DIR}"
+    ./distribute-admpc.sh
+    if [[ "$SYNC_CODE" -eq 1 ]]; then
+      ./distribute-docker.sh
+    fi
+    ./distribute-file.sh "$conf_dir"
+    SHUFFLE_MODE="$mode" ./control-node.sh "$conf_dir" "admpc2-shuffle-bgw-static" "$TIMEOUT"
+  )
+
+  mkdir -p "$outdir"
+  save_metadata "$outdir" "shuffle-bgw-static" "$EXP_ID" "$n" "$t" "$switch_layers" "$layers_total" "$k"
+  cp -r "${ASY_SCRIPTS_DIR}/logs" "${outdir}/logs" 2>/dev/null || true
+  cp -r "${ASY_DIR}/conf/${conf_dir}" "${outdir}/conf" 2>/dev/null || true
+  collect_raw_logs_placeholder "$outdir"
+}
+
+run_dumbo_shuffle_beaver_case() {
+  local case_name="$1"
+  local n="$2"
+  local t="$3"
+  local k="$4"
+  local mode="${5:-single}"
+
+  local switch_layers
+  switch_layers="$(shuffle_switch_layers "$k" "$mode")"
+  local layers_total=3
+  local conf_dir="admpc_${k}_${layers_total}_${n}"
+  local outdir="${SESSION_DIR}/${case_name}"
+  local triples_needed=$(( (k / 2) * switch_layers ))
+
+  echo "[dumbo-shuffle-beaver] ${case_name}: mode=${mode}, n=${n}, t=${t}, k=${k}, switch_layers=${switch_layers}, triples=${triples_needed}, layers=${layers_total}, mixed_batch_verify={$(bgw_batch_verify_summary)}"
+  sync_cluster_for_n "$n"
+  ensure_ssh_setup_for_n "$n"
+  cleanup_remote_before_case "$n"
+
+  (
+    cd "${ASY_DIR}"
+    PYTHONPATH="${ASY_DIR}:${PYTHONPATH:-}" \
+      "$CONTINUUM_PYTHON" scripts/create_json_files.py admpc "$n" "$t" "$layers_total" "$k"
+
+    cd "${ASY_SCRIPTS_DIR}"
+    ./distribute-admpc.sh
+    if [[ "$SYNC_CODE" -eq 1 ]]; then
+      ./distribute-docker.sh
+    fi
+    ./distribute-file.sh "$conf_dir"
+    SHUFFLE_MODE="$mode" ./control-node.sh "$conf_dir" "admpc2-dumbo-shuffle-beaver" "$TIMEOUT"
+  )
+
+  mkdir -p "$outdir"
+  save_metadata "$outdir" "dumbo-shuffle-beaver" "$EXP_ID" "$n" "$t" "$switch_layers" "$layers_total" "$k" "$triples_needed"
   cp -r "${ASY_SCRIPTS_DIR}/logs" "${outdir}/logs" 2>/dev/null || true
   cp -r "${ASY_DIR}/conf/${conf_dir}" "${outdir}/conf" 2>/dev/null || true
   collect_raw_logs_placeholder "$outdir"
@@ -420,14 +699,109 @@ run_dumbo_case() {
   collect_raw_logs_placeholder "$outdir"
 }
 
+run_dumbo_bgw_direct_case() {
+  local case_name="$1"
+  local n="$2"
+  local t="$3"
+  local d="$4"
+  local k="$5"
+  local dumbo_mode="${6:-full}"
+
+  local layers_total=$((d + 2))
+  local conf_dir="mpc_${n}"
+  local outdir="${SESSION_DIR}/${case_name}"
+
+  echo "[dumbo-bgw-direct] ${case_name}: mode=${dumbo_mode}, n=${n}, t=${t}, d=${d}, k=${k}"
+  sync_cluster_for_n "$n"
+  ensure_ssh_setup_for_n "$n"
+  cleanup_remote_before_case "$n"
+
+  (
+    cd "${ASY_DIR}"
+    PYTHONPATH="${ASY_DIR}:${PYTHONPATH:-}" \
+      "$CONTINUUM_PYTHON" scripts/run_key_gen_dumbo_dyn.py --N "$n" --f "$t" --k "$k" --layers "$d" --ip-file scripts/ip.txt --port 7001
+
+    cd "${ASY_SCRIPTS_DIR}"
+    ./distribute-admpc.sh
+    if [[ "$SYNC_CODE" -eq 1 ]]; then
+      ./distribute-docker.sh
+    fi
+    ./distribute-file.sh "$conf_dir"
+
+    cd "${REMOTE_ASY_SCRIPTS_DIR}"
+    if [[ "$DUMBO_TIMEOUT" -gt 0 ]]; then
+      set +e
+      timeout "${DUMBO_TIMEOUT}s" ./launch_bgw_direct.sh "$n" "$k" "$d" "$dumbo_mode"
+      rc=$?
+      set -e
+      if [[ "$rc" -ne 0 && "$rc" -ne 124 ]]; then
+        echo "Dumbo-BGW direct launch failed with rc=${rc}" >&2
+        exit "$rc"
+      fi
+      if [[ "$rc" -eq 124 ]]; then
+        echo "Dumbo-BGW direct launch hit timeout (${DUMBO_TIMEOUT}s)."
+      fi
+    else
+      ./launch_bgw_direct.sh "$n" "$k" "$d" "$dumbo_mode"
+    fi
+  )
+
+  mkdir -p "$outdir"
+  save_metadata "$outdir" "dumbo-bgw-direct" "$EXP_ID" "$n" "$t" "$d" "$layers_total" "$k" "$dumbo_mode"
+  cp -r "${REMOTE_ASY_SCRIPTS_DIR}/logs" "${outdir}/remote_logs" 2>/dev/null || true
+  cp -r "${ASY_DIR}/conf/${conf_dir}" "${outdir}/conf" 2>/dev/null || true
+  collect_raw_logs_placeholder "$outdir"
+}
+
 WIDTH=100
+EXP_SCALE_NS=(4 10 16 22)
+EXP_SCALE_TS=(1 3 5 7)
 
 case "$EXP_ID" in
+  exp-shuffle)
+    SHUFFLE_K="${SHUFFLE_K:-128}"
+    SHUFFLE_MODE_VALUE="${SHUFFLE_MODE:-single}"
+    NS=("${EXP_SCALE_NS[@]}")
+    TS=("${EXP_SCALE_TS[@]}")
+    selected_indices=()
+    for idx in "${!NS[@]}"; do
+      n="${NS[$idx]}"
+      if [[ -n "$ONLY_N" ]] && [[ "$n" != "$ONLY_N" ]]; then
+        continue
+      fi
+      selected_indices+=("$idx")
+    done
+    if [[ "${#selected_indices[@]}" -eq 0 ]]; then
+      echo "No exp-shuffle cases selected with --only-n=${ONLY_N}" >&2
+      exit 1
+    fi
+
+    for run_idx in "${!selected_indices[@]}"; do
+      idx="${selected_indices[$run_idx]}"
+      n="${NS[$idx]}"
+      t="${TS[$idx]}"
+      if [[ "$PROTOCOL" == "shuffle" ]]; then
+        switch_layers="$(shuffle_switch_layers "$SHUFFLE_K" "$SHUFFLE_MODE_VALUE")"
+        handoff_interval="$(shuffle_handoff_interval "$switch_layers")"
+        case_name="n${n}_t${t}_k${SHUFFLE_K}_${SHUFFLE_MODE_VALUE}_h${handoff_interval}"
+        run_shuffle_case "$case_name" "$n" "$t" "$SHUFFLE_K" "$SHUFFLE_MODE_VALUE"
+      elif [[ "$PROTOCOL" == "shuffle-bgw-static" ]]; then
+        case_name="n${n}_t${t}_k${SHUFFLE_K}_${SHUFFLE_MODE_VALUE}_bgw_static"
+        run_shuffle_bgw_static_case "$case_name" "$n" "$t" "$SHUFFLE_K" "$SHUFFLE_MODE_VALUE"
+      else
+        case_name="n${n}_t${t}_k${SHUFFLE_K}_${SHUFFLE_MODE_VALUE}_dumbo_beaver"
+        case_name="${case_name}$(dumbo_beaver_mix_suffix)$(batch_path_mix_suffix)"
+        run_dumbo_shuffle_beaver_case "$case_name" "$n" "$t" "$SHUFFLE_K" "$SHUFFLE_MODE_VALUE"
+      fi
+      pause_between_cases_if_needed "$run_idx" "${#selected_indices[@]}"
+    done
+    ;;
+
   exp1)
     GATE_MODE="linear"
     D=6
-    NS=(4 8 12 16)
-    TS=(1 2 3 5)
+    NS=("${EXP_SCALE_NS[@]}")
+    TS=("${EXP_SCALE_TS[@]}")
     selected_indices=()
     for idx in "${!NS[@]}"; do
       n="${NS[$idx]}"
@@ -449,8 +823,10 @@ case "$EXP_ID" in
       case_name="n${n}_t${t}_d${D}"
       if [[ "$PROTOCOL" == "admpc" ]]; then
         run_admpc_case "$case_name" "$GATE_MODE" "$n" "$t" "$D" "$total_cm"
-      else
+      elif [[ "$PROTOCOL" == "continuum" || "$PROTOCOL" == "bgw-aggtrans" ]]; then
         run_continuum_case "$case_name" "$GATE_MODE" "$n" "$t" "$D" "$total_cm"
+      else
+        run_dumbo_bgw_direct_case "$case_name" "$n" "$t" "$D" "$total_cm"
       fi
       pause_between_cases_if_needed "$run_idx" "${#selected_indices[@]}"
     done
@@ -459,8 +835,8 @@ case "$EXP_ID" in
   exp2)
     GATE_MODE="nonlinear"
     D=6
-    NS=(4 8 12 16)
-    TS=(1 2 3 5)
+    NS=("${EXP_SCALE_NS[@]}")
+    TS=("${EXP_SCALE_TS[@]}")
     selected_indices=()
     for idx in "${!NS[@]}"; do
       n="${NS[$idx]}"
@@ -482,8 +858,10 @@ case "$EXP_ID" in
       case_name="n${n}_t${t}_d${D}"
       if [[ "$PROTOCOL" == "admpc" ]]; then
         run_admpc_case "$case_name" "$GATE_MODE" "$n" "$t" "$D" "$total_cm"
-      else
+      elif [[ "$PROTOCOL" == "continuum" || "$PROTOCOL" == "bgw-aggtrans" ]]; then
         run_continuum_case "$case_name" "$GATE_MODE" "$n" "$t" "$D" "$total_cm"
+      else
+        run_dumbo_bgw_direct_case "$case_name" "$n" "$t" "$D" "$total_cm"
       fi
       pause_between_cases_if_needed "$run_idx" "${#selected_indices[@]}"
     done
@@ -494,18 +872,32 @@ case "$EXP_ID" in
     N=16
     T=5
     DS=(2 4 6 8 10)
-    for idx in "${!DS[@]}"; do
-      d="${DS[$idx]}"
+    selected_ds=()
+    for d in "${DS[@]}"; do
+      if [[ -n "$ONLY_D" && "$d" != "$ONLY_D" ]]; then
+        continue
+      fi
+      selected_ds+=("$d")
+    done
+    if [[ "${#selected_ds[@]}" -eq 0 ]]; then
+      echo "No exp3 cases selected with --only-d=${ONLY_D}. Supported d values: ${DS[*]}" >&2
+      exit 1
+    fi
+
+    for run_idx in "${!selected_ds[@]}"; do
+      d="${selected_ds[$run_idx]}"
       total_cm="$(total_cm_for_gate "$GATE_MODE" "$WIDTH" "$d")"
       case_name="n${N}_t${T}_d${d}"
       if [[ "$PROTOCOL" == "admpc" ]]; then
         run_admpc_case "$case_name" "$GATE_MODE" "$N" "$T" "$d" "$total_cm"
-      elif [[ "$PROTOCOL" == "continuum" ]]; then
+      elif [[ "$PROTOCOL" == "continuum" || "$PROTOCOL" == "bgw-aggtrans" ]]; then
         run_continuum_case "$case_name" "$GATE_MODE" "$N" "$T" "$d" "$total_cm"
+      elif [[ "$PROTOCOL" == "dumbo-bgw-direct" ]]; then
+        run_dumbo_bgw_direct_case "$case_name" "$N" "$T" "$d" "$total_cm"
       else
         run_dumbo_case "$case_name" "$N" "$T" "$d" "$total_cm" "full"
       fi
-      pause_between_cases_if_needed "$idx" "${#DS[@]}"
+      pause_between_cases_if_needed "$run_idx" "${#selected_ds[@]}"
     done
     ;;
 
@@ -519,8 +911,10 @@ case "$EXP_ID" in
 
     if [[ "$PROTOCOL" == "admpc" ]]; then
       run_admpc_case "$case_name" "$GATE_MODE" "$N" "$T" "$D" "$total_cm"
-    elif [[ "$PROTOCOL" == "continuum" ]]; then
+    elif [[ "$PROTOCOL" == "continuum" || "$PROTOCOL" == "bgw-aggtrans" ]]; then
       run_continuum_case "$case_name" "$GATE_MODE" "$N" "$T" "$D" "$total_cm"
+    elif [[ "$PROTOCOL" == "dumbo-bgw-direct" ]]; then
+      run_dumbo_bgw_direct_case "${case_name}_drop-epoch4" "$N" "$T" "$D" "$total_cm" "drop-epoch4"
     else
       run_dumbo_case "${case_name}_drop-epoch4" "$N" "$T" "$D" "$total_cm" "drop-epoch4"
     fi

@@ -53,9 +53,19 @@ for ID in $(seq 0 $((TOTAL_NODES - 1))); do
     PIDS+=($!) # Store process ID
 done
 
-# Start monitoring the logs for the 'Finished' keyword
-# echo "Starting to monitor log files for 'Finished' keyword..."
-./scripts/monitor_log.sh "$TOTAL_NODES" &  # Run monitor_log.sh in the background
+if [ -z "${FINISHED_PATTERN:-}" ]; then
+    case "${MODULE_PATH}" in
+        *admpc2_dynamic_shuffle*)
+            FINISHED_PATTERN="Shuffle Finished!"
+            ;;
+        *)
+            FINISHED_PATTERN="Finished"
+            ;;
+    esac
+fi
+
+# Start monitoring the logs for the finished marker.
+./scripts/monitor_log.sh "$TOTAL_NODES" "$FINISHED_PATTERN" &  # Run monitor_log.sh in the background
 
 # Wait for the log monitoring script to finish
 wait $!  # Wait for monitor_log.sh to finish before continuing

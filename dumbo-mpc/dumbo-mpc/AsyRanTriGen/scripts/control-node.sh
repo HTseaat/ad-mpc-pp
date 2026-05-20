@@ -39,6 +39,18 @@ case "$protocol" in
     admpc2-nonlinear)
         run_mod="scripts.admpc2_dynamic_nonlinear_run"
         ;;
+    admpc2-bgw-aggtrans)
+        run_mod="scripts.admpc2_dynamic_bgw_aggtrans_run"
+        ;;
+    admpc2-shuffle)
+        run_mod="scripts.admpc2_dynamic_shuffle_run"
+        ;;
+    admpc2-shuffle-bgw-static)
+        run_mod="scripts.admpc2_dynamic_shuffle_bgw_static_run"
+        ;;
+    admpc2-dumbo-shuffle-beaver)
+        run_mod="scripts.admpc2_dynamic_dumbo_shuffle_beaver_run"
+        ;;
     fluid1)
         run_mod="scripts.fluid_mpc_run_1"
         ;;
@@ -77,7 +89,13 @@ fi
 
 
 base_port=7000  # setting basic port, e.g. 7000
-delay_between_ssh_commands=0.1
+delay_between_ssh_commands="${CONTROL_NODE_SSH_DELAY:-0}"
+
+maybe_sleep_between_launches() {
+    if [ "$delay_between_ssh_commands" != "0" ] && [ "$delay_between_ssh_commands" != "0.0" ]; then
+        sleep "$delay_between_ssh_commands"
+    fi
+}
 
 if [ "$protocol" = "hbmpc" ] || [ "$protocol" = "hbmpc_attack" ]; then
     # Single loop for hbmpc: one container per node
@@ -98,6 +116,7 @@ if [ "$protocol" = "hbmpc" ] || [ "$protocol" = "hbmpc_attack" ]; then
                 exit 127; \
             fi" \
             > "logs/node${i}.log" 2>&1 &
+        maybe_sleep_between_launches
     done
 else
     # Two-layer loops for admpc and fluid
@@ -119,11 +138,35 @@ else
                 "set -e; cd ${REMOTE_ROOT}/dumbo-mpc; \
                 if command -v docker-compose >/dev/null 2>&1; then \
                     MPC_IMAGE='${MPC_IMAGE:-}' docker-compose run -p $external_port:$external_port \
+                    -e DISABLE_RLC=${DISABLE_RLC:-} \
+                    -e DISABLE_AGG_PROTO=${DISABLE_AGG_PROTO:-} \
+                    -e BGW_UNBATCHED_VERIFY=${BGW_UNBATCHED_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_ALL_VERIFY=${BGW_UNBATCHED_BATCH_ALL_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_SHARE_VERIFY=${BGW_UNBATCHED_BATCH_SHARE_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_HIDDEN_VERIFY=${BGW_UNBATCHED_BATCH_HIDDEN_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_ZERO_VERIFY=${BGW_UNBATCHED_BATCH_ZERO_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_PROD_VERIFY=${BGW_UNBATCHED_BATCH_PROD_VERIFY:-} \
+                    -e BGW_BATCH_UNBATCHED_PROD_VERIFY=${BGW_BATCH_UNBATCHED_PROD_VERIFY:-} \
+                    -e SHUFFLE_MODE=${SHUFFLE_MODE:-} \
+                    -e SHUFFLE_HANDOFF_INTERVAL=${SHUFFLE_HANDOFF_INTERVAL:-} \
+                    -e SHUFFLE_HANDOFF_GRACE_SECONDS=${SHUFFLE_HANDOFF_GRACE_SECONDS:-} \
                     -w /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen \
                     dumbo-mpc \
                     /opt/venv/continuum/bin/python3 -u -m $run_mod -d -f $json_dir/local.${file_num}.json --time $TIMEOUT; \
                 elif docker compose version >/dev/null 2>&1; then \
                     MPC_IMAGE='${MPC_IMAGE:-}' docker compose run -p $external_port:$external_port \
+                    -e DISABLE_RLC=${DISABLE_RLC:-} \
+                    -e DISABLE_AGG_PROTO=${DISABLE_AGG_PROTO:-} \
+                    -e BGW_UNBATCHED_VERIFY=${BGW_UNBATCHED_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_ALL_VERIFY=${BGW_UNBATCHED_BATCH_ALL_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_SHARE_VERIFY=${BGW_UNBATCHED_BATCH_SHARE_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_HIDDEN_VERIFY=${BGW_UNBATCHED_BATCH_HIDDEN_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_ZERO_VERIFY=${BGW_UNBATCHED_BATCH_ZERO_VERIFY:-} \
+                    -e BGW_UNBATCHED_BATCH_PROD_VERIFY=${BGW_UNBATCHED_BATCH_PROD_VERIFY:-} \
+                    -e BGW_BATCH_UNBATCHED_PROD_VERIFY=${BGW_BATCH_UNBATCHED_PROD_VERIFY:-} \
+                    -e SHUFFLE_MODE=${SHUFFLE_MODE:-} \
+                    -e SHUFFLE_HANDOFF_INTERVAL=${SHUFFLE_HANDOFF_INTERVAL:-} \
+                    -e SHUFFLE_HANDOFF_GRACE_SECONDS=${SHUFFLE_HANDOFF_GRACE_SECONDS:-} \
                     -w /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen \
                     dumbo-mpc \
                     /opt/venv/continuum/bin/python3 -u -m $run_mod -d -f $json_dir/local.${file_num}.json --time $TIMEOUT; \
@@ -132,6 +175,7 @@ else
                     exit 127; \
                 fi" \
                 > "logs/node${i}_cont${j}.log" 2>&1 &
+            maybe_sleep_between_launches
         done
     done
 fi

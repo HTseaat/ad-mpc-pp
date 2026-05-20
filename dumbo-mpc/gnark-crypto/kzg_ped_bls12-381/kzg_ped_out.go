@@ -27,9 +27,9 @@ import (
 // OpeningProofPub represents a public KZG evaluation proof where the
 // scalars f(i), f̂(i) have been hidden by exponentiating on g / h.
 type OpeningProofPub struct {
-	H       curve.G1Affine `json:"H"`       // witness w_i
-	GClaim  curve.G1Affine `json:"GClaim"`       // g^{f(i)}
-	HClaim  curve.G1Affine `json:"HClaim"`  // h^{f̂(i)}
+	H      curve.G1Affine `json:"H"`      // witness w_i
+	GClaim curve.G1Affine `json:"GClaim"` // g^{f(i)}
+	HClaim curve.G1Affine `json:"HClaim"` // h^{f̂(i)}
 }
 
 var testSRS *kzg_ped.SRS
@@ -54,46 +54,45 @@ func pyNewSRS(srsSize int) *C.char {
 	// return C.CString(string(outest))
 
 	size := ecc.NextPowerOfTwo(uint64(srsSize + 1))
-    // first seed → g‑chain
-    srsG, _ := kzg_ped.NewSRS(size, new(big.Int).SetInt64(42))
+	// first seed → g‑chain
+	srsG, _ := kzg_ped.NewSRS(size, new(big.Int).SetInt64(42))
 
 	// derive h_i = δ · g_i （δ 取任意≠0, ≠1 的常数，这里用 7）
-    delta := new(big.Int).SetInt64(7)
+	delta := new(big.Int).SetInt64(7)
 	for i := range srsG.Pk.G1_h {
 		srsG.Pk.G1_h[i].ScalarMultiplication(&srsG.Pk.G1_g[i], delta)
 	}
 	// Vk 链首保持同样关系
-    srsG.Vk.G1_h.ScalarMultiplication(&srsG.Vk.G1_g, delta)
+	srsG.Vk.G1_h.ScalarMultiplication(&srsG.Vk.G1_g, delta)
 
-    // // second seed → independent chain for h
-    // srsH, _ := kzg_ped.NewSRS(size, new(big.Int).SetInt64(137))
+	// // second seed → independent chain for h
+	// srsH, _ := kzg_ped.NewSRS(size, new(big.Int).SetInt64(137))
 
-    // // overwrite G1_h with the β‑chain shifted by 1
-    // // note: G1_g[0] == generator^0, identical for any seed,
-    // // so copy from index 1 to guarantee h ≠ g
-    // for i := range srsG.Pk.G1_h {
-    //     idx := (i + 1) % len(srsH.Pk.G1_g)
-    //     srsG.Pk.G1_h[i].Set(&srsH.Pk.G1_g[idx])
-    // }
-    // // Vk part: just take β‑chain[1] to avoid clash
-    // // srsG.Vk.G1_h.Set(&srsH.Vk.G1_g)
+	// // overwrite G1_h with the β‑chain shifted by 1
+	// // note: G1_g[0] == generator^0, identical for any seed,
+	// // so copy from index 1 to guarantee h ≠ g
+	// for i := range srsG.Pk.G1_h {
+	//     idx := (i + 1) % len(srsH.Pk.G1_g)
+	//     srsG.Pk.G1_h[i].Set(&srsH.Pk.G1_g[idx])
+	// }
+	// // Vk part: just take β‑chain[1] to avoid clash
+	// // srsG.Vk.G1_h.Set(&srsH.Vk.G1_g)
 
 	// // use β‑chain[1] so that Vk’s h matches Pk.G1_h[0]
 	// srsG.Vk.G1_h.Set(&srsH.Pk.G1_g[1])
 
 	// Debug: show g and h to verify they differ
-    fmt.Println("pyNewSRS g =", srsG.Pk.G1_g[0])
-    fmt.Println("pyNewSRS Pk.G1_h =", srsG.Pk.G1_h[0])
+	fmt.Println("pyNewSRS g =", srsG.Pk.G1_g[0])
+	fmt.Println("pyNewSRS Pk.G1_h =", srsG.Pk.G1_h[0])
 	fmt.Println("pyNewSRS Vk.G1_h =", srsG.Vk.G1_h)
-    fmt.Println("pyNewSRS g and h Equal?", srsG.Pk.G1_g[0].Equal(&srsG.Pk.G1_h[0]))
+	fmt.Println("pyNewSRS g and h Equal?", srsG.Pk.G1_g[0].Equal(&srsG.Pk.G1_h[0]))
 	fmt.Println("pyNewSRS Pk.G1_h and Vk.G1_h Equal?", srsG.Pk.G1_h[0].Equal(&srsG.Vk.G1_h))
 
+	// cache for self‑test if needed
+	testSRS = srsG
 
-    // cache for self‑test if needed
-    testSRS = srsG
-
-    out, _ := json.Marshal(srsG)
-    return C.CString(string(out))
+	out, _ := json.Marshal(srsG)
+	return C.CString(string(out))
 }
 
 func KeyGenPerparty(g curve.G1Affine, n int) ([]curve.G1Affine, []byte) {
@@ -336,7 +335,7 @@ func pyCommit(json_SRS_Pk *C.char, json_secret *C.char, t int) *C.char {
 	return C.CString(string(jsonResult))
 }
 
-func samplePolyPair(secret_f []fr.Element, secret_aux []fr.Element, batch_size int, t int) ([][]fr.Element, [][]fr.Element) {	
+func samplePolyPair(secret_f []fr.Element, secret_aux []fr.Element, batch_size int, t int) ([][]fr.Element, [][]fr.Element) {
 	// Generate random polynomials and auxiliary polynomials
 	polynomialList := make([][]fr.Element, 0)
 	polynomialList_aux := make([][]fr.Element, 0)
@@ -416,81 +415,194 @@ func pyPedersenCombine(json_gp *C.char, json_hr *C.char) *C.char {
 
 //export pyCircuitAdd
 func pyCircuitAdd(jsonLeft *C.char, jsonRight *C.char) *C.char {
-    // Define input structure matching Python add_inputs format
-    type proofElem struct {
-        H              curve.G1Affine `json:"H"`
-        ClaimedValue   string          `json:"ClaimedValue"`
-        ClaimedValueAux string         `json:"ClaimedValueAux"`
-    }
-    type addInputs struct {
-        Commitment []curve.G1Affine `json:"commitment"`
-        Proof      []proofElem      `json:"proof"`
-    }
+	// Define input structure matching Python add_inputs format
+	type proofElem struct {
+		H               curve.G1Affine `json:"H"`
+		ClaimedValue    string         `json:"ClaimedValue"`
+		ClaimedValueAux string         `json:"ClaimedValueAux"`
+	}
+	type addInputs struct {
+		Commitment []curve.G1Affine `json:"commitment"`
+		Proof      []proofElem      `json:"proof"`
+	}
 
-    // Unmarshal left and right JSON into Go structs
-    var left addInputs
-    if err := json.Unmarshal([]byte(C.GoString(jsonLeft)), &left); err != nil {
-        return C.CString(`{"error":"invalid left inputs"}`)
-    }
-    var right addInputs
-    if err := json.Unmarshal([]byte(C.GoString(jsonRight)), &right); err != nil {
-        return C.CString(`{"error":"invalid right inputs"}`)
-    }
-    // Validate lengths
-    if len(left.Commitment) != len(right.Commitment) || len(left.Proof) != len(right.Proof) {
-        return C.CString(`{"error":"length mismatch"}`)
-    }
+	// Unmarshal left and right JSON into Go structs
+	var left addInputs
+	if err := json.Unmarshal([]byte(C.GoString(jsonLeft)), &left); err != nil {
+		return C.CString(`{"error":"invalid left inputs"}`)
+	}
+	var right addInputs
+	if err := json.Unmarshal([]byte(C.GoString(jsonRight)), &right); err != nil {
+		return C.CString(`{"error":"invalid right inputs"}`)
+	}
+	// Validate lengths
+	if len(left.Commitment) != len(right.Commitment) || len(left.Proof) != len(right.Proof) {
+		return C.CString(`{"error":"length mismatch"}`)
+	}
 
-    // Prepare result struct
-    var result addInputs
-    n := len(left.Commitment)
-    result.Commitment = make([]curve.G1Affine, n)
-    result.Proof = make([]proofElem, n)
+	// Prepare result struct
+	var result addInputs
+	n := len(left.Commitment)
+	result.Commitment = make([]curve.G1Affine, n)
+	result.Proof = make([]proofElem, n)
 
-    // Combine commitments and proof elements
-    for i := 0; i < n; i++ {
-        // Add commitments
-        var sumCommit curve.G1Affine
-        sumCommit.Add(&left.Commitment[i], &right.Commitment[i])
-        result.Commitment[i] = sumCommit
+	// Combine commitments and proof elements
+	for i := 0; i < n; i++ {
+		// Add commitments
+		var sumCommit curve.G1Affine
+		sumCommit.Add(&left.Commitment[i], &right.Commitment[i])
+		result.Commitment[i] = sumCommit
 
-        // Add proof.H (witness)
-        var sumH curve.G1Affine
-        sumH.Add(&left.Proof[i].H, &right.Proof[i].H)
-        // Parse and add ClaimedValue
-        a, ok := new(big.Int).SetString(left.Proof[i].ClaimedValue, 10)
-        if !ok {
-            return C.CString(`{"error":"invalid left ClaimedValue"}`)
-        }
-        b, ok := new(big.Int).SetString(right.Proof[i].ClaimedValue, 10)
-        if !ok {
-            return C.CString(`{"error":"invalid right ClaimedValue"}`)
-        }
-        sumA := new(big.Int).Add(a, b)
-        // Parse and add ClaimedValueAux
-        aAux, ok := new(big.Int).SetString(left.Proof[i].ClaimedValueAux, 10)
-        if !ok {
-            return C.CString(`{"error":"invalid left ClaimedValueAux"}`)
-        }
-        bAux, ok := new(big.Int).SetString(right.Proof[i].ClaimedValueAux, 10)
-        if !ok {
-            return C.CString(`{"error":"invalid right ClaimedValueAux"}`)
-        }
-        sumAux := new(big.Int).Add(aAux, bAux)
+		// Add proof.H (witness)
+		var sumH curve.G1Affine
+		sumH.Add(&left.Proof[i].H, &right.Proof[i].H)
+		// Parse and add ClaimedValue
+		a, ok := new(big.Int).SetString(left.Proof[i].ClaimedValue, 10)
+		if !ok {
+			return C.CString(`{"error":"invalid left ClaimedValue"}`)
+		}
+		b, ok := new(big.Int).SetString(right.Proof[i].ClaimedValue, 10)
+		if !ok {
+			return C.CString(`{"error":"invalid right ClaimedValue"}`)
+		}
+		sumA := new(big.Int).Add(a, b)
+		// Parse and add ClaimedValueAux
+		aAux, ok := new(big.Int).SetString(left.Proof[i].ClaimedValueAux, 10)
+		if !ok {
+			return C.CString(`{"error":"invalid left ClaimedValueAux"}`)
+		}
+		bAux, ok := new(big.Int).SetString(right.Proof[i].ClaimedValueAux, 10)
+		if !ok {
+			return C.CString(`{"error":"invalid right ClaimedValueAux"}`)
+		}
+		sumAux := new(big.Int).Add(aAux, bAux)
 
-        result.Proof[i] = proofElem{
-            H:               sumH,
-            ClaimedValue:    sumA.String(),
-            ClaimedValueAux: sumAux.String(),
-        }
-    }
+		result.Proof[i] = proofElem{
+			H:               sumH,
+			ClaimedValue:    sumA.String(),
+			ClaimedValueAux: sumAux.String(),
+		}
+	}
 
-    // Marshal result to JSON and return
-    outBytes, err := json.Marshal(result)
-    if err != nil {
-        return C.CString(`{"error":"marshal failure"}`)
-    }
-    return C.CString(string(outBytes))
+	// Marshal result to JSON and return
+	outBytes, err := json.Marshal(result)
+	if err != nil {
+		return C.CString(`{"error":"marshal failure"}`)
+	}
+	return C.CString(string(outBytes))
+}
+
+//export pyCircuitLinearComb
+func pyCircuitLinearComb(jsonInputs *C.char, jsonCoeffs *C.char) *C.char {
+	type proofElem struct {
+		H               curve.G1Affine `json:"H"`
+		ClaimedValue    string         `json:"ClaimedValue"`
+		ClaimedValueAux string         `json:"ClaimedValueAux"`
+	}
+	type circuitValues struct {
+		Commitment []curve.G1Affine `json:"commitment"`
+		Proof      []proofElem      `json:"proof"`
+	}
+	type linearInputs struct {
+		Terms []circuitValues `json:"terms"`
+	}
+
+	var inputs linearInputs
+	if err := json.Unmarshal([]byte(C.GoString(jsonInputs)), &inputs); err != nil {
+		return C.CString(`{"error":"invalid linear-combination inputs"}`)
+	}
+
+	var coeffStrings []string
+	if err := json.Unmarshal([]byte(C.GoString(jsonCoeffs)), &coeffStrings); err != nil {
+		return C.CString(`{"error":"invalid linear-combination coeffs"}`)
+	}
+
+	if len(inputs.Terms) == 0 {
+		return C.CString(`{"error":"empty linear-combination terms"}`)
+	}
+	if len(inputs.Terms) != len(coeffStrings) {
+		return C.CString(`{"error":"terms/coeffs length mismatch"}`)
+	}
+
+	width := len(inputs.Terms[0].Commitment)
+	if width != len(inputs.Terms[0].Proof) {
+		return C.CString(`{"error":"commitment/proof length mismatch"}`)
+	}
+	for i := 1; i < len(inputs.Terms); i++ {
+		if len(inputs.Terms[i].Commitment) != width || len(inputs.Terms[i].Proof) != width {
+			return C.CString(`{"error":"term width mismatch"}`)
+		}
+	}
+
+	modulus := fr.Modulus()
+	coeffs := make([]big.Int, len(coeffStrings))
+	for i, coeffString := range coeffStrings {
+		coeff, ok := new(big.Int).SetString(coeffString, 10)
+		if !ok {
+			return C.CString(`{"error":"invalid coefficient"}`)
+		}
+		coeff.Mod(coeff, modulus)
+		if coeff.Sign() < 0 {
+			coeff.Add(coeff, modulus)
+		}
+		coeffs[i].Set(coeff)
+	}
+
+	var result circuitValues
+	result.Commitment = make([]curve.G1Affine, width)
+	result.Proof = make([]proofElem, width)
+
+	for j := 0; j < width; j++ {
+		var commitSum curve.G1Affine
+		var hSum curve.G1Affine
+		valueSum := new(big.Int).SetInt64(0)
+		auxSum := new(big.Int).SetInt64(0)
+
+		for i, term := range inputs.Terms {
+			var scaledCommit curve.G1Affine
+			scaledCommit.ScalarMultiplication(&term.Commitment[j], &coeffs[i])
+			commitSum.Add(&commitSum, &scaledCommit)
+
+			var scaledH curve.G1Affine
+			scaledH.ScalarMultiplication(&term.Proof[j].H, &coeffs[i])
+			hSum.Add(&hSum, &scaledH)
+
+			value, ok := new(big.Int).SetString(term.Proof[j].ClaimedValue, 10)
+			if !ok {
+				return C.CString(`{"error":"invalid ClaimedValue"}`)
+			}
+			aux, ok := new(big.Int).SetString(term.Proof[j].ClaimedValueAux, 10)
+			if !ok {
+				return C.CString(`{"error":"invalid ClaimedValueAux"}`)
+			}
+
+			value.Mod(value, modulus)
+			aux.Mod(aux, modulus)
+
+			scaledValue := new(big.Int).Mul(value, &coeffs[i])
+			scaledValue.Mod(scaledValue, modulus)
+			valueSum.Add(valueSum, scaledValue)
+			valueSum.Mod(valueSum, modulus)
+
+			scaledAux := new(big.Int).Mul(aux, &coeffs[i])
+			scaledAux.Mod(scaledAux, modulus)
+			auxSum.Add(auxSum, scaledAux)
+			auxSum.Mod(auxSum, modulus)
+		}
+
+		result.Commitment[j] = commitSum
+		result.Proof[j] = proofElem{
+			H:               hSum,
+			ClaimedValue:    valueSum.String(),
+			ClaimedValueAux: auxSum.String(),
+		}
+	}
+
+	outBytes, err := json.Marshal(result)
+	if err != nil {
+		return C.CString(`{"error":"marshal failure"}`)
+	}
+	return C.CString(string(outBytes))
 }
 
 //export pyCommitWithZeroFull
@@ -507,7 +619,6 @@ func pyCommitWithZeroFull(json_SRS_Pk *C.char, json_secret *C.char, json_secret_
 
 	var secret_aux []fr.Element
 	_ = json.Unmarshal([]byte(C.GoString(json_secret_aux)), &secret_aux)
-
 
 	batch_size := len(secret_f)
 
@@ -645,7 +756,6 @@ func pyComputeShareGH(json_SRS_Pk *C.char, json_prooflist_left *C.char, json_pro
 	return C.CString(string(jsonResult))
 }
 
-
 // func Batchopen(f [][]fr.Element, f_aux [][]fr.Element, n int, pk kzg_ped.ProvingKey) [][]kzg_ped.OpeningProof {
 // 	// Compute batch opening proofs for the polynomials
 // 	res := make([][]kzg_ped.OpeningProof, n)
@@ -692,26 +802,26 @@ func pyComputeShareGH(json_SRS_Pk *C.char, json_prooflist_left *C.char, json_pro
 
 // new version of Batchopen
 func Batchopen(f [][]fr.Element, f_aux [][]fr.Element, n int, pk kzg_ped.ProvingKey) [][]kzg_ped.OpeningProof {
-    // 始终为每个 (j, idx) 组合重新生成完整的 opening proof，无特殊分支
-    res := make([][]kzg_ped.OpeningProof, n)
-    var wg sync.WaitGroup
+	// 始终为每个 (j, idx) 组合重新生成完整的 opening proof，无特殊分支
+	res := make([][]kzg_ped.OpeningProof, n)
+	var wg sync.WaitGroup
 
-    for j := 0; j < n; j++ {
-        wg.Add(1)
-        go func(j int) {
-            defer wg.Done()
-            res[j] = make([]kzg_ped.OpeningProof, len(f))
-            var point fr.Element
-            point.SetInt64(int64(j + 1)) // 评估点 x = j+1
+	for j := 0; j < n; j++ {
+		wg.Add(1)
+		go func(j int) {
+			defer wg.Done()
+			res[j] = make([]kzg_ped.OpeningProof, len(f))
+			var point fr.Element
+			point.SetInt64(int64(j + 1)) // 评估点 x = j+1
 
-            for idx := 0; idx < len(f); idx++ {
-                // 对多项式 f[idx] 和辅助 f_aux[idx] 在 point 处做 KZG 开证明
-                res[j][idx], _ = kzg_ped.Open(f[idx], f_aux[idx], point, pk)
-            }
-        }(j)
-    }
-    wg.Wait()
-    return res
+			for idx := 0; idx < len(f); idx++ {
+				// 对多项式 f[idx] 和辅助 f_aux[idx] 在 point 处做 KZG 开证明
+				res[j][idx], _ = kzg_ped.Open(f[idx], f_aux[idx], point, pk)
+			}
+		}(j)
+	}
+	wg.Wait()
+	return res
 }
 
 //export pyBatchVerify
@@ -730,8 +840,26 @@ func pyBatchVerify(json_SRS_Vk *C.char, json_commitmentlist *C.char, json_proofl
 	var point fr.Element
 	point.SetInt64(int64(i + 1))
 
-	// Perform batch verification
+	// Private proofs always use RLC batch verification regardless of DISABLE_RLC.
+	// DISABLE_RLC only controls the public-proof path (pyBatchVerifyPub).
 	return BatchVerify(commitmentList, prooflist, point, Vk)
+}
+
+//export pyBatchVerifyUnbatched
+func pyBatchVerifyUnbatched(json_SRS_Vk *C.char, json_commitmentlist *C.char, json_prooflist *C.char, i int) bool {
+	var Vk kzg_ped.VerifyingKey
+	_ = json.Unmarshal([]byte(C.GoString(json_SRS_Vk)), &Vk)
+
+	var commitmentList []kzg_ped.Digest
+	_ = json.Unmarshal([]byte(C.GoString(json_commitmentlist)), &commitmentList)
+
+	var prooflist []kzg_ped.OpeningProof
+	_ = json.Unmarshal([]byte(C.GoString(json_prooflist)), &prooflist)
+
+	var point fr.Element
+	point.SetInt64(int64(i + 1))
+
+	return BatchVerifyTest(commitmentList, prooflist, point, Vk)
 }
 
 // ------------------------------------------------------------
@@ -769,61 +897,61 @@ func pyBatchVerify(json_SRS_Vk *C.char, json_commitmentlist *C.char, json_proofl
 
 //export pyBatchVerifyPub
 func pyBatchVerifyPub(json_SRS_Vk *C.char,
-                      json_commitmentlist *C.char,
-                      json_proofAtZero *C.char,
-                      json_shareG *C.char,
-                      json_shareH *C.char,
-                      i int) bool {
+	json_commitmentlist *C.char,
+	json_proofAtZero *C.char,
+	json_shareG *C.char,
+	json_shareH *C.char,
+	i int) bool {
 
-    // 1) Verifying key
-    var Vk kzg_ped.VerifyingKey
-    _ = json.Unmarshal([]byte(C.GoString(json_SRS_Vk)), &Vk)
+	// 1) Verifying key
+	var Vk kzg_ped.VerifyingKey
+	_ = json.Unmarshal([]byte(C.GoString(json_SRS_Vk)), &Vk)
 
-    // 2) Commitments
-    var comList []kzg_ped.Digest
-    _ = json.Unmarshal([]byte(C.GoString(json_commitmentlist)), &comList)
+	// 2) Commitments
+	var comList []kzg_ped.Digest
+	_ = json.Unmarshal([]byte(C.GoString(json_commitmentlist)), &comList)
 
-    // 3‑a) Proof‑at‑zero: contains only the witness H elements
-    type hOnly struct {
-        H curve.G1Affine `json:"H"`
-    }
-    var p0 []hOnly
-    _ = json.Unmarshal([]byte(C.GoString(json_proofAtZero)), &p0)
+	// 3‑a) Proof‑at‑zero: contains only the witness H elements
+	type hOnly struct {
+		H curve.G1Affine `json:"H"`
+	}
+	var p0 []hOnly
+	_ = json.Unmarshal([]byte(C.GoString(json_proofAtZero)), &p0)
 
-    // 3‑b) g^{f(0)} claims
-    var shareG []curve.G1Affine
-    _ = json.Unmarshal([]byte(C.GoString(json_shareG)), &shareG)
+	// 3‑b) g^{f(0)} claims
+	var shareG []curve.G1Affine
+	_ = json.Unmarshal([]byte(C.GoString(json_shareG)), &shareG)
 
-    // 3‑c) h^{f̂(0)} claims
-    var shareH []curve.G1Affine
-    _ = json.Unmarshal([]byte(C.GoString(json_shareH)), &shareH)
+	// 3‑c) h^{f̂(0)} claims
+	var shareH []curve.G1Affine
+	_ = json.Unmarshal([]byte(C.GoString(json_shareH)), &shareH)
 
-    // Sanity‑check equal lengths
-    if len(p0) != len(shareG) || len(shareG) != len(shareH) || len(comList) != len(p0) {
-        return false
-    }
+	// Sanity‑check equal lengths
+	if len(p0) != len(shareG) || len(shareG) != len(shareH) || len(comList) != len(p0) {
+		return false
+	}
 
-    // Re‑assemble OpeningProofPub slice
-    proofList := make([]OpeningProofPub, len(p0))
-    for idx := range p0 {
-        proofList[idx] = OpeningProofPub{
-            H:      p0[idx].H,
-            GClaim: shareG[idx],
-            HClaim: shareH[idx],
-        }
-    }
+	// Re‑assemble OpeningProofPub slice
+	proofList := make([]OpeningProofPub, len(p0))
+	for idx := range p0 {
+		proofList[idx] = OpeningProofPub{
+			H:      p0[idx].H,
+			GClaim: shareG[idx],
+			HClaim: shareH[idx],
+		}
+	}
 
-
-    // 4) evaluation point x = i+1
-    var point fr.Element
-    point.SetInt64(int64(i + 1))
+	// 4) evaluation point x = i+1
+	var point fr.Element
+	point.SetInt64(int64(i + 1))
 	// point.SetInt64(int64(0))
 
-    // Verification (one‑by‑one test variant)
+	// Verification (one‑by‑one test variant)
+	if os.Getenv("DISABLE_RLC") == "1" {
+		return BatchVerifyPubTest(comList, proofList, point, Vk)
+	}
 	return BatchVerifyPub(comList, proofList, point, Vk)
-    // return BatchVerifyPubTest(comList, proofList, point, Vk)
 }
-
 
 // aggregates commitments and proofs using a bunch of random element for batch verification.
 func randomCombine(commitment []kzg_ped.Digest, proof []kzg_ped.OpeningProof) (kzg_ped.Digest, kzg_ped.OpeningProof) {
@@ -860,6 +988,34 @@ func BatchVerify(commitment []kzg_ped.Digest, proof []kzg_ped.OpeningProof, poin
 	return kzg_ped.Verify(&Aggcom, &Aggproofs, point, vk)
 }
 
+// BatchVerifyTest is a test variant of BatchVerify that verifies each (commitment, proof)
+// pair one-by-one using kzg_ped.Verify without the random linear combination.
+// Used for the (A1, B0) ablation: no RLC batch verification.
+func BatchVerifyTest(commitment []kzg_ped.Digest, proof []kzg_ped.OpeningProof, point fr.Element, vk kzg_ped.VerifyingKey) bool {
+	if len(commitment) != len(proof) {
+		return false
+	}
+	for i := range commitment {
+		if !kzg_ped.Verify(&commitment[i], &proof[i], point, vk) {
+			return false
+		}
+	}
+	return true
+}
+
+func openAllSequential(f [][]fr.Element, f_aux [][]fr.Element, n int, pk kzg_ped.ProvingKey) [][]kzg_ped.OpeningProof {
+	res := make([][]kzg_ped.OpeningProof, n)
+	for j := 0; j < n; j++ {
+		res[j] = make([]kzg_ped.OpeningProof, len(f))
+		var point fr.Element
+		point.SetInt64(int64(j + 1))
+		for idx := 0; idx < len(f); idx++ {
+			res[j][idx], _ = kzg_ped.Open(f[idx], f_aux[idx], point, pk)
+		}
+	}
+	return res
+}
+
 // randomCombinePub aggregates commitments + public proofs with random r_i.
 func randomCombinePub(commitment []kzg_ped.Digest,
 	proof []OpeningProofPub) (kzg_ped.Digest, OpeningProofPub) {
@@ -880,9 +1036,9 @@ func randomCombinePub(commitment []kzg_ped.Digest,
 
 	var aggC, aggW, aggG, aggH curve.G1Affine
 	aggC.MultiExp(commitment, r, ecc.MultiExpConfig{})
-	aggW.MultiExp(wArr,       r, ecc.MultiExpConfig{})
-	aggG.MultiExp(gArr,       r, ecc.MultiExpConfig{})
-	aggH.MultiExp(hArr,       r, ecc.MultiExpConfig{})
+	aggW.MultiExp(wArr, r, ecc.MultiExpConfig{})
+	aggG.MultiExp(gArr, r, ecc.MultiExpConfig{})
+	aggH.MultiExp(hArr, r, ecc.MultiExpConfig{})
 
 	return aggC, OpeningProofPub{
 		H:      aggW,
@@ -988,7 +1144,7 @@ func VMmatrixGen(t int) *C.char {
 	for i := 0; i < dim_row; i++ {
 		vm_matrix[i] = make([]fr.Element, dim_col)
 		var temp fr.Element
-		temp.SetInt64(int64(i+1))
+		temp.SetInt64(int64(i + 1))
 		for j := 0; j < dim_col; j++ {
 			ExponentElement := new(big.Int).SetInt64(int64(j))
 			vm_matrix[i][j].Exp(temp, ExponentElement) // Compute temp^j
@@ -1289,6 +1445,63 @@ func HiddenEvalcompute(srs_pk kzg_ped.ProvingKey, prooflist []kzg_ped.OpeningPro
 	return ZkProof_ab, ZkProof_c, prodproofs
 }
 
+func pedersenPoint(g curve.G1Affine, h curve.G1Affine, value fr.Element, aux fr.Element) curve.G1Affine {
+	var valueBig, auxBig big.Int
+	value.BigInt(&valueBig)
+	aux.BigInt(&auxBig)
+
+	var gValue, hAux, out curve.G1Affine
+	gValue.ScalarMultiplication(&g, &valueBig)
+	hAux.ScalarMultiplication(&h, &auxBig)
+	out.Add(&gValue, &hAux)
+	return out
+}
+
+func HiddenEvalcomputeUnbatched(srs_pk kzg_ped.ProvingKey, prooflist []kzg_ped.OpeningProof,
+	c_zero_proof []kzg_ped.OpeningProof, ab_com []kzg_ped.Digest, c_com []kzg_ped.Digest,
+	my_id int) ([]curve.G1Affine, []curve.G1Affine, []kzg_ped.ProdProof) {
+	batchsize := len(prooflist)
+	halfbatchsize := batchsize / 2
+
+	if batchsize != len(ab_com) || halfbatchsize != len(c_zero_proof) || halfbatchsize != len(c_com) {
+		fmt.Println("The BGW unbatched proof input lengths are inconsistent")
+	}
+
+	g := srs_pk.G1_g[0]
+	h := srs_pk.G1_h[0]
+
+	eval := make([]fr.Element, batchsize)
+	evalAux := make([]fr.Element, batchsize)
+	zkProofAB := make([]curve.G1Affine, 2*batchsize)
+	for i := 0; i < batchsize; i++ {
+		eval[i].Set(&prooflist[i].ClaimedValue)
+		evalAux[i].Set(&prooflist[i].ClaimedValueAux)
+		zkProofAB[i] = pedersenPoint(g, h, eval[i], evalAux[i])
+		zkProofAB[batchsize+i].Set(&prooflist[i].H)
+	}
+
+	evalC := make([]fr.Element, halfbatchsize)
+	evalAuxC := make([]fr.Element, halfbatchsize)
+	zkProofCZero := make([]curve.G1Affine, 2*halfbatchsize)
+	for i := 0; i < halfbatchsize; i++ {
+		evalC[i].Set(&c_zero_proof[i].ClaimedValue)
+		evalAuxC[i].Set(&c_zero_proof[i].ClaimedValueAux)
+		zkProofCZero[i] = pedersenPoint(g, h, evalC[i], evalAuxC[i])
+		zkProofCZero[halfbatchsize+i].Set(&c_zero_proof[i].H)
+	}
+
+	prodproofs := make([]kzg_ped.ProdProof, halfbatchsize)
+	for i := 0; i < halfbatchsize; i++ {
+		prodproofs[i] = kzg_ped.Prodproof(
+			srs_pk,
+			eval[i], evalAux[i], eval[i+halfbatchsize], evalAux[i+halfbatchsize],
+			evalC[i], evalAuxC[i], zkProofAB[i], zkProofAB[i+halfbatchsize], zkProofCZero[i],
+		)
+	}
+
+	return zkProofAB, zkProofCZero, prodproofs
+}
+
 //export pyParseRandom
 func pyParseRandom(json_SRS_Pk *C.char, json_commitmentlist *C.char, json_prooflist *C.char, t int, my_id int) *C.char {
 	// Unmarshal input data from JSON to Go structures
@@ -1347,13 +1560,66 @@ func pyParseRandom(json_SRS_Pk *C.char, json_commitmentlist *C.char, json_proofl
 	json_prodProofs, _ := json.Marshal(prodProofs)
 	log.Println("prodProofs size = ", len(json_prodProofs))
 	log.Println("prodProofs count = ", len(prodProofs))
-	
 
 	jsonResult := "{\"commitments_c\":" + string(json_c_commitments) +
 		",\"proofs_c\":" + string(json_c_proofs) +
 		",\"zkProof_ab\":" + string(json_zkProof_ab) +
 		",\"zkProof_c_zero\":" + string(json_zkProof_c_0) +
 		",\"prodProofs\":" + string(json_prodProofs) + "}"
+
+	return C.CString(jsonResult)
+}
+
+//export pyParseRandomUnbatched
+func pyParseRandomUnbatched(json_SRS_Pk *C.char, json_commitmentlist *C.char, json_prooflist *C.char, t int, my_id int) *C.char {
+	var SRS_pk kzg_ped.ProvingKey
+	_ = json.Unmarshal([]byte(C.GoString(json_SRS_Pk)), &SRS_pk)
+
+	var commitmentList []kzg_ped.Digest
+	if err := json.Unmarshal([]byte(C.GoString(json_commitmentlist)), &commitmentList); err != nil || len(commitmentList) == 0 {
+		fmt.Println("Error: json_commitmentlist is null or empty")
+		return C.CString(`{"error": "json_commitmentlist is null or empty"}`)
+	}
+
+	var prooflist []kzg_ped.OpeningProof
+	if err := json.Unmarshal([]byte(C.GoString(json_prooflist)), &prooflist); err != nil || len(prooflist) == 0 {
+		fmt.Println("Error: json_prooflist is null or empty")
+		return C.CString(`{"error": "json_prooflist is null or empty"}`)
+	}
+
+	batchsize := len(commitmentList) / 2
+
+	secretC := make([]fr.Element, batchsize)
+	for i := 0; i < batchsize; i++ {
+		secretC[i].Mul(&prooflist[i].ClaimedValue, &prooflist[i+batchsize].ClaimedValue)
+	}
+
+	polynomialList, polynomialListAux := samplepolynomial(secretC, batchsize, t)
+
+	cCommitments := make([]kzg_ped.Digest, batchsize)
+	cZeroProof := make([]kzg_ped.OpeningProof, batchsize)
+	for i := 0; i < batchsize; i++ {
+		cCommitments[i], _ = kzg_ped.Commit(polynomialList[i], polynomialListAux[i], SRS_pk)
+		cZeroProof[i], _ = kzg_ped.OpenZero(polynomialList[i], polynomialListAux[i], SRS_pk)
+	}
+
+	n := resolveN(t)
+	cProofs := openAllSequential(polynomialList, polynomialListAux, n, SRS_pk)
+	zkProofAB, zkProofCZero, prodProofs := HiddenEvalcomputeUnbatched(SRS_pk, prooflist, cZeroProof, commitmentList, cCommitments, my_id)
+
+	jsonCCommitments, _ := json.Marshal(cCommitments)
+	jsonCProofs, _ := json.Marshal(cProofs)
+	jsonZkProofAB, _ := json.Marshal(zkProofAB)
+	jsonZkProofCZero, _ := json.Marshal(zkProofCZero)
+	jsonProdProofs, _ := json.Marshal(prodProofs)
+	log.Println("unbatched prodProofs size = ", len(jsonProdProofs))
+	log.Println("unbatched prodProofs count = ", len(prodProofs))
+
+	jsonResult := "{\"commitments_c\":" + string(jsonCCommitments) +
+		",\"proofs_c\":" + string(jsonCProofs) +
+		",\"zkProof_ab\":" + string(jsonZkProofAB) +
+		",\"zkProof_c_zero\":" + string(jsonZkProofCZero) +
+		",\"prodProofs\":" + string(jsonProdProofs) + "}"
 
 	return C.CString(jsonResult)
 }
@@ -1381,8 +1647,8 @@ func pyDeriveChallenge(json_commitment *C.char) *C.char {
 // challenge γ ∈ 𝔽.  It corresponds to line 106 of Algorithm 2 in the paper.
 func deterministicCombine(
 	commitments []kzg_ped.Digest,
-	proofs      []kzg_ped.OpeningProof,
-	gamma       fr.Element,
+	proofs []kzg_ped.OpeningProof,
+	gamma fr.Element,
 ) (kzg_ped.Digest, kzg_ped.OpeningProof) {
 
 	if len(commitments) != len(proofs) {
@@ -1399,22 +1665,22 @@ func deterministicCombine(
 
 	// --- aggregate commitment and witness H with multi‑exp ---
 	var aggCom curve.G1Affine
-	var aggW   curve.G1Affine
+	var aggW curve.G1Affine
 	wArr := make([]curve.G1Affine, B)
 	for i := 0; i < B; i++ {
 		wArr[i].Set(&proofs[i].H)
 	}
 	aggCom.MultiExp(commitments, coeff, ecc.MultiExpConfig{})
-	aggW.  MultiExp(wArr,        coeff, ecc.MultiExpConfig{})
+	aggW.MultiExp(wArr, coeff, ecc.MultiExpConfig{})
 
 	// --- aggregate claimed values scalarly ---
-	valArr     := make([]fr.Element, B)
-	valAuxArr  := make([]fr.Element, B)
+	valArr := make([]fr.Element, B)
+	valAuxArr := make([]fr.Element, B)
 	for i := 0; i < B; i++ {
-		valArr[i]    .Set(&proofs[i].ClaimedValue)
-		valAuxArr[i] .Set(&proofs[i].ClaimedValueAux)
+		valArr[i].Set(&proofs[i].ClaimedValue)
+		valAuxArr[i].Set(&proofs[i].ClaimedValueAux)
 	}
-	aggVal    := DotProductfrElement(valArr,    coeff)
+	aggVal := DotProductfrElement(valArr, coeff)
 	aggValAux := DotProductfrElement(valAuxArr, coeff)
 
 	// build aggregated proof
@@ -1428,11 +1694,13 @@ func deterministicCombine(
 
 // aggregateWitnessAtZero aggregates the *witnesses at x = 0* (only the H part)
 // using γ⁰, γ¹, … γ^{B‑1}.   It realises
-//    W_agg = ∏_{i=1}^{B} (w_{i,0})^{γ^{i-1}}
+//
+//	W_agg = ∏_{i=1}^{B} (w_{i,0})^{γ^{i-1}}
+//
 // where the product is expressed in additive form on G1.
 func aggregateWitnessAtZero(
 	proofs []kzg_ped.OpeningProof,
-	gamma  fr.Element,
+	gamma fr.Element,
 ) curve.G1Affine {
 	B := len(proofs)
 	if B == 0 {
@@ -1463,12 +1731,13 @@ func aggregateWitnessAtZero(
 // γ‑powers and then runs a single pairing check analogously to Verify.
 //
 // Inputs:
-//   vk            — the public verifying key (contains G2 generator & h2Gen)
-//   commitments   — slice of commitments C_0 … C_{B-1}
-//   pointIdx      — the evaluation point (0 for constant term, otherwise dealer index+1)
-//   gClaim, hClaim— aggregated group elements g^{v} and h^{v_aux}
-//   aggW          — aggregated witness  W_agg  = Σ γ^{i} · H_i
-//   gamma         — the challenge γ used in deterministic aggregation
+//
+//	vk            — the public verifying key (contains G2 generator & h2Gen)
+//	commitments   — slice of commitments C_0 … C_{B-1}
+//	pointIdx      — the evaluation point (0 for constant term, otherwise dealer index+1)
+//	gClaim, hClaim— aggregated group elements g^{v} and h^{v_aux}
+//	aggW          — aggregated witness  W_agg  = Σ γ^{i} · H_i
+//	gamma         — the challenge γ used in deterministic aggregation
 //
 // Returns true iff the aggregated proof is valid.
 func PubAggVerifyEval(
@@ -1528,10 +1797,11 @@ func PubAggVerifyEval(
 	return ok
 }
 
-//export pyAggProveEvalZero
 // pyAggProveEvalZero(json_proofs, json_gamma) → {"aggH": {...}}
+//
+//export pyAggProveEvalZero
 func pyAggProveEvalZero(json_proofs *C.char,
-	json_gamma  *C.char) *C.char {
+	json_gamma *C.char) *C.char {
 
 	// --- decode proofs --------------------------------------------------------
 	var proofList []kzg_ped.OpeningProof
@@ -1567,23 +1837,25 @@ func pyAggProveEvalZero(json_proofs *C.char,
 	return C.CString(outJSON)
 }
 
-//export pyPubAggVerifyEval
 // pyPubAggVerifyEval(vk, commitmentList, gClaim, hClaim, aggH, gamma, pointIdx) -> bool
-//    vk               : VerifyingKey JSON
-//    commitmentList   : []Digest JSON (same as serialized_commitment)
-//    gClaim / hClaim  : Digest JSON  (single G1 point each)
-//    aggH             : Digest JSON  (aggregated witness)
-//    gamma            : decimal string
-//    pointIdx         : evaluation point index (int)
+//
+//	vk               : VerifyingKey JSON
+//	commitmentList   : []Digest JSON (same as serialized_commitment)
+//	gClaim / hClaim  : Digest JSON  (single G1 point each)
+//	aggH             : Digest JSON  (aggregated witness)
+//	gamma            : decimal string
+//	pointIdx         : evaluation point index (int)
 //
 // Returns C.bool(1) if verification passes, else 0.
+//
+//export pyPubAggVerifyEval
 func pyPubAggVerifyEval(json_vk *C.char,
 	json_commitments *C.char,
-	json_gClaim      *C.char,
-	json_hClaim      *C.char,
-	json_aggH        *C.char,
-	json_gamma       *C.char,
-	pointIdx         int,
+	json_gClaim *C.char,
+	json_hClaim *C.char,
+	json_aggH *C.char,
+	json_gamma *C.char,
+	pointIdx int,
 ) bool {
 
 	// ---------- decode verifying key ----------
@@ -1591,7 +1863,6 @@ func pyPubAggVerifyEval(json_vk *C.char,
 	if err := json.Unmarshal([]byte(C.GoString(json_vk)), &vk); err != nil {
 		return false
 	}
-
 
 	// ---------- decode commitments ----------
 	var comList []kzg_ped.Digest
@@ -1628,7 +1899,6 @@ func pyPubAggVerifyEval(json_vk *C.char,
 		return false
 	}
 	gamma.SetBigInt(&bigTmp)
-
 
 	// ---------- call verifier ----------
 	okBool := PubAggVerifyEval(
@@ -1738,8 +2008,8 @@ func pyPubAggVerifyEvalCombined(
 
 //export pyAggProveEval
 func pyAggProveEval(json_commitments *C.char,
-                    json_proofs      *C.char,
-                    json_gamma       *C.char) *C.char {
+	json_proofs *C.char,
+	json_gamma *C.char) *C.char {
 
 	// 1) decode inputs ---------------------------------------------------------
 	var comList []kzg_ped.Digest
@@ -1764,8 +2034,8 @@ func pyAggProveEval(json_commitments *C.char,
 
 	// 3) marshal result --------------------------------------------------------
 	type outStruct struct {
-		Commitment kzg_ped.Digest        `json:"aggCommitment"`
-		Proof      kzg_ped.OpeningProof  `json:"aggProof"`
+		Commitment kzg_ped.Digest       `json:"aggCommitment"`
+		Proof      kzg_ped.OpeningProof `json:"aggProof"`
 	}
 	out, _ := json.Marshal(outStruct{
 		Commitment: aggCom,
@@ -1774,41 +2044,40 @@ func pyAggProveEval(json_commitments *C.char,
 	return C.CString(string(out))
 }
 
-
 //export pyMultiplyClaimedValuesWithAux
 func pyMultiplyClaimedValuesWithAux(json_prooflist_left *C.char, json_prooflist_right *C.char) *C.char {
-    var prooflist_left []kzg_ped.OpeningProof
-    var prooflist_right []kzg_ped.OpeningProof
-    if err := json.Unmarshal([]byte(C.GoString(json_prooflist_left)), &prooflist_left); err != nil {
-        return C.CString(`{"error": "invalid prooflist_left"}`)
-    }
-    if err := json.Unmarshal([]byte(C.GoString(json_prooflist_right)), &prooflist_right); err != nil {
-        return C.CString(`{"error": "invalid prooflist_right"}`)
-    }
+	var prooflist_left []kzg_ped.OpeningProof
+	var prooflist_right []kzg_ped.OpeningProof
+	if err := json.Unmarshal([]byte(C.GoString(json_prooflist_left)), &prooflist_left); err != nil {
+		return C.CString(`{"error": "invalid prooflist_left"}`)
+	}
+	if err := json.Unmarshal([]byte(C.GoString(json_prooflist_right)), &prooflist_right); err != nil {
+		return C.CString(`{"error": "invalid prooflist_right"}`)
+	}
 
-    if len(prooflist_left) != len(prooflist_right) {
-        return C.CString(`{"error": "prooflists must have equal length"}`)
-    }
+	if len(prooflist_left) != len(prooflist_right) {
+		return C.CString(`{"error": "prooflists must have equal length"}`)
+	}
 
-    batchsize := len(prooflist_left)
-    productVals := make([]fr.Element, batchsize)
-    productAux := make([]fr.Element, batchsize)
+	batchsize := len(prooflist_left)
+	productVals := make([]fr.Element, batchsize)
+	productAux := make([]fr.Element, batchsize)
 
-    for i := 0; i < batchsize; i++ {
-        productVals[i].Mul(&prooflist_left[i].ClaimedValue, &prooflist_right[i].ClaimedValue)
-        productAux[i].Mul(&prooflist_left[i].ClaimedValueAux, &prooflist_right[i].ClaimedValueAux)
-    }
+	for i := 0; i < batchsize; i++ {
+		productVals[i].Mul(&prooflist_left[i].ClaimedValue, &prooflist_right[i].ClaimedValue)
+		productAux[i].Mul(&prooflist_left[i].ClaimedValueAux, &prooflist_right[i].ClaimedValueAux)
+	}
 
-    result := struct {
-        Value []fr.Element `json:"value"`
-        Aux   []fr.Element `json:"aux"`
-    }{
-        Value: productVals,
-        Aux:   productAux,
-    }
+	result := struct {
+		Value []fr.Element `json:"value"`
+		Aux   []fr.Element `json:"aux"`
+	}{
+		Value: productVals,
+		Aux:   productAux,
+	}
 
-    jsonResult, _ := json.Marshal(result)
-    return C.CString(string(jsonResult))
+	jsonResult, _ := json.Marshal(result)
+	return C.CString(string(jsonResult))
 }
 
 // Agg_zeroknowledgeproofs aggregates zero-knowledge proofs into a single proof.
@@ -1909,6 +2178,68 @@ func pyBatchhiddenzeroverify(json_SRS_Vk *C.char, json_commitment_c *C.char, jso
 	return result
 }
 
+//export pyBatchhiddenverifyUnbatched
+func pyBatchhiddenverifyUnbatched(json_SRS_Vk *C.char, json_commitmentlist_ab *C.char, json_zkProof_ab *C.char, dealer_id int) bool {
+	var Vk kzg_ped.VerifyingKey
+	_ = json.Unmarshal([]byte(C.GoString(json_SRS_Vk)), &Vk)
+
+	var commitmentlistAB []kzg_ped.Digest
+	_ = json.Unmarshal([]byte(C.GoString(json_commitmentlist_ab)), &commitmentlistAB)
+
+	var zkProofAB []curve.G1Affine
+	_ = json.Unmarshal([]byte(C.GoString(json_zkProof_ab)), &zkProofAB)
+
+	if len(zkProofAB) != 2*len(commitmentlistAB) {
+		fmt.Println("Unbatched hidden verification of ab got inconsistent lengths")
+		return false
+	}
+
+	var point fr.Element
+	point.SetInt64(int64(dealer_id + 1))
+	batchsize := len(commitmentlistAB)
+	for i := 0; i < batchsize; i++ {
+		var proof kzg_ped.ZeroKnowledgeOpeningProof
+		proof.CommittedValue.Set(&zkProofAB[i])
+		proof.H.Set(&zkProofAB[batchsize+i])
+		if !kzg_ped.HiddenVerify(&commitmentlistAB[i], &proof, point, Vk) {
+			fmt.Println("Unbatched hidden verification of ab failed!")
+			return false
+		}
+	}
+	return true
+}
+
+//export pyBatchhiddenzeroverifyUnbatched
+func pyBatchhiddenzeroverifyUnbatched(json_SRS_Vk *C.char, json_commitment_c *C.char, json_zkProof_c_zero *C.char) bool {
+	var Vk kzg_ped.VerifyingKey
+	_ = json.Unmarshal([]byte(C.GoString(json_SRS_Vk)), &Vk)
+
+	var commitmentlistC []kzg_ped.Digest
+	_ = json.Unmarshal([]byte(C.GoString(json_commitment_c)), &commitmentlistC)
+
+	var zkProofCZero []curve.G1Affine
+	_ = json.Unmarshal([]byte(C.GoString(json_zkProof_c_zero)), &zkProofCZero)
+
+	if len(zkProofCZero) != 2*len(commitmentlistC) {
+		fmt.Println("Unbatched hidden zero verification got inconsistent lengths")
+		return false
+	}
+
+	var point0 fr.Element
+	point0.SetInt64(int64(0))
+	batchsize := len(commitmentlistC)
+	for i := 0; i < batchsize; i++ {
+		var proof kzg_ped.ZeroKnowledgeOpeningProof
+		proof.CommittedValue.Set(&zkProofCZero[i])
+		proof.H.Set(&zkProofCZero[batchsize+i])
+		if !kzg_ped.HiddenVerify(&commitmentlistC[i], &proof, point0, Vk) {
+			fmt.Println("Unbatched hidden verification of zero point of c failed!")
+			return false
+		}
+	}
+	return true
+}
+
 // pyProdverify verifies product proofs.
 //
 //export pyProdverify
@@ -1945,6 +2276,35 @@ func pyProdverify(json_SRS_Vk *C.char, json_zkProof_ab *C.char, json_zkProof_c_z
 	return result
 }
 
+//export pyProdverifyUnbatched
+func pyProdverifyUnbatched(json_SRS_Vk *C.char, json_zkProof_ab *C.char, json_zkProof_c_zero *C.char, json_proofproduct *C.char) bool {
+	var Vk kzg_ped.VerifyingKey
+	_ = json.Unmarshal([]byte(C.GoString(json_SRS_Vk)), &Vk)
+
+	var zkProofAB []curve.G1Affine
+	_ = json.Unmarshal([]byte(C.GoString(json_zkProof_ab)), &zkProofAB)
+
+	var zkProofCZero []curve.G1Affine
+	_ = json.Unmarshal([]byte(C.GoString(json_zkProof_c_zero)), &zkProofCZero)
+
+	var proofproduct []kzg_ped.ProdProof
+	_ = json.Unmarshal([]byte(C.GoString(json_proofproduct)), &proofproduct)
+
+	batchsize := len(proofproduct)
+	if len(zkProofAB) < 2*batchsize || len(zkProofCZero) < batchsize {
+		fmt.Println("Unbatched product verification got inconsistent lengths")
+		return false
+	}
+
+	for i := 0; i < batchsize; i++ {
+		if !kzg_ped.Prodproofverify(Vk, proofproduct[i], zkProofAB[i], zkProofAB[i+batchsize], zkProofCZero[i]) {
+			fmt.Println("Unbatched product verification failed!")
+			return false
+		}
+	}
+	return true
+}
+
 // lagrangeCoefficient computes the Lagrange coefficient for the given x value.
 func lagrangeCoefficient(xs []fr.Element, x fr.Element, commonset []int) fr.Element {
 	var res fr.Element
@@ -1957,11 +2317,10 @@ func lagrangeCoefficient(xs []fr.Element, x fr.Element, commonset []int) fr.Elem
 			temp.Inverse(&temp)
 			temp.Mul(&xs[index], &temp)
 			res.Mul(&res, &temp)
-		}		
+		}
 	}
 	return res
 }
-
 
 func degreereduction(lagrangeCoefficientList []fr.Element, commonset []int, shares_c_2t [][]kzg_ped.OpeningProof) []fr.Element {
 	batchsize := len(shares_c_2t[commonset[0]])
@@ -1977,14 +2336,12 @@ func degreereduction(lagrangeCoefficientList []fr.Element, commonset []int, shar
 	return c_shares_temp
 }
 
-
 // pyTriplesCompute reconstructs triples from secret shares using Lagrange interpolation.
 //
 //export pyTriplesCompute
-func pyTriplesCompute( json_commonset *C.char, json_shares_ab *C.char, json_c_shares *C.char, json_c_com *C.char) *C.char {
+func pyTriplesCompute(json_commonset *C.char, json_shares_ab *C.char, json_c_shares *C.char, json_c_com *C.char) *C.char {
 	var commonset []int
 	_ = json.Unmarshal([]byte(C.GoString(json_commonset)), &commonset)
-	
 
 	var shares_ab []kzg_ped.OpeningProof
 	_ = json.Unmarshal([]byte(C.GoString(json_shares_ab)), &shares_ab)
@@ -2034,10 +2391,10 @@ func lagrangeCoefficientwithTransfer(xs []fr.Element, x fr.Element, S []int) fr.
 		if xs[j].Equal(&x) {
 			continue
 		}
-		num.Set(&xs[j])                // x_j
-		den.Sub(&xs[j], &x)            // x_j - x_i
+		num.Set(&xs[j])     // x_j
+		den.Sub(&xs[j], &x) // x_j - x_i
 		den.Inverse(&den)
-		num.Mul(&num, &den)            // x_j / (x_j - x_i)
+		num.Mul(&num, &den) // x_j / (x_j - x_i)
 		res.Mul(&res, &num)
 	}
 	return res
@@ -2046,17 +2403,17 @@ func lagrangeCoefficientwithTransfer(xs []fr.Element, x fr.Element, S []int) fr.
 //export pyInterpolateShareswithTransfer
 func pyInterpolateShareswithTransfer(json_commonset *C.char,
 	json_commitAll *C.char,
-	json_shareAll  *C.char) *C.char {
+	json_shareAll *C.char) *C.char {
 
 	// ---------- 1) 反序列化 ----------
 	var commonSet []int
 	_ = json.Unmarshal([]byte(C.GoString(json_commonset)), &commonSet)
 	sort.Ints(commonSet)
 
-	var commitAll [][]kzg_ped.Digest          // [dealer][batch]
-	var shareAll  [][]kzg_ped.OpeningProof    // [dealer][batch]
+	var commitAll [][]kzg_ped.Digest      // [dealer][batch]
+	var shareAll [][]kzg_ped.OpeningProof // [dealer][batch]
 	_ = json.Unmarshal([]byte(C.GoString(json_commitAll)), &commitAll)
-	_ = json.Unmarshal([]byte(C.GoString(json_shareAll)),  &shareAll)
+	_ = json.Unmarshal([]byte(C.GoString(json_shareAll)), &shareAll)
 
 	if len(commonSet) == 0 {
 		return C.CString("{}")
@@ -2064,10 +2421,10 @@ func pyInterpolateShareswithTransfer(json_commonset *C.char,
 	batch := len(commitAll[commonSet[0]])
 
 	// ---------- 2) 预计算 λ_i ----------
-	k := len(commonSet)                                     // |S|
-	xs := make([]fr.Element, k)                             // x‑coordinates of selected dealers
+	k := len(commonSet)         // |S|
+	xs := make([]fr.Element, k) // x‑coordinates of selected dealers
 	for i, id := range commonSet {
-		xs[i].SetInt64(int64(id + 1))                       // x_i = (dealerID)+1
+		xs[i].SetInt64(int64(id + 1)) // x_i = (dealerID)+1
 	}
 
 	// helper slice [0,1,…,k-1] for lagrangeCoefficientwithTransfer
@@ -2076,14 +2433,14 @@ func pyInterpolateShareswithTransfer(json_commonset *C.char,
 		idxSlice[i] = i
 	}
 
-	λ := make([]fr.Element, k)                              // λ_i for each pos in S
+	λ := make([]fr.Element, k) // λ_i for each pos in S
 	for i := 0; i < k; i++ {
 		λ[i] = lagrangeCoefficientwithTransfer(xs, xs[i], idxSlice)
 	}
 
 	// ---------- 3) 聚合 ----------
-	aggCom  := make([]kzg_ped.Digest,       batch)
-	aggShare:= make([]kzg_ped.OpeningProof, batch)
+	aggCom := make([]kzg_ped.Digest, batch)
+	aggShare := make([]kzg_ped.OpeningProof, batch)
 
 	for j := 0; j < batch; j++ {
 		// G1 累加
@@ -2120,7 +2477,7 @@ func pyInterpolateShareswithTransfer(json_commonset *C.char,
 			vAuxSum.Add(&vAuxSum, &t)
 		}
 
-		aggCom[j]          = kzg_ped.Digest(cSum)
+		aggCom[j] = kzg_ped.Digest(cSum)
 		aggShare[j].H.Set(&hSum)
 		aggShare[j].ClaimedValue.Set(&vSum)
 		aggShare[j].ClaimedValueAux.Set(&vAuxSum)
@@ -2136,7 +2493,7 @@ func pyInterpolateShareswithTransfer(json_commonset *C.char,
 }
 
 //export pyReconstruct
-func pyReconstruct(json_0 *C.char, json_1 *C.char, json_2 *C.char, json_3 *C.char,){
+func pyReconstruct(json_0 *C.char, json_1 *C.char, json_2 *C.char, json_3 *C.char) {
 	// fmt.Println("alltriples", alltriples)
 	alltriples := make([]kzg_ped.Triples, 4)
 	_ = json.Unmarshal([]byte(C.GoString(json_0)), &alltriples[0])
@@ -2151,7 +2508,6 @@ func pyReconstruct(json_0 *C.char, json_1 *C.char, json_2 *C.char, json_3 *C.cha
 		commonsetFrElement[index].SetInt64(int64(index + 1))
 		// log.Println("commonsetFrElement: ", index,  commonsetFrElement[index])
 	}
-	
 
 	lagrangeCoefficientList := make([]fr.Element, 4)
 	for _, index := range commonset {
@@ -2160,7 +2516,6 @@ func pyReconstruct(json_0 *C.char, json_1 *C.char, json_2 *C.char, json_3 *C.cha
 		// log.Println("point: ", index, point)
 		lagrangeCoefficientList[index] = lagrangeCoefficient(commonsetFrElement, point, commonset)
 	}
-
 
 	// interpolation
 	var res_A fr.Element
@@ -2171,7 +2526,6 @@ func pyReconstruct(json_0 *C.char, json_1 *C.char, json_2 *C.char, json_3 *C.cha
 		res_A.Add(&res_A, &temp)
 	}
 	log.Println("res_A: ", res_A)
-
 
 	var res_B fr.Element
 	res_B.SetZero()
@@ -2194,15 +2548,13 @@ func pyReconstruct(json_0 *C.char, json_1 *C.char, json_2 *C.char, json_3 *C.cha
 	res_product.Mul(&res_A, &res_B)
 	log.Println("res_product: ", res_product)
 	log.Println("res_product: ", res_product.Mul(&res_A, &res_B))
-	var ele_one fr.Element 
+	var ele_one fr.Element
 	ele_one.SetOne()
-	
+
 	// log.Println("one: ", ele_one)
 	// log.Println("one: ", ele_one.SetOne())
 	// log.Println("one: ", ele_one.SetInt64(int64(1)))
 	// log.Println("2: ", ele_one.SetInt64(int64(2)))
-
-
 
 }
 
@@ -2234,8 +2586,8 @@ func main() {
 	// note: G1_g[0] == generator^0, identical for any seed,
 	// so copy from index 1 to guarantee h ≠ g
 	for i := range srsG.Pk.G1_h {
-	    idx := (i + 1) % len(srsH.Pk.G1_g)
-	    srsG.Pk.G1_h[i].Set(&srsH.Pk.G1_g[idx])
+		idx := (i + 1) % len(srsH.Pk.G1_g)
+		srsG.Pk.G1_h[i].Set(&srsH.Pk.G1_g[idx])
 	}
 	// Vk part: just take β‑chain[1] to avoid clash
 	// srsG.Vk.G1_h.Set(&srsH.Vk.G1_g)
@@ -2314,9 +2666,8 @@ func main() {
 	commonsetFrElement := make([]fr.Element, n)
 	for _, index := range commonset {
 		commonsetFrElement[index].SetInt64(int64(index + 1))
-		log.Println("commonsetFrElement: ", index,  commonsetFrElement[index])
+		log.Println("commonsetFrElement: ", index, commonsetFrElement[index])
 	}
-	
 
 	lagrangeCoefficientList := make([]fr.Element, n)
 	for _, index := range commonset {
@@ -2324,14 +2675,14 @@ func main() {
 		point.SetInt64(int64(index + 1))
 		log.Println("point: ", index, point)
 		lagrangeCoefficientList[index] = lagrangeCoefficient(commonsetFrElement, point, commonset)
-		log.Println("lagrangeCoefficientList: ",index,lagrangeCoefficientList[index])
+		log.Println("lagrangeCoefficientList: ", index, lagrangeCoefficientList[index])
 	}
 
 	c_shares_temp := degreereduction(lagrangeCoefficientList, commonset, batchproofsofallparties)
 
 	log.Println("larange interpolation: ", c_shares_temp)
 	log.Println("larange interpolation: ", secret)
-	if c_shares_temp[0].Equal(&secret[0]){
+	if c_shares_temp[0].Equal(&secret[0]) {
 		log.Printf("Interpolation correct:\n")
 	}
 
@@ -2349,8 +2700,6 @@ func main() {
 	// Marshal triples to JSON and return as C string
 	// json_triples, _ := json.Marshal(triples)
 	log.Println(triples)
-
-
 
 	// // //test end
 
@@ -2404,7 +2753,7 @@ func main() {
 
 	// jsonMap := make(map[string]string)
 	// for i, key := range secretKeysAsStrings {
-	// 	jsonMap[fmt.Sprintf("%d", i)] = key 
+	// 	jsonMap[fmt.Sprintf("%d", i)] = key
 	// }
 
 	// jsonBytes, err := json.Marshal(jsonMap)

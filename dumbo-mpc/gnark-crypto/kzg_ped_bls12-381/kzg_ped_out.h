@@ -85,27 +85,33 @@ extern char* pyCommit(char* json_SRS_Pk, char* json_secret, GoInt t);
 extern char* pyPedersenCommit(char* json_SRS_Pk, char* json_p, char* json_r);
 extern char* pyPedersenCombine(char* json_gp, char* json_hr);
 extern char* pyCircuitAdd(char* jsonLeft, char* jsonRight);
+extern char* pyCircuitLinearComb(char* jsonInputs, char* jsonCoeffs);
 extern char* pyCommitWithZeroFull(char* json_SRS_Pk, char* json_secret, char* json_secret_aux, GoInt t);
 extern char* pyComputeShareGH(char* json_SRS_Pk, char* json_prooflist_left, char* json_prooflist_right);
 extern GoUint8 pyBatchVerify(char* json_SRS_Vk, char* json_commitmentlist, char* json_prooflist, GoInt i);
+extern GoUint8 pyBatchVerifyUnbatched(char* json_SRS_Vk, char* json_commitmentlist, char* json_prooflist, GoInt i);
 extern GoUint8 pyBatchVerifyPub(char* json_SRS_Vk, char* json_commitmentlist, char* json_proofAtZero, char* json_shareG, char* json_shareH, GoInt i);
 extern char* VMmatrixGen(GoInt t);
 extern char* pyRandomShareCompute(char* json_matrix, char* json_set, char* json_comlist, char* json_prooflist, GoInt t);
 extern char* pyParseRandom(char* json_SRS_Pk, char* json_commitmentlist, char* json_prooflist, GoInt t, GoInt my_id);
+extern char* pyParseRandomUnbatched(char* json_SRS_Pk, char* json_commitmentlist, char* json_prooflist, GoInt t, GoInt my_id);
 extern char* pyDeriveChallenge(char* json_commitment);
 
 // pyAggProveEvalZero(json_proofs, json_gamma) → {"aggH": {...}}
+//
 extern char* pyAggProveEvalZero(char* json_proofs, char* json_gamma);
 
 // pyPubAggVerifyEval(vk, commitmentList, gClaim, hClaim, aggH, gamma, pointIdx) -> bool
-//    vk               : VerifyingKey JSON
-//    commitmentList   : []Digest JSON (same as serialized_commitment)
-//    gClaim / hClaim  : Digest JSON  (single G1 point each)
-//    aggH             : Digest JSON  (aggregated witness)
-//    gamma            : decimal string
-//    pointIdx         : evaluation point index (int)
+//
+//	vk               : VerifyingKey JSON
+//	commitmentList   : []Digest JSON (same as serialized_commitment)
+//	gClaim / hClaim  : Digest JSON  (single G1 point each)
+//	aggH             : Digest JSON  (aggregated witness)
+//	gamma            : decimal string
+//	pointIdx         : evaluation point index (int)
 //
 // Returns C.bool(1) if verification passes, else 0.
+//
 extern GoUint8 pyPubAggVerifyEval(char* json_vk, char* json_commitments, char* json_gClaim, char* json_hClaim, char* json_aggH, char* json_gamma, GoInt pointIdx);
 extern GoUint8 pyPubAggVerifyEvalCombined(char* json_vk, char* json_commitments, char* json_combinedClaim, char* json_aggH, char* json_gamma, GoInt pointIdx);
 extern char* pyAggProveEval(char* json_commitments, char* json_proofs, char* json_gamma);
@@ -118,10 +124,13 @@ extern GoUint8 pyBatchhiddenverify(char* json_SRS_Vk, char* json_commitmentlist_
 // pyBatchhiddenzeroverify verifies hidden evaluation for zero point.
 //
 extern GoUint8 pyBatchhiddenzeroverify(char* json_SRS_Vk, char* json_commitment_c, char* json_zkProof_c_zero);
+extern GoUint8 pyBatchhiddenverifyUnbatched(char* json_SRS_Vk, char* json_commitmentlist_ab, char* json_zkProof_ab, GoInt dealer_id);
+extern GoUint8 pyBatchhiddenzeroverifyUnbatched(char* json_SRS_Vk, char* json_commitment_c, char* json_zkProof_c_zero);
 
 // pyProdverify verifies product proofs.
 //
 extern GoUint8 pyProdverify(char* json_SRS_Vk, char* json_zkProof_ab, char* json_zkProof_c_zero, char* json_proofproduct);
+extern GoUint8 pyProdverifyUnbatched(char* json_SRS_Vk, char* json_zkProof_ab, char* json_zkProof_c_zero, char* json_proofproduct);
 
 // pyTriplesCompute reconstructs triples from secret shares using Lagrange interpolation.
 //

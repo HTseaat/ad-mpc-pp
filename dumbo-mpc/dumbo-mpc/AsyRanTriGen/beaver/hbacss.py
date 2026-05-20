@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import os
 from pickle import dumps, loads
 from beaver.symmetric_crypto import SymmetricCrypto
 from beaver.broadcast.reliablebroadcast import reliablebroadcast, rbc_dyn
@@ -74,6 +75,9 @@ lib.pySharedKeysGen_recv.restype = c_char_p
 lib.pyBatchVerify.argtypes = [c_char_p, c_char_p, c_char_p, c_int]
 lib.pyBatchVerify.restype = c_bool
 
+lib.pyBatchVerifyUnbatched.argtypes = [c_char_p, c_char_p, c_char_p, c_int]
+lib.pyBatchVerifyUnbatched.restype = c_bool
+
 # Public verifier for KZG opening proofs (uses OpeningProofPub JSON format)
 lib.pyBatchVerifyPub.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_char_p, c_int]
 lib.pyBatchVerifyPub.restype = c_bool
@@ -81,14 +85,26 @@ lib.pyBatchVerifyPub.restype = c_bool
 lib.pyParseRandom.argtypes = [c_char_p, c_char_p, c_char_p, c_int, c_int]
 lib.pyParseRandom.restype = c_char_p
 
+lib.pyParseRandomUnbatched.argtypes = [c_char_p, c_char_p, c_char_p, c_int, c_int]
+lib.pyParseRandomUnbatched.restype = c_char_p
+
 lib.pyBatchhiddenverify.argtypes = [c_char_p, c_char_p, c_char_p, c_int]
 lib.pyBatchhiddenverify.restype = c_bool
+
+lib.pyBatchhiddenverifyUnbatched.argtypes = [c_char_p, c_char_p, c_char_p, c_int]
+lib.pyBatchhiddenverifyUnbatched.restype = c_bool
 
 lib.pyBatchhiddenzeroverify.argtypes = [c_char_p, c_char_p, c_char_p]
 lib.pyBatchhiddenzeroverify.restype = c_bool
 
+lib.pyBatchhiddenzeroverifyUnbatched.argtypes = [c_char_p, c_char_p, c_char_p]
+lib.pyBatchhiddenzeroverifyUnbatched.restype = c_bool
+
 lib.pyProdverify.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p]
 lib.pyProdverify.restype = c_bool
+
+lib.pyProdverifyUnbatched.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p]
+lib.pyProdverifyUnbatched.restype = c_bool
 
 lib.pyMultiplyClaimedValuesWithAux.argtypes = [c_char_p, c_char_p]
 lib.pyMultiplyClaimedValuesWithAux.restype = c_char_p
@@ -122,6 +138,79 @@ logger.setLevel(logging.INFO)
 # logger.setLevel(logging.NOTSET)
 
 
+def _timed_bgw_unbatched_call(function_name, function, args, context=""):
+    start = time.time()
+    result = function(*args)
+    elapsed = time.time() - start
+    suffix = f", {context}" if context else ""
+    logger.info(
+        "bgw_unbatched_call_time: function=%s, elapsed=%s%s",
+        function_name,
+        elapsed,
+        suffix,
+    )
+    return result
+
+
+def _bgw_use_batch_verify(component):
+    return (
+        os.getenv("BGW_UNBATCHED_BATCH_ALL_VERIFY") == "1"
+        or os.getenv(f"BGW_UNBATCHED_BATCH_{component.upper()}_VERIFY") == "1"
+    )
+
+
+def _timed_bgw_mixed_batch_call(component, function_name, function, args, context=""):
+    start = time.time()
+    result = function(*args)
+    elapsed = time.time() - start
+    suffix = f", {context}" if context else ""
+    logger.info(
+        "bgw_mixed_batch_%s_verify_time: function=%s, elapsed=%s%s",
+        component,
+        function_name,
+        elapsed,
+        suffix,
+    )
+    return result
+
+
+def _timed_bgw_batch_unbatched_call(component, function_name, function, args, context=""):
+    start = time.time()
+    result = function(*args)
+    elapsed = time.time() - start
+    suffix = f", {context}" if context else ""
+    logger.info(
+        "bgw_batch_unbatched_%s_verify_time: function=%s, elapsed=%s%s",
+        component,
+        function_name,
+        elapsed,
+        suffix,
+    )
+    return result
+
+
+def _timed_bgw_product_generation_call(mode, function_name, function, args, context=""):
+    start = time.time()
+    result = function(*args)
+    elapsed = time.time() - start
+    suffix = f", {context}" if context else ""
+    logger.info(
+        "bgw_product_proof_generation_time: mode=%s, function=%s, elapsed=%s%s",
+        mode,
+        function_name,
+        elapsed,
+        suffix,
+    )
+    if mode == "unbatched":
+        logger.info(
+            "bgw_unbatched_call_time: function=%s, elapsed=%s%s",
+            function_name,
+            elapsed,
+            suffix,
+        )
+    return result
+
+
 class HbAVSSMessageType:
     OK = "OK"
     IMPLICATE = "IMPLICATE"
@@ -145,6 +234,11 @@ class Hbacss0:
         # self.srs_pk = json.dumps(deserialized_srs_kzg['Pk']).encode('utf-8')
         
         self.mode = msgmode
+        if os.getenv("DISABLE_AGG_PROTO") == "1":
+            if self.mode == "avss_with_aggtransfer":
+                self.mode = "avss_with_transfer"
+            elif self.mode == "avss_with_aggbatch_multiplication":
+                self.mode = "avss_with_batch_multiplication"
 
         # Create a mechanism to split the `recv` channels based on `tag`
         self.subscribe_recv_task, self.subscribe_recv = subscribe_recv(recv)
@@ -409,7 +503,40 @@ class Hbacss0:
             deserialized_commandprooflist = json.loads(values.decode('utf-8'))            
             serialized_commitmentlist = json.dumps(deserialized_commandprooflist['commitment']).encode('utf-8')
             serialized_prooflist = json.dumps(deserialized_commandprooflist['proof']).encode('utf-8')
-            commitmentlistandprooflist = lib.pyParseRandom(self.srs_kzg['Pk'], serialized_commitmentlist, serialized_prooflist, self.t, self.my_id)
+            product_generation_context = (
+                f"my_id={self.my_id}, t={self.t}, "
+                f"commitments={len(deserialized_commandprooflist['commitment'])}, "
+                f"proofs={len(deserialized_commandprooflist['proof'])}, "
+                f"expected_product_proofs={len(deserialized_commandprooflist['commitment']) // 2}"
+            )
+            if os.getenv("BGW_UNBATCHED_VERIFY") == "1":
+                commitmentlistandprooflist = _timed_bgw_product_generation_call(
+                    "unbatched",
+                    "pyParseRandomUnbatched",
+                    lib.pyParseRandomUnbatched,
+                    (
+                        self.srs_kzg['Pk'],
+                        serialized_commitmentlist,
+                        serialized_prooflist,
+                        self.t,
+                        self.my_id,
+                    ),
+                    product_generation_context,
+                )
+            else:
+                commitmentlistandprooflist = _timed_bgw_product_generation_call(
+                    "batched",
+                    "pyParseRandom",
+                    lib.pyParseRandom,
+                    (
+                        self.srs_kzg['Pk'],
+                        serialized_commitmentlist,
+                        serialized_prooflist,
+                        self.t,
+                        self.my_id,
+                    ),
+                    product_generation_context,
+                )
 
             deser_comsandproofs = json.loads(commitmentlistandprooflist.decode('utf-8'))
             # logging.info("deser_comsandproofs: %s", deser_comsandproofs)
@@ -1578,14 +1705,168 @@ class Hbacss0:
                 else:
                     all_shares_valid = False
             if self.mode == "avss_with_proof":
-                if lib.pyBatchVerify(
-                    self.srs_kzg['Vk'], serialized_commitment, serialized_proofandshares, self.my_id
-                    ) == int(1) and lib.pyBatchhiddenverify(self.srs_kzg['Vk'], 
-                    self.tagvars[tag]['committment_ab'], serialized_zkProof_ab, dealer_id) == int(1) and lib.pyBatchhiddenzeroverify(self.srs_kzg['Vk'], 
-                    serialized_commitment, serialized_zkProof_c_zero) == int(1) and lib.pyProdverify(
-                    self.srs_kzg['Vk'], serialized_zkProof_ab, serialized_zkProof_c_zero, serialized_prodProofs) == int(1):
-                        self.tagvars[tag]['commitments'] = serialized_commitment
-                        self.tagvars[tag]['proofsandshares'] = serialized_proofandshares
+                if os.getenv("BGW_UNBATCHED_VERIFY") == "1":
+                    verify_total_start = time.time()
+                    verify_context = f"my_id={self.my_id}, dealer_id={dealer_id}"
+                    batch_share_verify = _bgw_use_batch_verify("share")
+                    batch_hidden_verify = _bgw_use_batch_verify("hidden")
+                    batch_zero_verify = _bgw_use_batch_verify("zero")
+                    batch_prod_verify = _bgw_use_batch_verify("prod")
+                    if batch_share_verify:
+                        shares_ok = _timed_bgw_mixed_batch_call(
+                            "share",
+                            "pyBatchVerify",
+                            lib.pyBatchVerify,
+                            (
+                                self.srs_kzg['Vk'],
+                                serialized_commitment,
+                                serialized_proofandshares,
+                                self.my_id,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    else:
+                        shares_ok = _timed_bgw_unbatched_call(
+                            "pyBatchVerifyUnbatched",
+                            lib.pyBatchVerifyUnbatched,
+                            (
+                                self.srs_kzg['Vk'],
+                                serialized_commitment,
+                                serialized_proofandshares,
+                                self.my_id,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    if batch_hidden_verify:
+                        hidden_ok = _timed_bgw_mixed_batch_call(
+                            "hidden",
+                            "pyBatchhiddenverify",
+                            lib.pyBatchhiddenverify,
+                            (
+                                self.srs_kzg['Vk'],
+                                self.tagvars[tag]['committment_ab'],
+                                serialized_zkProof_ab,
+                                dealer_id,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    else:
+                        hidden_ok = _timed_bgw_unbatched_call(
+                            "pyBatchhiddenverifyUnbatched",
+                            lib.pyBatchhiddenverifyUnbatched,
+                            (
+                                self.srs_kzg['Vk'],
+                                self.tagvars[tag]['committment_ab'],
+                                serialized_zkProof_ab,
+                                dealer_id,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    if batch_zero_verify:
+                        zero_ok = _timed_bgw_mixed_batch_call(
+                            "zero",
+                            "pyBatchhiddenzeroverify",
+                            lib.pyBatchhiddenzeroverify,
+                            (
+                                self.srs_kzg['Vk'],
+                                serialized_commitment,
+                                serialized_zkProof_c_zero,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    else:
+                        zero_ok = _timed_bgw_unbatched_call(
+                            "pyBatchhiddenzeroverifyUnbatched",
+                            lib.pyBatchhiddenzeroverifyUnbatched,
+                            (
+                                self.srs_kzg['Vk'],
+                                serialized_commitment,
+                                serialized_zkProof_c_zero,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    if batch_prod_verify:
+                        prod_ok = _timed_bgw_mixed_batch_call(
+                            "prod",
+                            "pyProdverify",
+                            lib.pyProdverify,
+                            (
+                                self.srs_kzg['Vk'],
+                                serialized_zkProof_ab,
+                                serialized_zkProof_c_zero,
+                                serialized_prodProofs,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    else:
+                        prod_ok = _timed_bgw_unbatched_call(
+                            "pyProdverifyUnbatched",
+                            lib.pyProdverifyUnbatched,
+                            (
+                                self.srs_kzg['Vk'],
+                                serialized_zkProof_ab,
+                                serialized_zkProof_c_zero,
+                                serialized_prodProofs,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    logger.info(
+                        "bgw_unbatched_verify_total_time: elapsed=%s, my_id=%s, dealer_id=%s, batch_share_verify=%s, batch_hidden_verify=%s, batch_zero_verify=%s, batch_prod_verify=%s, shares_ok=%s, hidden_ok=%s, zero_ok=%s, prod_ok=%s",
+                        time.time() - verify_total_start,
+                        self.my_id,
+                        dealer_id,
+                        batch_share_verify,
+                        batch_hidden_verify,
+                        batch_zero_verify,
+                        batch_prod_verify,
+                        shares_ok,
+                        hidden_ok,
+                        zero_ok,
+                        prod_ok,
+                    )
+                else:
+                    verify_total_start = time.time()
+                    verify_context = f"my_id={self.my_id}, dealer_id={dealer_id}"
+                    shares_ok = lib.pyBatchVerify(
+                        self.srs_kzg['Vk'], serialized_commitment, serialized_proofandshares, self.my_id
+                    ) == int(1)
+                    hidden_ok = lib.pyBatchhiddenverify(
+                        self.srs_kzg['Vk'], self.tagvars[tag]['committment_ab'], serialized_zkProof_ab, dealer_id
+                    ) == int(1)
+                    zero_ok = lib.pyBatchhiddenzeroverify(
+                        self.srs_kzg['Vk'], serialized_commitment, serialized_zkProof_c_zero
+                    ) == int(1)
+                    if os.getenv("BGW_BATCH_UNBATCHED_PROD_VERIFY") == "1":
+                        prod_ok = _timed_bgw_batch_unbatched_call(
+                            "prod",
+                            "pyProdverifyUnbatched",
+                            lib.pyProdverifyUnbatched,
+                            (
+                                self.srs_kzg['Vk'],
+                                serialized_zkProof_ab,
+                                serialized_zkProof_c_zero,
+                                serialized_prodProofs,
+                            ),
+                            verify_context,
+                        ) == int(1)
+                    else:
+                        prod_ok = lib.pyProdverify(
+                            self.srs_kzg['Vk'], serialized_zkProof_ab, serialized_zkProof_c_zero, serialized_prodProofs
+                        ) == int(1)
+                    logger.info(
+                        "bgw_batch_verify_total_time: elapsed=%s, my_id=%s, dealer_id=%s, unbatched_prod_verify=%s, shares_ok=%s, hidden_ok=%s, zero_ok=%s, prod_ok=%s",
+                        time.time() - verify_total_start,
+                        self.my_id,
+                        dealer_id,
+                        os.getenv("BGW_BATCH_UNBATCHED_PROD_VERIFY") == "1",
+                        shares_ok,
+                        hidden_ok,
+                        zero_ok,
+                        prod_ok,
+                    )
+                if shares_ok and hidden_ok and zero_ok and prod_ok:
+                    self.tagvars[tag]['commitments'] = serialized_commitment
+                    self.tagvars[tag]['proofsandshares'] = serialized_proofandshares
                 else:
                     return False
             if self.mode == "avss_with_transfer":
