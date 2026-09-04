@@ -3,10 +3,11 @@ set -euo pipefail
 
 source /opt/venv/admpc/bin/activate
 export PYTHONPATH="/opt/admpc:${PYTHONPATH:-}"
+export ZMQ_AUTH_MODE=curve
 cd /opt/admpc
 
 if [[ $# -lt 4 || $# -gt 5 ]]; then
-  echo "Usage: run-admpc-local [admpc|admpc-linear|admpc-nonlinear|fluid1|fluid2|hbmpc|hbmpc_attack] <n> <t> <layers> <total_cm>" >&2
+  echo "Usage: run-admpc-local [admpc|admpc-shuffle|admpc-linear|admpc-nonlinear|admpc-batchrand|fluid1|fluid2|hbmpc|hbmpc_attack] <n> <t> <layers> <total_cm>" >&2
   exit 1
 fi
 

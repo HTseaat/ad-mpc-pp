@@ -1,0 +1,8 @@
+ARG BASE_IMAGE=continuum-aws-amd64:20260819-trusted-setup-d52e85d25804-r8
+FROM ${BASE_IMAGE}
+
+ARG PATCH_REF=unknown
+ADD --chown=0:0 adversarial-rootfs.tar /
+
+LABEL org.opencontainers.image.adversarial.patch-ref="${PATCH_REF}"
+LABEL org.opencontainers.image.adversarial.scope="continuum-distributed-delay-byzantine"

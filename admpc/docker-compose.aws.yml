@@ -1,0 +1,23 @@
+version: "3.8"
+
+# Standalone production compose file.  It mounts only generated runtime state;
+# protocol source and x86 native libraries always come from MPC_IMAGE.
+services:
+  htadkg_adkg:
+    image: ${MPC_IMAGE:?set MPC_IMAGE to an immutable linux/amd64 image tag or digest}
+    entrypoint: ""
+    working_dir: /usr/src/adkg
+    cap_add:
+      - NET_ADMIN
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      PATH: /opt/venv/admpc/bin:/usr/local/go/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PYTHONPATH: /opt/admpc
+    volumes:
+      - ./conf:/opt/admpc/conf
+      - ./logs:/opt/admpc/logs
+      - ./sharedata:/opt/admpc/sharedata
+      - ./adkg/ipc.py:/opt/admpc/adkg/ipc.py:ro

@@ -11,6 +11,30 @@ from adkg.reed_solomon import IncrementalDecoder
 from adkg.batch_reconstruction import fetch_one
 
 
+def find_inconsistent_dealers(poly, shares_list, key_proposal, point):
+    """Check every available point against an already decoded polynomial.
+
+    ``IncrementalDecoder`` may finish after ``n-t`` consistent points and then
+    intentionally ignores later calls to ``add``. ADtrans already has all ACSS
+    candidates available, so its formal Byzantine experiment uses this helper
+    to prevent an unchecked tail candidate from entering the matching set.
+    """
+    if poly is None:
+        raise ValueError("cannot validate ADtrans candidates without a polynomial")
+
+    inconsistent = []
+    for dealer in key_proposal:
+        actual = shares_list[dealer]
+        actual_value = actual.value if hasattr(actual, "value") else int(actual)
+        expected = poly(point(dealer))
+        expected_value = (
+            expected.value if hasattr(expected, "value") else int(expected)
+        )
+        if actual_value != expected_value:
+            inconsistent.append(int(dealer))
+    return inconsistent
+
+
 async def robust_reconstruct(field_futures, field, n, t, point, degree):
     use_omega_powers = point.use_omega_powers
     enc = EncoderFactory.get(

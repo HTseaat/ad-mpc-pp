@@ -1,0 +1,18 @@
+# Fast, offline runtime overlay for the Figure 8/9 n=4 campaign.  The parent
+# image owns all amd64 native dependencies; this layer replaces only the
+# architecture-independent Python sources needed by the current metrics path.
+ARG BASE_IMAGE=continuum-aws-amd64:20260817-7b503d9c5fd1-r3
+FROM ${BASE_IMAGE}
+
+ARG PATCH_REF=unknown
+ARG SOURCE_DATE_EPOCH=0
+
+# The archive is generated with sorted paths, fixed uid/gid/mode, and a fixed
+# mtime.  A single deterministic layer gives all workers the same image ID.
+ADD --chown=0:0 fig89-rootfs.tar /
+
+LABEL org.opencontainers.image.title="Continuum Figure 8/9 runtime overlay" \
+      org.opencontainers.image.base.name="continuum-aws-amd64:20260817-7b503d9c5fd1-r3" \
+      org.opencontainers.image.revision="${PATCH_REF}" \
+      org.opencontainers.image.created="${SOURCE_DATE_EPOCH}" \
+      org.opencontainers.image.fig89.patch-ref="${PATCH_REF}"

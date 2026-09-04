@@ -317,7 +317,9 @@ class IncrementalDecoder(object):
 
             if success is False:
                 # Guess was incorrect
-                logging.critical("Decoding failed")
+                logging.warning(
+                    "Optimistic decoding mismatch; switching to robust decoding"
+                )
                 self._guess_decoded = None
                 self._guess_encoded = None
                 self._optimistic = False

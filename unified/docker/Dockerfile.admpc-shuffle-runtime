@@ -1,0 +1,15 @@
+# Fast offline overlay for the AD-MPC Figure 12 shuffle runner. The parent
+# image provides the validated amd64 native dependencies and Figure 8/9 fixes.
+ARG BASE_IMAGE=continuum-aws-amd64:20260818-fig89-e659d86d276d-r4
+FROM ${BASE_IMAGE}
+
+ARG PATCH_REF=unknown
+ARG SOURCE_DATE_EPOCH=0
+
+ADD --chown=0:0 admpc-shuffle-rootfs.tar /
+
+LABEL org.opencontainers.image.title="AD-MPC Figure 12 shuffle runtime overlay" \
+      org.opencontainers.image.base.name="continuum-aws-amd64:20260818-fig89-e659d86d276d-r4" \
+      org.opencontainers.image.revision="${PATCH_REF}" \
+      org.opencontainers.image.created="${SOURCE_DATE_EPOCH}" \
+      org.opencontainers.image.admpc-shuffle.patch-ref="${PATCH_REF}"

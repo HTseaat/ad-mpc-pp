@@ -1,0 +1,16 @@
+# Reproducible, offline source/runtime overlay for the validated AMD64 r9 image.
+ARG BASE_IMAGE=continuum-aws-amd64:20260820-adversarial-7c91631b839d-r9
+FROM ${BASE_IMAGE}
+
+ARG BASE_IMAGE
+ARG PATCH_REF=unknown
+ARG SOURCE_DATE_EPOCH=0
+
+ADD --chown=0:0 current-rootfs.tar /
+
+LABEL org.opencontainers.image.title="Continuum current runtime overlay" \
+      org.opencontainers.image.base.name="${BASE_IMAGE}" \
+      org.opencontainers.image.revision="${PATCH_REF}" \
+      org.opencontainers.image.created="${SOURCE_DATE_EPOCH}" \
+      org.opencontainers.image.current-runtime.patch-ref="${PATCH_REF}" \
+      org.opencontainers.image.adversarial.patch-ref="${PATCH_REF}"

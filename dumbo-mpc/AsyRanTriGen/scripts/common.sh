@@ -1,0 +1,119 @@
+function ethermintd() {
+    docker run --rm -it \
+        -v "$PWD":/external \
+        --workdir /external \
+        --network host \
+        sdumoe-chain-ethermint ethermintd "$@"
+}
+
+function command_exists() {
+    command -v -- "$1" &>/dev/null
+}
+
+function ensure_bash() {
+    if [ ! -x /bin/bash ]; then
+        echo /bin/bash not found or not executable. 1>&2
+        exit 1
+    fi
+}
+
+function ensure_commands_exists() {
+    if [ $# -eq 0 ]; then
+        return
+    fi
+
+    if command_exists "$1"; then
+        shift
+        ensure_commands_exists "$@"
+    else
+        echo Command "$1" is missing. 1>&2
+        exit 1
+    fi
+}
+
+function ensure_root() {
+    if [ "$(id -u)" != "0" ]; then
+        echo "This script must be run as root" 1>&2
+        exit 1
+    fi
+}
+
+function get_script_dir() {
+    (cd "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+}
+
+function ensure_script_dir() {
+    (
+        script_dir="$(get_script_dir)"
+        working_dir="$(pwd)"
+        if [ "$script_dir" != "$working_dir" ]; then
+            echo Run this script in "$script_dir". 1>&2
+            exit 1
+        fi
+    )
+}
+
+function require_positive_integer() {
+    if ! [[ $1 =~ ^[0-9]+$ ]]; then
+        echo "error: not an integer" >&2
+        exit 1
+    fi
+
+    if [ "$1" -le 0 ]; then
+        echo "error: must be greater than 0" >&2
+        exit 1
+    fi
+}
+
+function rm() {
+    echo "rm $@"
+    command rm "$@"
+}
+
+function retry_transient_connection() {
+    local tool="$1"
+    shift
+    local attempt status started elapsed
+    for attempt in 1 2 3; do
+        started=$SECONDS
+        if command "$tool" "$@"; then
+            return 0
+        else
+            status=$?
+        fi
+        elapsed=$((SECONDS - started))
+        if [ "$attempt" -ge 3 ] || [ "$elapsed" -ge 15 ]; then
+            return "$status"
+        fi
+        echo "Transient ${tool} connection failure; retrying attempt $((attempt + 1))/3" >&2
+        sleep 2
+    done
+}
+
+function ssh() {
+    local connection_options=(
+        -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null"
+        -o "BatchMode yes" -o "ConnectTimeout 10" -o "ConnectionAttempts 1"
+    )
+    if [ -n "${SSH_IDENTITY_FILE:-}" ]; then
+        connection_options+=(
+            -i "$SSH_IDENTITY_FILE" -o "IdentitiesOnly yes"
+        )
+    fi
+    retry_transient_connection ssh \
+        "${connection_options[@]}" "$@"
+}
+
+function scp() {
+    local connection_options=(
+        -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null"
+        -o "BatchMode yes" -o "ConnectTimeout 10" -o "ConnectionAttempts 1"
+    )
+    if [ -n "${SSH_IDENTITY_FILE:-}" ]; then
+        connection_options+=(
+            -i "$SSH_IDENTITY_FILE" -o "IdentitiesOnly yes"
+        )
+    fi
+    retry_transient_connection scp \
+        "${connection_options[@]}" "$@"
+}

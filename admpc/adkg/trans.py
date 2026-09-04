@@ -17,7 +17,12 @@ from adkg.mpc import TaskProgramRunner
 from adkg.utils.serilization import Serial
 from adkg.robust_rec import Robust_Rec
 from adkg.field import GF, GFElement
-from adkg.robust_reconstruction import robust_reconstruct_admpc
+from adkg.robust_reconstruction import (
+    find_inconsistent_dealers,
+    robust_reconstruct_admpc,
+)
+from adkg.adversarial_faults import BYZANTINE_DELTA
+from adkg.adtrans_byzantine import build_adtrans_outgoing_copy
 from adkg.elliptic_curve import Subgroup
 from itertools import combinations
 
@@ -317,7 +322,7 @@ class Trans:
                 self.mks = self.mks.union(set(list(ks)))
                 if len(self.mks) >= self.n-self.t:
                     break
-        
+
         # Waiting for all ACSS to terminate
         for k in self.mks:
             if k not in acss_outputs:
@@ -706,6 +711,7 @@ class Trans_Pre(Trans):
                              acsssend, acssrecv, self.pc, self.ZR, self.G1, 
                              mpc_instance=self.mpc_instance
                          )
+        self.acss.metrics_protocol = "adtrans"
         self.acss_tasks = [None] * self.n
         # n-parallel ACSS
         len_values = len(trans_values[0])
@@ -728,6 +734,7 @@ class Trans_Pre(Trans):
                              acsssend, acssrecv, self.pc, self.ZR, self.G1, 
                              mpc_instance=self.mpc_instance
                          )
+        self.acss.metrics_protocol = "adtrans"
         self.acss_tasks = [None] * self.n
 
 
@@ -776,11 +783,43 @@ class Trans_Pre(Trans):
         self.acss_task = asyncio.create_task(self.acss_step_log(acss_outputs, trans_values, acss_signal))
         
 
+    def prepare_adtrans_inputs(self, values, rand_values, w_list):
+        """Return the original objects or an isolated Byzantine outgoing copy."""
+        fault_controller = getattr(self.mpc_instance, "fault_controller", None)
+        if fault_controller is None:
+            return values, rand_values, w_list
+        attack_index = fault_controller.begin_adtrans_mutation(len(values))
+        if attack_index is None:
+            return values, rand_values, w_list
+
+        forked = build_adtrans_outgoing_copy(
+            values=values,
+            rand_values=rand_values,
+            w_list=w_list,
+            attack_index=attack_index,
+            delta=self.ZR(BYZANTINE_DELTA),
+        )
+        fault_controller.record_adtrans_mutation(batch_size=len(values))
+        return forked
+
     async def run_trans(self, values, rand_values, w_list):     
+        fault_controller = getattr(self.mpc_instance, "fault_controller", None)
+        if fault_controller is not None:
+            await fault_controller.delay_adtrans_if_needed()
+
+        values, rand_values, w_list = self.prepare_adtrans_inputs(
+            values, rand_values, w_list
+        )
+
         self.len_values = len(values)
 
         trans_values = (values, rand_values, w_list)
         self.acss_task = asyncio.create_task(self.acss_step(trans_values))
+        await self.acss_task
+        # acss_step() installs the dealer task and otherwise returns
+        # immediately. Wait for that task as well so run_trans() only returns
+        # after the source-side public RBC and initial AVID dispersal complete.
+        await self.acss_tasks[self.my_id]
 
 
 class Trans_Foll(Trans):        
@@ -795,7 +834,8 @@ class Trans_Foll(Trans):
             self.subscribe_recv_task.cancel()
             for task in self.acss_tasks:
                 task.cancel()
-            self.acss.kill()
+            for acss in self.acss_instances:
+                acss.kill()
             self.acss_task.cancel()
         except Exception:
             logging.info("TRANS task finished")
@@ -807,40 +847,126 @@ class Trans_Foll(Trans):
     def __exit__(self, type, value, traceback):
         return self
 
-    async def acss_step(self, len_values):
-        rounds = 1
+    async def _select_reconstruction_dealers(
+            self, initial_dealers, acss_outputs, fault_controller):
+        """Choose the verified dealer set used by ADTrans reconstruction.
+
+        The normal asynchronous path must advance with its first ``n-t``
+        verified dealers.  The controlled Figure 10 fork profile is different:
+        all selected faulty dealers remain responsive, and reconstructing in
+        the presence of ``t`` forked evaluations needs the remaining verified
+        candidates.  Only that destination waits for the background collector.
+        """
+        candidates = list(initial_dealers)
+        if (
+            fault_controller is None
+            or not fault_controller.observes_attack_destination()
+        ):
+            return candidates
+
+        await self.acss_task
+        candidates = sorted(int(dealer) for dealer in acss_outputs)
+        expected = list(range(self.n))
+        if candidates != expected:
+            raise RuntimeError(
+                "Figure 10 ADTrans attack requires all n responsive, fully "
+                f"verified candidates before reconstruction: expected={expected}, "
+                f"got={candidates}"
+            )
+        return candidates
+
+    async def acss_step(
+            self, len_values, outputs, quorum_proposal, dealer_ready):
         self.acss_tasks = [None] * self.n
+        self.acss_instances = [None] * self.n
+
+        async def _run_dealer(dealer_id, acss):
+            try:
+                result = await acss.avss_trans(0, dealer_id, len_values)
+                if result[0] != dealer_id:
+                    raise ValueError(
+                        "ADTrans ACSS returned dealer %s for task %s"
+                        % (result[0], dealer_id)
+                    )
+                return dealer_id, result, None
+            except asyncio.CancelledError:
+                raise
+            except Exception as exc:
+                # A faulty dealer is an invalid contribution, not a failure of
+                # the whole n-parallel ADTrans collection.
+                return dealer_id, None, exc
+
         for dealer_id in range(self.n): 
-            
             acsstag = TRANSMsgType.ACSS + str(self.mpc_instance.layer_ID - 1) + str(dealer_id)
             acsssend, acssrecv = self.get_send(acsstag), self.subscribe_recv(acsstag)
 
-            
-            self.acss = ACSS_Foll(self.public_keys, self.private_key, 
-                                self.g, self.h, self.n, self.t, self.deg, self.sc, self.my_id, 
-                                acsssend, acssrecv, self.pc, self.ZR, self.G1, 
-                                mpc_instance=self.mpc_instance
-                            )
+            acss = ACSS_Foll(
+                self.public_keys, self.private_key,
+                self.g, self.h, self.n, self.t, self.deg, self.sc,
+                self.my_id, acsssend, acssrecv, self.pc, self.ZR, self.G1,
+                mpc_instance=self.mpc_instance,
+            )
+            acss.metrics_protocol = "adtrans"
+            self.acss_instances[dealer_id] = acss
+            # Preserve the legacy attribute for callers that inspect it, while
+            # retaining every instance for correct cleanup.
+            self.acss = acss
+            self.acss_tasks[dealer_id] = asyncio.create_task(
+                _run_dealer(dealer_id, acss)
+            )
 
-            self.acss_tasks[dealer_id] = asyncio.create_task(self.acss.avss_trans(0, dealer_id, len_values))
+        for completed in asyncio.as_completed(self.acss_tasks):
+            dealer, result, error = await completed
+            if error is not None:
+                logger.warning(
+                    "[%d] ADTrans rejected dealer %d: %s",
+                    self.my_id,
+                    dealer,
+                    error,
+                )
+                continue
 
-
-        results = await asyncio.gather(*self.acss_tasks)
-
-        dealer, _, shares, commitments, omega, mask, hat_mask, w = zip(*results)
-
-
-        outputs = {}
-        for i in range(len(dealer)):
-            outputs[i] = {
-                'shares':  shares[i],
-                'commits': commitments[i],
-                'omega':   omega[i],
-                'mask':   mask[i],
-                'hat_mask':  hat_mask[i],
-                'w': w[i]
+            (_, _, shares, commitments, omega, mask, hat_mask, w) = result
+            outputs[dealer] = {
+                'shares': shares,
+                'commits': commitments,
+                'omega': omega,
+                'mask': mask,
+                'hat_mask': hat_mask,
+                'w': w,
             }
-        return outputs
+            # Publish availability only after the fully verified output has
+            # been inserted. Events are monotonic and safe for many waiters.
+            dealer_ready[dealer].set()
+
+            if (
+                len(outputs) >= self.n - self.t
+                and not quorum_proposal.done()
+            ):
+                frozen_proposal = tuple(
+                    sorted(outputs.keys())[:self.n - self.t]
+                )
+                metrics_recorder = getattr(
+                    self.mpc_instance, "metrics_recorder", None
+                )
+                record_proof_quorum = getattr(
+                    metrics_recorder, "record_proof_quorum", None
+                )
+                if callable(record_proof_quorum):
+                    record_proof_quorum(
+                        protocol="adtrans",
+                        target_layer=self.mpc_instance.layer_ID,
+                        receiver_local_id=self.my_id,
+                        dealer_ids=frozen_proposal,
+                        required_count=self.n - self.t,
+                    )
+                quorum_proposal.set_result(frozen_proposal)
+
+        if not quorum_proposal.done():
+            quorum_proposal.set_exception(RuntimeError(
+                "ADTrans exhausted all dealer tasks before collecting "
+                f"n-t={self.n - self.t} valid outputs"
+            ))
     
        
 
@@ -896,7 +1022,9 @@ class Trans_Foll(Trans):
 
         rbc_signal.set()
     
-    async def agreement(self, key_proposal, de_masked_value, acss_outputs, acss_signal):
+    async def agreement(
+            self, key_proposal, de_masked_value, acss_outputs,
+            dealer_ready):
         aba_inputs = [asyncio.Queue() for _ in range(self.n)]
         aba_outputs = [asyncio.Queue() for _ in range(self.n)]
         rbc_outputs = [asyncio.Queue() for _ in range(self.n)]
@@ -913,6 +1041,19 @@ class Trans_Foll(Trans):
             # print(f"de_masked_value: {de_masked_value}")
             if len(kpl) <= self.t:
                 return False
+
+            # Match AggTrans's scheduling rule: an RBC proposal is considered
+            # only after every dealer it names has a fully verified local ACSS
+            # output. This changes availability scheduling, not the existing
+            # ADTrans cryptographic predicate below.
+            await asyncio.gather(
+                *(dealer_ready[dealer].wait() for dealer in kpl)
+            )
+            if not all(dealer in acss_outputs for dealer in kpl):
+                raise RuntimeError(
+                    "ADTrans dealer availability was signalled before its "
+                    "ACSS output became available"
+                )
             
             GFEG1 = GF(Subgroup.BLS12_381)
             point = EvalPoint(GFEG1, self.n, use_omega_powers=False)
@@ -997,12 +1138,13 @@ class Trans_Foll(Trans):
                 rbc_values,
                 rbc_signal,
                 acss_outputs,
-                acss_signal, 
+                dealer_ready,
             ),
             work_tasks,
         )
 
-    async def new_share(self, rbc_values, rbc_signal, acss_outputs, acss_signal):
+    async def new_share(
+            self, rbc_values, rbc_signal, acss_outputs, dealer_ready):
         await rbc_signal.wait()
         rbc_signal.clear()
 
@@ -1013,11 +1155,20 @@ class Trans_Foll(Trans):
                 if len(self.mks) >= self.n-self.t:
                     break
 
-        # Waiting for all ACSS to terminate
-        for k in self.mks:
-            if k not in acss_outputs:
-                await acss_signal.wait()
-                acss_signal.clear()
+        fault_controller = getattr(self.mpc_instance, "fault_controller", None)
+        if fault_controller is not None:
+            fault_controller.record_adtrans_common_subset(self.mks)
+
+        # Wait only for the fully verified ACSS outputs selected by agreement.
+        # Unselected slow/faulty dealer tasks are not on the critical path.
+        await asyncio.gather(
+            *(dealer_ready[dealer].wait() for dealer in self.mks)
+        )
+        if not all(dealer in acss_outputs for dealer in self.mks):
+            raise RuntimeError(
+                "ADTrans selected dealer availability was signalled before "
+                "its ACSS output became available"
+            )
 
         mks_list = list(self.mks)
         secrets_num = len(acss_outputs[mks_list[0]]['shares']['msg'][0])
@@ -1050,11 +1201,25 @@ class Trans_Foll(Trans):
         for i in range(self.n): 
             self.member_list.append(self.n * (self.mpc_instance.layer_ID) + i)
         
-        acss_signal = asyncio.Event()
-        self.acss_task = asyncio.create_task(self.acss_step(len_values))
-        acss_outputs = await self.acss_task
-        
-        LT = list(acss_outputs.keys())
+        acss_outputs = {}
+        dealer_ready = [asyncio.Event() for _ in range(self.n)]
+        quorum_proposal = asyncio.get_running_loop().create_future()
+        self.acss_task = asyncio.create_task(
+            self.acss_step(
+                len_values,
+                acss_outputs,
+                quorum_proposal,
+                dealer_ready,
+            )
+        )
+        LT = list(await quorum_proposal)
+
+        fault_controller = getattr(self.mpc_instance, "fault_controller", None)
+        LT = await self._select_reconstruction_dealers(
+            LT, acss_outputs, fault_controller
+        )
+        if fault_controller is not None:
+            fault_controller.record_adtrans_acss_complete(LT)
 
         sr = Serial(self.G1)
         de_masked_values = [self.ZR(0) for _ in range(self.n)]
@@ -1066,6 +1231,11 @@ class Trans_Foll(Trans):
         point = EvalPoint(GFEG1, self.n, use_omega_powers=False)
         poly, err = [None] * len_values, [None] * len_values
         poly, err = await robust_reconstruct_admpc(de_masked_values, LT, GFEG1, self.t, point, self.t)
+        if poly is None or err is None:
+            raise RuntimeError(
+                "ADTrans robust reconstruction did not complete from verified "
+                f"candidate dealers {LT}"
+            )
         err_list = list(err)
 
   
@@ -1077,7 +1247,20 @@ class Trans_Foll(Trans):
         #             LT.pop(err_list[i][j])
         # GT = LT
 
-        filtered = [j for j in LT if all(j not in errs for errs in err_list)]
+        decoder_error_dealers = sorted(int(dealer) for dealer in err_list)
+        post_decode_mismatch_dealers = []
+        if (
+            fault_controller is not None
+            and fault_controller.observes_attack_destination()
+        ):
+            post_decode_mismatch_dealers = find_inconsistent_dealers(
+                poly, de_masked_values, LT, point
+            )
+
+        error_dealers = sorted(
+            set(decoder_error_dealers).union(post_decode_mismatch_dealers)
+        )
+        filtered = [j for j in LT if j not in error_dealers]
 
 
         if filtered:
@@ -1086,9 +1269,25 @@ class Trans_Foll(Trans):
         else:
             GT = []
 
+        if fault_controller is not None:
+            fault_controller.record_adtrans_robust_filter(
+                candidate_dealers=LT,
+                decoder_error_dealers=decoder_error_dealers,
+                post_decode_mismatch_dealers=post_decode_mismatch_dealers,
+                filtered_dealers=filtered,
+                matching_randomness_dealers=GT,
+            )
+
 
         # MVBA
-        create_acs_task = asyncio.create_task(self.agreement(GT, de_masked_values, acss_outputs, acss_signal))
+        create_acs_task = asyncio.create_task(
+            self.agreement(
+                GT,
+                de_masked_values,
+                acss_outputs,
+                dealer_ready,
+            )
+        )
 
         acs, key_task, work_tasks = await create_acs_task
         await acs
@@ -1222,6 +1421,7 @@ class Trans_Fluid_Foll(Trans):
                                 acsssend, acssrecv, self.pc, self.ZR, self.G1, 
                                 mpc_instance=self.mpc_instance, rbc_values=self.rbcl_list
                             )
+            self.acss.metrics_protocol = "adtrans"
             # self.acss_tasks[dealer_id] = asyncio.create_task(self.acss.avss(0, dealer_id, rounds))
             self.acss_tasks[dealer_id] = asyncio.create_task(self.acss.avss_trans(0, dealer_id, len_values))
 

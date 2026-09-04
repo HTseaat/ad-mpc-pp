@@ -71,9 +71,23 @@ function rm() {
 }
 
 function ssh() {
-    command ssh -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" "$@"
+    local connection_options=(
+        -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null"
+        -o "BatchMode yes" -o "ConnectTimeout 10" -o "ConnectionAttempts 1"
+    )
+    if [ -n "${SSH_IDENTITY_FILE:-}" ]; then
+        connection_options+=(-i "$SSH_IDENTITY_FILE" -o "IdentitiesOnly yes")
+    fi
+    command ssh "${connection_options[@]}" "$@"
 }
 
 function scp() {
-    command scp -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null" "$@"
+    local connection_options=(
+        -o "StrictHostKeyChecking no" -o "UserKnownHostsFile /dev/null"
+        -o "BatchMode yes" -o "ConnectTimeout 10" -o "ConnectionAttempts 1"
+    )
+    if [ -n "${SSH_IDENTITY_FILE:-}" ]; then
+        connection_options+=(-i "$SSH_IDENTITY_FILE" -o "IdentitiesOnly yes")
+    fi
+    command scp "${connection_options[@]}" "$@"
 }

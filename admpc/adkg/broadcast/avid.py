@@ -280,3 +280,242 @@ class AVID:
                         ),
                     )
                 self.retrieval_requests.clear()
+
+
+class AVID_DYNAMIC:
+    """AVID from one source-committee dealer to a destination committee.
+
+    ``member_list`` contains the dealer's global process id followed by the
+    destination committee's global process ids.  Only the destination
+    committee participates in ECHO/READY and stores erasure-coded stripes;
+    the source dealer returns after sending the initial VAL messages.
+
+    This intentionally has the same unbound public/private transcript
+    semantics as the existing Continuum transport: ECHO and READY do not
+    carry an AVID-root digest.
+    """
+
+    def __init__(self, n, t, leader, recv, send, committee_size, member_list):
+        assert n == committee_size + 1
+        assert committee_size >= 3 * t + 1
+        assert t >= 0
+        assert 0 <= leader < committee_size
+        assert len(member_list) == n
+        assert len(set(member_list)) == n
+
+        self.n = n
+        self.t = t
+        self.leader = leader
+        self.recv = recv
+        self.send = send
+        self.committee_size = committee_size
+        self.member_list = list(member_list)
+        self.dealer_global_id = self.member_list[0]
+        self.recipient_global_ids = self.member_list[1:]
+        self.recipient_positions = {
+            global_id: index
+            for index, global_id in enumerate(self.recipient_global_ids)
+        }
+        self.retrieval_queue = asyncio.Queue()
+        self.ok_future = asyncio.Future()
+        self.retrieval_requests = []
+
+    def broadcast(self, message):
+        for global_id in self.recipient_global_ids:
+            self.send(global_id, message)
+
+    async def retrieve(self, sid, index):
+        """Recover the receiver-specific item at destination-local ``index``."""
+        assert 0 <= index < self.committee_size
+
+        await self.ok_future
+        self.broadcast((sid, AVIDMessageType.RETRIEVE, index))
+
+        result = [None] * self.committee_size
+        response_set = set()
+        response_threshold = self.t + 1
+
+        while True:
+            sender, msg = await self.retrieval_queue.get()
+            if msg[1] != AVIDMessageType.RESPONSE:
+                continue
+
+            _, _, response_index, roothash, data = msg
+            if response_index != index:
+                continue
+            if sender in response_set:
+                logger.warning("Redundant RESPONSE from %s", sender)
+                continue
+            if sender not in self.recipient_positions or not data:
+                logger.warning("Invalid RESPONSE from %s", sender)
+                continue
+
+            result[self.recipient_positions[sender]] = data
+            response_set.add(sender)
+            if len(response_set) < response_threshold:
+                continue
+
+            try:
+                decoded_output = decode(
+                    response_threshold, self.committee_size, result
+                )
+                stripes = encode(
+                    response_threshold, self.committee_size, decoded_output
+                )
+                if merkle_tree(stripes)[1] != roothash:
+                    raise adkgError("Failed to verify merkle tree")
+            except Exception as exc:
+                raise adkgError("Failed to decode AVID item") from exc
+
+            return decoded_output
+
+    async def disperse(self, sid, pid, input_list=None):
+        """Disperse at the dealer or serve AVID at destination-local ``pid``."""
+        assert 0 <= pid < self.committee_size
+
+        k = self.t + 1
+        echo_threshold = 2 * self.t + 1
+        ready_threshold = self.t + 1
+        output_threshold = 2 * self.t + 1
+
+        if input_list is not None:
+            assert pid == self.leader
+            assert len(input_list) == self.committee_size
+
+            stripes_list = []
+            mt_list = []
+            roothash_list = []
+            for message in input_list:
+                stripes = encode(k, self.committee_size, message)
+                mt = merkle_tree(stripes)
+                stripes_list.append(stripes)
+                mt_list.append(mt)
+                roothash_list.append(mt[1])
+
+            stripes_per_recipient = [list(items) for items in zip(*stripes_list)]
+            for recipient_index, global_id in enumerate(
+                self.recipient_global_ids
+            ):
+                branch_list = [
+                    get_merkle_branch(recipient_index, mt)
+                    for mt in mt_list
+                ]
+                self.send(
+                    global_id,
+                    (
+                        sid,
+                        AVIDMessageType.VAL,
+                        roothash_list,
+                        branch_list,
+                        stripes_per_recipient[recipient_index],
+                    ),
+                )
+            return
+
+        echo_set = set()
+        ready_set = set()
+        ready_sent = False
+        from_dealer = False
+        my_stripes = None
+        my_roothash_list = None
+
+        while True:
+            sender, msg = await self.recv()
+            if sender not in self.recipient_positions and sender != self.dealer_global_id:
+                continue
+
+            if msg[1] == AVIDMessageType.VAL and not from_dealer:
+                _, _, roothash_list, branch_list, stripes_for_each = msg
+                if sender != self.dealer_global_id:
+                    logger.warning(
+                        "[%d] VAL message from non-dealer %d", pid, sender
+                    )
+                    continue
+                if not (
+                    len(roothash_list)
+                    == len(branch_list)
+                    == len(stripes_for_each)
+                    == self.committee_size
+                ):
+                    continue
+
+                valid = all(
+                    merkle_verify(
+                        self.committee_size,
+                        stripes_for_each[index],
+                        roothash_list[index],
+                        branch_list[index],
+                        pid,
+                    )
+                    for index in range(self.committee_size)
+                )
+                if not valid:
+                    logger.error("[%d] Failed to validate VAL message", pid)
+                    continue
+
+                from_dealer = True
+                my_stripes = stripes_for_each
+                my_roothash_list = roothash_list
+                self.broadcast((sid, AVIDMessageType.ECHO))
+
+            elif msg[1] == AVIDMessageType.ECHO:
+                if sender == self.dealer_global_id or sender in echo_set:
+                    continue
+                echo_set.add(sender)
+
+            elif msg[1] == AVIDMessageType.READY:
+                if sender == self.dealer_global_id or sender in ready_set:
+                    continue
+                ready_set.add(sender)
+
+            elif msg[1] == AVIDMessageType.RETRIEVE:
+                _, _, index = msg
+                if not 0 <= index < self.committee_size:
+                    continue
+                if my_stripes is None:
+                    continue
+                if not self.ok_future.done():
+                    self.retrieval_requests.append((sender, index))
+                else:
+                    self.send(
+                        sender,
+                        (
+                            sid,
+                            AVIDMessageType.RESPONSE,
+                            index,
+                            my_roothash_list[index],
+                            my_stripes[index],
+                        ),
+                    )
+
+            elif msg[1] == AVIDMessageType.RESPONSE:
+                self.retrieval_queue.put_nowait((sender, msg))
+
+            if len(echo_set) >= echo_threshold and not ready_sent:
+                ready_sent = True
+                self.broadcast((sid, AVIDMessageType.READY))
+
+            if len(ready_set) >= ready_threshold and not ready_sent:
+                ready_sent = True
+                self.broadcast((sid, AVIDMessageType.READY))
+
+            if (
+                len(ready_set) >= output_threshold
+                and len(echo_set) >= k
+                and not self.ok_future.done()
+            ):
+                self.ok_future.set_result(True)
+
+            if self.ok_future.done() and my_stripes is not None:
+                for sender, index in self.retrieval_requests:
+                    self.send(
+                        sender,
+                        (
+                            sid,
+                            AVIDMessageType.RESPONSE,
+                            index,
+                            my_roothash_list[index],
+                            my_stripes[index],
+                        ),
+                    )
+                self.retrieval_requests.clear()

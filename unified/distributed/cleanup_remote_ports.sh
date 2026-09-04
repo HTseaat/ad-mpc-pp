@@ -64,6 +64,15 @@ esac
 load_cluster_env
 require_tools ssh
 
+SSH_OPTIONS=(-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o BatchMode=yes)
+if [[ -n "${SSH_IDENTITY_FILE:-}" ]]; then
+  if [[ ! -r "$SSH_IDENTITY_FILE" ]]; then
+    echo "SSH identity file is not readable: ${SSH_IDENTITY_FILE}" >&2
+    exit 1
+  fi
+  SSH_OPTIONS+=(-i "$SSH_IDENTITY_FILE" -o IdentitiesOnly=yes)
+fi
+
 if [[ -z "$TARGET_N" ]]; then
   TARGET_N="${#CLUSTER_IPS[@]}"
 fi
@@ -92,15 +101,22 @@ echo "Cleanup target protocol=${TARGET_PROTOCOL}, N=${TARGET_N}"
 echo "Projects: ${PROJECTS[*]}"
 echo "Hosts: ${SELECTED_IPS[*]}"
 
-for ip in "${SELECTED_IPS[@]}"; do
-  host="${NODE_SSH_USERNAME}@${ip}"
+parallelism="${CLEANUP_PARALLELISM:-8}"
+if ! [[ "$parallelism" =~ ^[1-9][0-9]*$ ]]; then
+  echo "CLEANUP_PARALLELISM must be a positive integer" >&2
+  exit 1
+fi
+
+cleanup_host() {
+  local ip="$1"
+  local host="${NODE_SSH_USERNAME}@${ip}"
   echo "[cleanup] ${host}"
 
   if [[ "$DRY_RUN" -eq 1 ]]; then
-    continue
+    return 0
   fi
 
-  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$host" bash -s -- "${PROJECTS[@]}" <<'EOF'
+  ssh "${SSH_OPTIONS[@]}" "$host" bash -s -- "${PROJECTS[@]}" <<'EOF'
 set -euo pipefail
 
 projects=("$@")
@@ -114,6 +130,32 @@ done
 # Print residual listeners in expected benchmark range for diagnostics.
 docker ps --format '{{.Names}} {{.Ports}}' | grep -E '(:700[1-9]|:7010)->' || true
 EOF
+}
+
+pids=()
+failed=0
+for ip in "${SELECTED_IPS[@]}"; do
+  cleanup_host "$ip" &
+  pids+=("$!")
+  if [[ "${#pids[@]}" -ge "$parallelism" ]]; then
+    for pid in "${pids[@]}"; do
+      if ! wait "$pid"; then
+        failed=1
+      fi
+    done
+    pids=()
+  fi
 done
+
+for pid in "${pids[@]}"; do
+  if ! wait "$pid"; then
+    failed=1
+  fi
+done
+
+if [[ "$failed" -ne 0 ]]; then
+  echo "One or more remote cleanups failed" >&2
+  exit 1
+fi
 
 echo "Remote cleanup completed."

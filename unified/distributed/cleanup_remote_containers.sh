@@ -23,8 +23,8 @@ Options:
 Examples:
   $0
   $0 --protocol dumbo --n 4
-  $0 --host 110.42.130.226
-  $0 --host 110.42.130.226 --protocol all --prune
+  $0 --host 203.0.113.10
+  $0 --host 203.0.113.10 --protocol all --prune
 USAGE
 }
 
@@ -85,6 +85,20 @@ esac
 load_cluster_env
 require_tools ssh
 
+SSH_OPTIONS=(
+  -o StrictHostKeyChecking=no
+  -o UserKnownHostsFile=/dev/null
+  -o BatchMode=yes
+  -o ConnectTimeout=12
+  -o ConnectionAttempts=3
+)
+if [[ -n "${SSH_IDENTITY_FILE:-}" ]]; then
+  SSH_OPTIONS+=(
+    -i "$SSH_IDENTITY_FILE"
+    -o IdentitiesOnly=yes
+  )
+fi
+
 if [[ -z "$TARGET_N" ]]; then
   TARGET_N="${#CLUSTER_IPS[@]}"
 fi
@@ -134,7 +148,7 @@ for ip in "${TARGET_HOSTS[@]}"; do
     continue
   fi
 
-  ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "$host" \
+  ssh "${SSH_OPTIONS[@]}" "$host" \
     bash -s -- "$REMOTE_ROOT" "$DO_PRUNE" "${#REMOTE_PROJECT_DIRS[@]}" "${REMOTE_PROJECT_DIRS[@]}" "${LABEL_PROJECTS[@]}" <<'EOF'
 set -euo pipefail
 

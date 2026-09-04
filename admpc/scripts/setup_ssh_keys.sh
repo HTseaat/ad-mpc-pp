@@ -9,6 +9,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 source -- ./config.sh
 
+SSH_OPTIONS=(
+    -o StrictHostKeyChecking=no
+    -o UserKnownHostsFile=/dev/null
+)
+
 ALL_IPS=("${NODE_IPS[@]}")
 if [ "${#ALL_IPS[@]}" -eq 0 ]; then
     echo "No NODE_IPS found in scripts/config.sh"
@@ -46,8 +51,8 @@ fi
 PUB_KEY_CONTENT=$(cat "$KEY_PATH.pub")
 for ip in "${TARGET_IPS[@]}"; do
     echo "Configuring passwordless SSH for $NODE_SSH_USERNAME@$ip ..."
-    ssh "$NODE_SSH_USERNAME@$ip" "mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
-    ssh "$NODE_SSH_USERNAME@$ip" "grep -qxF '$PUB_KEY_CONTENT' ~/.ssh/authorized_keys || echo '$PUB_KEY_CONTENT' >> ~/.ssh/authorized_keys"
+    ssh "${SSH_OPTIONS[@]}" "$NODE_SSH_USERNAME@$ip" "mkdir -p ~/.ssh && chmod 700 ~/.ssh && touch ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+    ssh "${SSH_OPTIONS[@]}" "$NODE_SSH_USERNAME@$ip" "grep -qxF '$PUB_KEY_CONTENT' ~/.ssh/authorized_keys || echo '$PUB_KEY_CONTENT' >> ~/.ssh/authorized_keys"
     echo "Done: $ip"
 done
 

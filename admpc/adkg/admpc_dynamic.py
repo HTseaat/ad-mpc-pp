@@ -17,9 +17,16 @@ from adkg.mpc import TaskProgramRunner
 from adkg.robust_rec import robust_reconstruct_admpc, Robust_Rec
 from adkg.trans import Trans, Trans_Pre, Trans_Foll
 from adkg.rand import Rand, Rand_Pre, Rand_Foll
-from adkg.bundle import Bundle, Bundle_Pre, Bundle_Foll
+from adkg.bundle import (
+    Bundle,
+    Bundle_Pre,
+    Bundle_Foll,
+    batchbundle_batch_count,
+)
 
 from adkg.aprep import APREP, APREP_Pre, APREP_Foll
+from adkg.adversarial_faults import ADMPCFaultController
+from adkg.fault_accumulation import ADMPCFaultAccumulationController
 import math
 
 import logging
@@ -313,11 +320,26 @@ class ADMPC_Multi_Layer_Control():
 class ADMPC_Dynamic(ADMPC):
     GATE_MODE = "mixed"
 
-    def __init__(self, public_keys, private_key, g, h, n, t, deg, my_id, send, recv, pc, curve_params, matrices, total_cm, layerID = None, admpc_control_instance=None):
+    def __init__(self, public_keys, private_key, g, h, n, t, deg, my_id, send, recv, pc, curve_params, matrices, total_cm, layerID = None, admpc_control_instance=None, metrics_recorder=None):
         self.admpc_control_instance = admpc_control_instance if admpc_control_instance is not None else ADMPC_Multi_Layer_Control(n=n, t=t, deg=deg, layer_num=int(len(public_keys)/n), total_cm=total_cm, pks=public_keys)
         self.layer_ID = layerID
+        self.metrics_recorder = metrics_recorder
         self.sc = ceil((deg+1)/(t+1)) + 1
         self.Signal = asyncio.Event()
+        self.fault_controller = ADMPCFaultController.from_env(
+            n=n,
+            t=t,
+            layers=self.admpc_control_instance.layer_num,
+            physical_layer_id=layerID,
+            local_party_id=my_id,
+        )
+        self.fault_accumulation = ADMPCFaultAccumulationController.from_env(
+            n=n,
+            t=t,
+            layers=self.admpc_control_instance.layer_num,
+            physical_layer_id=layerID,
+            local_party_id=my_id,
+        )
         super().__init__(public_keys, private_key, g, h, n, t, deg, my_id, send, recv, pc, curve_params, matrices)
 
     def _resolve_gate_mode(self):
@@ -397,6 +419,14 @@ class ADMPC_Dynamic(ADMPC):
     
     async def run_admpc(self, start_time):
         acss_start_time = time.time()
+        if self.fault_accumulation.should_be_silent():
+            self.fault_accumulation.log_silent_entered()
+            logging.warning(
+                "[Layer %s] local party %s enters permanent crash-stop silence; Finished",
+                self.layer_ID,
+                self.my_id,
+            )
+            return
         self.public_keys = self.public_keys[self.n*self.layer_ID:self.n*self.layer_ID+self.n]
         
         # cm indicates the number of multiplication gates per layer, evenly distributed across working layers
@@ -412,6 +442,7 @@ class ADMPC_Dynamic(ADMPC):
             w = cm
         else:
             w = cm * 2
+        self.metrics_normalization_count = w
         print(
             f"run_admpc layer_ID: {self.layer_ID}, mode: {gate_mode}, "
             f"cm: {cm}, w: {w}, total_cm: {self.admpc_control_instance.total_cm}"
@@ -453,10 +484,7 @@ class ADMPC_Dynamic(ADMPC):
             rand_pre_time = time.time()
             # r_num = 2 * w + 1
             r_num = w
-            if r_num > self.n - self.t: 
-                rounds = math.ceil(r_num / (self.n - self.t))
-            else: 
-                rounds = 1
+            rounds = batchbundle_batch_count(r_num, self.t)
 
             randtag = ADMPCMsgType.GENRAND + str(self.layer_ID+1)
             randsend, randrecv = self.get_send(randtag), self.subscribe_recv(randtag)
@@ -531,10 +559,7 @@ class ADMPC_Dynamic(ADMPC):
                                   randsend, randrecv, self.pc, self.curve_params, self.matrix, mpc_instance=self)
             # r_num = 2 * w + 1 
             r_num = w
-            if r_num > self.n - self.t: 
-                rounds = math.ceil(r_num / (self.n - self.t))
-            else: 
-                rounds = 1
+            rounds = batchbundle_batch_count(r_num, self.t)
             rand_shares, hat_rand_shares, w_list = await bundle_foll.run_bundle(r_num, rounds)
             rand_shares = [rand_shares[0]] + rand_shares + hat_rand_shares
             rand_foll_time = time.time() - rand_foll_time
@@ -575,7 +600,10 @@ class ADMPC_Dynamic(ADMPC):
                     trans_pre = Trans_Pre(self.public_keys, self.private_key, 
                                     self.g, self.h, self.n, self.t, self.deg, self.my_id, 
                                     transsend, transrecv, self.pc, self.curve_params, mpc_instance=self)
-                    trans_pre_task = asyncio.create_task(trans_pre.run_trans(gate_outputs, rand_shares, w_list))
+                    # The communication metrics checkpoint is written as soon as
+                    # run_admpc() returns.  Wait for the final handoff here so the
+                    # source committee's TR2 traffic is included in that artifact.
+                    await trans_pre.run_trans(gate_outputs, rand_shares, w_list)
                     
                     self.admpc_control_instance.control_signal.set()
                     trans_pre_time = time.time() - trans_pre_time
@@ -584,10 +612,7 @@ class ADMPC_Dynamic(ADMPC):
                     rand_pre_time = time.time()
                     # r_num = 2 * w + 1 
                     r_num = w
-                    if r_num > self.n - self.t: 
-                        rounds = math.ceil(r_num / (self.n - self.t))
-                    else: 
-                        rounds = 1
+                    rounds = batchbundle_batch_count(r_num, self.t)
 
                     randtag = ADMPCMsgType.GENRAND + str(self.layer_ID+1)
                     randsend, randrecv = self.get_send(randtag), self.subscribe_recv(randtag)
@@ -645,6 +670,16 @@ class ADMPC_Dynamic(ADMPC):
                 trans_foll_time = time.time() - trans_foll_time
                 print(f"layer ID: {self.layer_ID} trans_foll_time: {trans_foll_time}")
 
+                # Final reconstruction is outside the Figure 8 computation-layer
+                # communication scope.  Persist the output committee's TR2
+                # counters as soon as the handoff is complete, so a long RR step
+                # cannot hide otherwise complete communication measurements.
+                write_checkpoint = getattr(
+                    self.metrics_recorder, "write_metrics_checkpoint", None
+                )
+                if write_checkpoint is not None:
+                    write_checkpoint()
+
                 rec_values = await self.robust_rec_step(new_shares, 0)
             else: 
             
@@ -672,10 +707,7 @@ class ADMPC_Dynamic(ADMPC):
 
                 # r_num = 2 * w + 1 
                 r_num = w
-                if r_num > self.n - self.t: 
-                    rounds = math.ceil(r_num / (self.n - self.t))
-                else: 
-                    rounds = 1
+                rounds = batchbundle_batch_count(r_num, self.t)
                 rand_shares, hat_rand_shares, w_list = await bundle_foll.run_bundle(r_num, rounds)
                 rand_shares = [rand_shares[0]] + rand_shares + hat_rand_shares
                 rand_foll_time = time.time() - rand_foll_time
@@ -728,10 +760,7 @@ class ADMPC_Dynamic(ADMPC):
                     rand_pre_time = time.time()
                     # r_num = 2 * w + 1 
                     r_num = w
-                    if r_num > self.n - self.t: 
-                        rounds = math.ceil(r_num / (self.n - self.t))
-                    else: 
-                        rounds = 1
+                    rounds = batchbundle_batch_count(r_num, self.t)
 
                     randtag = ADMPCMsgType.GENRAND + str(self.layer_ID+1)
                     randsend, randrecv = self.get_send(randtag), self.subscribe_recv(randtag)

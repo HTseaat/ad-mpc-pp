@@ -1,0 +1,67 @@
+# This ignore file is intentionally scoped to Dockerfile.unified.  The build
+# context is /opt so the image can contain dumbo-mpc, admpc, and unified while
+# excluding local architecture artifacts and experiment output.
+*
+!admpc
+!admpc/**
+!dumbo-mpc
+!dumbo-mpc/**
+!unified
+!unified/**
+
+# Never copy local native/build artifacts.  They are rebuilt for linux/amd64.
+**/*.so
+**/*.o
+**/*.a
+**/*.egg
+**/*.egg-info
+**/build
+**/build/**
+**/dist
+**/dist/**
+**/target
+**/target/**
+**/__pycache__
+**/__pycache__/**
+**/.pytest_cache
+**/.pytest_cache/**
+**/*.pyc
+
+# Generated experiment state is distributed or mounted at runtime.
+admpc/conf/**
+admpc/logs/**
+admpc/sharedata/**
+admpc/*.log
+admpc/*times.csv
+dumbo-mpc/**/conf/**
+dumbo-mpc/**/log/**
+dumbo-mpc/**/logs/**
+dumbo-mpc/**/triples/**
+dumbo-mpc/**/sharedata/**
+dumbo-mpc/**/sharedata_test/**
+dumbo-mpc/**/transfer/**
+dumbo-mpc/**/mul_out/**
+dumbo-mpc/**/init_inputs/**
+dumbo-mpc/**/ransh/**
+dumbo-mpc/*times*.csv
+
+# The locked qsdh-py snapshot intentionally contains 13 checked-in local
+# configuration fixtures.  They are part of its manifest and are required by
+# the trusted-setup fail-closed source-integrity check.
+!dumbo-mpc/dumbo-mpc/AsyRanTriGen/trusted_setup/upstream/qsdh-py/conf
+!dumbo-mpc/dumbo-mpc/AsyRanTriGen/trusted_setup/upstream/qsdh-py/conf/**
+
+# Local repositories, credentials, editor state, and archives.
+**/.git
+**/.git/**
+**/.ssh
+**/.ssh/**
+**/.aws
+**/.aws/**
+**/*.pem
+**/*.key
+**/.env
+**/.env.*
+**/*.tar
+**/*.tar.gz
+**/*.zip

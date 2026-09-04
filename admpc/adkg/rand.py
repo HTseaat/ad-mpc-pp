@@ -22,6 +22,35 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.NOTSET)
 
+
+def batchrand_output_count(t):
+    """Return the number of independent outputs per BACSS batch."""
+    if not isinstance(t, int) or t < 0:
+        raise ValueError("BatchRand threshold must be a non-negative integer")
+    return t + 1
+
+
+def batchrand_batch_count(value_count, t):
+    """Return the paper-faithful number of BACSS batches for ``value_count``."""
+    if not isinstance(value_count, int) or value_count < 0:
+        raise ValueError("BatchRand value_count must be a non-negative integer")
+    return max(1, math.ceil(value_count / batchrand_output_count(t)))
+
+
+def batchrand_extraction_matrix(field, t):
+    """Build the (t+1)-by-(2t+1) MDS extraction matrix from Algorithm 1.
+
+    Rows are powers and columns are evaluations at distinct non-zero field
+    points.  Consequently every (t+1)-column square submatrix is a standard
+    Vandermonde matrix and is invertible.
+    """
+    output_count = batchrand_output_count(t)
+    input_count = 2 * t + 1
+    return [
+        [field(column + 1) ** row for column in range(input_count)]
+        for row in range(output_count)
+    ]
+
 class RANDMsgType:
     ACSS = "GR.A"
     RBC = "GR.R"
@@ -344,9 +373,21 @@ class Rand_Pre(Rand):
         self.mpc_instance = mpc_instance
 
         super().__init__(public_keys, private_key, g, h, n, t, deg, my_id, send, recv, pc, curve_params, matrix)
+        if self.n != 3 * self.t + 1:
+            raise ValueError(
+                "AD-MPC BatchRand requires the paper parameter n=3*t+1"
+            )
         
 
-    async def run_rand(self, w, rounds):
+    async def run_rand(self, w, rounds=None):
+        expected_rounds = batchrand_batch_count(w, self.t)
+        if rounds is None:
+            rounds = expected_rounds
+        if rounds != expected_rounds:
+            raise ValueError(
+                "BatchRand rounds must be ceil(w/(t+1)): "
+                f"expected {expected_rounds}, got {rounds}"
+            )
         self.rand_num = rounds
         values = [self.ZR.rand() for _ in range(rounds)]
         self.acss_task = asyncio.create_task(self.acss_step(values))
@@ -366,59 +407,119 @@ class Rand_Pre(Rand):
                              acsssend, acssrecv, self.pc, self.ZR, self.G1, 
                              mpc_instance=self.mpc_instance
                          )
+        self.acss.metrics_protocol = getattr(self, "metrics_protocol", "randgen")
         self.acss_tasks = [None] * self.n
         self.acss_tasks[self.my_id] = asyncio.create_task(self.acss.avss(0, values=values))
          
 class Rand_Foll(Rand):
     def __init__(self, public_keys, private_key, g, h, n, t, deg, my_id, send, recv, pc, curve_params, matrix, mpc_instance):
-        
         self.mpc_instance = mpc_instance
-        
-        super().__init__(public_keys, private_key, g, h, n, t, deg, my_id, send, recv, pc, curve_params, matrix)  
+        super().__init__(public_keys, private_key, g, h, n, t, deg, my_id, send, recv, pc, curve_params, matrix)
+        if self.n != 3 * self.t + 1:
+            raise ValueError(
+                "AD-MPC BatchRand requires the paper parameter n=3*t+1"
+            )
+        self.quorum_size = self.n - self.t
+        self.outputs_per_batch = batchrand_output_count(self.t)
+        self.rand_extraction_matrix = batchrand_extraction_matrix(
+            self.ZR, self.t
+        )
+        self.acss_instances = []
+        self.rbc_tasks = []
 
-    
-    async def agreement_dynamic(self, key_proposal, acss_outputs, acss_signal):
+    def kill(self):
+        subscribe_task = getattr(self, "subscribe_recv_task", None)
+        if subscribe_task is not None:
+            subscribe_task.cancel()
+        for task in getattr(self, "acss_tasks", ()):
+            if task is not None:
+                task.cancel()
+        for task in getattr(self, "rbc_tasks", ()):
+            if task is not None:
+                task.cancel()
+        collector = getattr(self, "acss_task", None)
+        if collector is not None:
+            collector.cancel()
+        for acss in getattr(self, "acss_instances", ()):
+            try:
+                acss.kill()
+            except Exception:
+                logger.debug("BatchRand ACSS instance already stopped", exc_info=True)
+
+    def _encode_proposal(self, proposal):
+        proposal = tuple(int(dealer) for dealer in proposal)
+        if (
+            len(proposal) != self.quorum_size
+            or len(set(proposal)) != self.quorum_size
+            or any(dealer < 0 or dealer >= self.n for dealer in proposal)
+        ):
+            raise ValueError(
+                "BatchRand proposal must contain exactly "
+                f"n-t={self.quorum_size} unique dealer IDs"
+            )
+        bitmap = Bitmap(self.n)
+        for dealer in proposal:
+            bitmap.set_bit(dealer)
+        return bytes(bitmap.array)
+
+    def _decode_proposal(self, encoded):
+        if not isinstance(encoded, (bytes, bytearray)):
+            return None
+        expected_length = Bitmap(self.n).BYTES_LENGTH
+        if len(encoded) != expected_length:
+            return None
+        try:
+            bitmap = Bitmap(self.n, encoded)
+            proposal = tuple(
+                dealer for dealer in range(self.n)
+                if bitmap.get_bit(dealer)
+            )
+        except (AssertionError, IndexError, TypeError):
+            return None
+        if len(proposal) != self.quorum_size:
+            return None
+        # Reject non-canonical encodings with set padding bits.
+        if self._encode_proposal(proposal) != bytes(encoded):
+            return None
+        return proposal
+
+    async def _proposal_is_valid(
+            self, encoded, acss_outputs, dealer_ready):
+        proposal = self._decode_proposal(encoded)
+        if proposal is None:
+            return False
+        await asyncio.gather(
+            *(dealer_ready[dealer].wait() for dealer in proposal)
+        )
+        if not all(dealer in acss_outputs for dealer in proposal):
+            raise RuntimeError(
+                "BatchRand dealer availability was signalled before its "
+                "ACSS output became available"
+            )
+        return True
+
+    async def agreement_dynamic(
+            self, key_proposal, acss_outputs, dealer_ready):
         aba_inputs = [asyncio.Queue() for _ in range(self.n)]
         aba_outputs = [asyncio.Queue() for _ in range(self.n)]
         rbc_outputs = [asyncio.Queue() for _ in range(self.n)]
-        
         coin_keys = [asyncio.Queue() for _ in range(self.n)]
+        local_rbc_input = self._encode_proposal(key_proposal)
 
         async def predicate(_key_proposal):
-            kp = Bitmap(self.n, _key_proposal)
-            kpl = []
-            for ii in range(self.n):
-                if kp.get_bit(ii):
-                    kpl.append(ii)
-            if len(kpl) <= self.t:
-                return False
-        
-            while True:
-                subset = True
-                for kk in kpl:
-                    if kk not in acss_outputs.keys():
-                        subset = False
-                if subset:
-                    acss_signal.clear()    
-                    return True
-                acss_signal.clear()
-                await acss_signal.wait()
+            return await self._proposal_is_valid(
+                _key_proposal, acss_outputs, dealer_ready
+            )
 
         async def _setup(j):
-            
-            # starting RBC
             rbctag =RANDMsgType.RBC + str(j) # (R, msg)
             rbcsend, rbcrecv = self.get_send(rbctag), self.subscribe_recv(rbctag)
 
             rbc_input = None
-            if j == self.my_id: 
-                # print(f"key_proposal: {key_proposal}")
-                riv = Bitmap(self.n)
-                for k in key_proposal: 
-                    riv.set_bit(k)
-                rbc_input = bytes(riv.array)
+            if j == self.my_id:
+                rbc_input = local_rbc_input
 
-            asyncio.create_task(
+            self.rbc_tasks[j] = asyncio.create_task(
                 optqrbc_dynamic(
                     rbctag,
                     self.my_id,
@@ -456,8 +557,8 @@ class Rand_Foll(Rand):
             )
             return aba_task
 
+        self.rbc_tasks = [None] * self.n
         work_tasks = await asyncio.gather(*[_setup(j) for j in range(self.n)])
-        
         rbc_signal = asyncio.Event()
         rbc_values = [None for i in range(self.n)]
 
@@ -465,7 +566,7 @@ class Rand_Foll(Rand):
             self.commonsubset_dynamic(
                 rbc_outputs,
                 acss_outputs,
-                acss_signal,
+                dealer_ready,
                 rbc_signal,
                 rbc_values,
                 [_.put_nowait for _ in coin_keys],
@@ -474,7 +575,7 @@ class Rand_Foll(Rand):
             ),
             self.generate_rand_dynamic(
                 acss_outputs,
-                acss_signal,
+                dealer_ready,
                 rbc_values,
                 rbc_signal,
             ),
@@ -482,45 +583,66 @@ class Rand_Foll(Rand):
         )
 
     
-    async def run_rand(self, w, rounds):
+    async def run_rand(self, w, rounds=None):
+        expected_rounds = batchrand_batch_count(w, self.t)
+        if rounds is None:
+            rounds = expected_rounds
+        if rounds != expected_rounds:
+            raise ValueError(
+                "BatchRand rounds must be ceil(w/(t+1)): "
+                f"expected {expected_rounds}, got {rounds}"
+            )
         print(f"rand_foll run_rand: w={w}, rounds={rounds}")
         self.rand_num = rounds
-        self.member_list = []
-        for i in range(self.n): 
-            self.member_list.append(self.n * (self.mpc_instance.layer_ID) + i)
+        self.member_list = [
+            self.n * self.mpc_instance.layer_ID + i
+            for i in range(self.n)
+        ]
 
         rand_acss_time = time.time()
-        acss_signal = asyncio.Event()
-        self.acss_task = asyncio.create_task(self.acss_step(rounds))
-        acss_outputs = await self.acss_task
+        acss_outputs = {}
+        dealer_ready = [asyncio.Event() for _ in range(self.n)]
+        quorum_proposal = asyncio.get_running_loop().create_future()
+        self.acss_task = asyncio.create_task(
+            self.acss_step(
+                rounds,
+                acss_outputs,
+                quorum_proposal,
+                dealer_ready,
+            )
+        )
+        key_proposal = list(await quorum_proposal)
         rand_acss_time = time.time() - rand_acss_time
-
-        key_proposal = list(acss_outputs.keys())
 
         # MVBA
         rand_mvba_time = time.time()
-        create_acs_task = asyncio.create_task(self.agreement_dynamic(key_proposal, acss_outputs, acss_signal))
+        create_acs_task = asyncio.create_task(
+            self.agreement_dynamic(
+                key_proposal, acss_outputs, dealer_ready
+            )
+        )
         acs, key_task, work_tasks = await create_acs_task
         await acs
         output = await key_task
         await asyncio.gather(*work_tasks)
         rand_mvba_time = time.time() - rand_mvba_time
 
-        mks, new_shares = output
-        rand_shares = []
+        common_set, new_shares = output
+        self.common_subset = tuple(common_set)
         rand_shares_time = time.time()
-        for i in range(self.rand_num): 
-            if i == self.rand_num - 1: 
-                w = w - i * (self.n - self.t)
-                rand_shares = rand_shares + new_shares[i][:w]
-            else: 
-                rand_shares = rand_shares + new_shares[i]
+        generated = [share for batch in new_shares for share in batch]
+        if len(generated) < w:
+            raise RuntimeError(
+                f"BatchRand generated {len(generated)} shares, expected {w}"
+            )
+        rand_shares = generated[:w]
         rand_shares_time = time.time() - rand_shares_time
 
-        # self.output_queue.put_nowait(rand_shares)
         return rand_shares
 
-    async def commonsubset_dynamic(self, rbc_out, acss_outputs, acss_signal, rbc_signal, rbc_values, coin_keys, aba_in, aba_out):
+    async def commonsubset_dynamic(
+            self, rbc_out, acss_outputs, dealer_ready, rbc_signal,
+            rbc_values, coin_keys, aba_in, aba_out):
         assert len(rbc_out) == self.n
         assert len(aba_in) == self.n
         assert len(aba_out) == self.n
@@ -530,27 +652,24 @@ class Rand_Foll(Rand):
 
         async def _recv_rbc(j):
             rbcl = await rbc_out[j].get()
-            rbcb = Bitmap(self.n, rbcl)
-            rbc_values[j] = []
+            proposal = self._decode_proposal(rbcl)
+            if proposal is None:
+                raise ValueError("RBC returned an invalid BatchRand proposal")
+            rbc_values[j] = list(proposal)
 
-            for i in range(self.n):
-                if rbcb.get_bit(i):
-                    rbc_values[j].append(i)
-            
             if not aba_inputted[j]:
                 aba_inputted[j] = True
                 aba_in[j](1)
-            
-            subset = True
-            while True:
-                acss_signal.clear()
-                for k in rbc_values[j]:
-                    if k not in acss_outputs.keys():
-                        subset = False
-                if subset:
-                    coin_keys[j]((acss_outputs, rbc_values[j]))
-                    return
-                await acss_signal.wait()
+
+            await asyncio.gather(
+                *(dealer_ready[dealer].wait() for dealer in proposal)
+            )
+            if not all(dealer in acss_outputs for dealer in proposal):
+                raise RuntimeError(
+                    "BatchRand RBC proposal became ready before all local "
+                    "ACSS outputs were stored"
+                )
+            coin_keys[j]((acss_outputs, rbc_values[j]))
 
         r_threads = [asyncio.create_task(_recv_rbc(j)) for j in range(self.n)]
 
@@ -565,88 +684,142 @@ class Rand_Foll(Rand):
                         aba_in[k](0)
         
         await asyncio.gather(*[asyncio.create_task(_recv_aba(j)) for j in range(self.n)])
-        # assert sum(aba_values) >= self.n - self.t  # Must have at least N-f committed
-        assert sum(aba_values) >= 1  # Must have at least N-f committed
+        assert sum(aba_values) >= 1
 
-        # Wait for the corresponding broadcasts
+        cancelled_rbc_receivers = []
         for j in range(self.n):
             if aba_values[j]:
                 await r_threads[j]
                 assert rbc_values[j] is not None
             else:
                 r_threads[j].cancel()
+                cancelled_rbc_receivers.append(r_threads[j])
                 rbc_values[j] = None
+        if cancelled_rbc_receivers:
+            await asyncio.gather(
+                *cancelled_rbc_receivers, return_exceptions=True
+            )
 
         rbc_signal.set()
-    
-    async def generate_rand_dynamic(self, acss_outputs, acss_signal, rbc_values, rbc_signal):
+
+    def _select_common_set(self, rbc_values):
+        for proposal in rbc_values:
+            if proposal is None:
+                continue
+            common_set = tuple(proposal)
+            try:
+                self._encode_proposal(common_set)
+            except ValueError as exc:
+                raise RuntimeError(
+                    "Agreed BatchRand proposal is not an exact valid quorum"
+                ) from exc
+            return common_set
+        raise RuntimeError("BatchRand agreement returned no accepted proposal")
+
+    async def generate_rand_dynamic(
+            self, acss_outputs, dealer_ready, rbc_values, rbc_signal):
         await rbc_signal.wait()
-        rbc_signal.clear()
+        common_set = self._select_common_set(rbc_values)
+        await asyncio.gather(
+            *(dealer_ready[dealer].wait() for dealer in common_set)
+        )
+        if not all(dealer in acss_outputs for dealer in common_set):
+            raise RuntimeError(
+                "BatchRand common-set dealer was signalled before its "
+                "ACSS output became available"
+            )
 
-
-        self.mks = set() # master key set
-        for ks in  rbc_values:
-            if ks is not None:
-                self.mks = self.mks.union(set(list(ks)))
-                if len(self.mks) >= self.n-self.t:
-                    break
-        
-        # Waiting for all ACSS to terminate
-        for k in self.mks:
-            if k not in acss_outputs:
-                await acss_signal.wait()
-                acss_signal.clear()
-
-
-        for node, rounds in acss_outputs.items():
+        self.mks = set(common_set)
+        flat_outputs = {}
+        for dealer in common_set:
             flat = []
-            for round_shares in rounds:
+            for round_shares in acss_outputs[dealer]:
                 flat.extend(round_shares)
-            acss_outputs[node] = flat
+            if len(flat) != self.rand_num:
+                raise RuntimeError(
+                    f"BatchRand dealer {dealer} returned {len(flat)} "
+                    f"shares, expected {self.rand_num}"
+                )
+            flat_outputs[dealer] = flat
 
+        z_shares = []
+        for batch_index in range(self.rand_num):
+            inputs = [
+                flat_outputs[dealer][batch_index]
+                for dealer in common_set
+            ]
+            z_shares.append([
+                self.dotprod(row, inputs)
+                for row in self.rand_extraction_matrix
+            ])
+        return common_set, z_shares
 
-        # extract random shares
-        secrets = [[self.ZR(0) for _ in range(self.n)] for _ in range(self.rand_num)]
-        for node, rounds_shares in acss_outputs.items():
-            if node in self.mks:
-                for idx in range(self.rand_num):
-                    secrets[idx][node] = rounds_shares[idx]
-
-        
-    
-        z_shares = [[self.ZR(0) for _ in range(self.n-self.t)] for _ in range(self.rand_num)]
-        
-        for i in range(self.rand_num): 
-            for j in range(self.n-self.t): 
-                z_shares[i][j] = self.dotprod(self.matrix[j], secrets[i])
-        return (self.mks, z_shares)
-    
-
-    async def acss_step(self, rounds):
+    async def acss_step(
+            self, rounds, outputs, quorum_proposal, dealer_ready):
         self.acss_tasks = [None] * self.n
-        for dealer_id in range(self.n): 
-            
+        self.acss_instances = [None] * self.n
+
+        async def _run_dealer(dealer_id, acss):
+            try:
+                result = await acss.avss(0, dealer_id, rounds)
+                if result[0] != dealer_id:
+                    raise ValueError(
+                        "BatchRand ACSS returned dealer %s for task %s"
+                        % (result[0], dealer_id)
+                    )
+                return dealer_id, result, None
+            except asyncio.CancelledError:
+                raise
+            except Exception as exc:
+                return dealer_id, None, exc
+
+        for dealer_id in range(self.n):
             acsstag = RANDMsgType.ACSS + str(self.mpc_instance.layer_ID - 1) + str(dealer_id)
             acsssend, acssrecv = self.get_send(acsstag), self.subscribe_recv(acsstag)
 
-            self.acss = ACSS_Foll(self.public_keys, self.private_key, 
-                                self.g, self.h, self.n, self.t, self.deg, self.sc, self.my_id, 
-                                acsssend, acssrecv, self.pc, self.ZR, self.G1, 
-                                mpc_instance=self.mpc_instance
-                            )
-            self.acss_tasks[dealer_id] = asyncio.create_task(self.acss.avss(0, dealer_id, rounds))
+            acss = ACSS_Foll(
+                self.public_keys, self.private_key,
+                self.g, self.h, self.n, self.t, self.deg, self.sc,
+                self.my_id, acsssend, acssrecv, self.pc, self.ZR, self.G1,
+                mpc_instance=self.mpc_instance,
+            )
+            acss.metrics_protocol = getattr(
+                self, "metrics_protocol", "randgen"
+            )
+            self.acss = acss
+            self.acss_instances[dealer_id] = acss
+            self.acss_tasks[dealer_id] = asyncio.create_task(
+                _run_dealer(dealer_id, acss)
+            )
 
+        for completed in asyncio.as_completed(self.acss_tasks):
+            dealer, result, error = await completed
+            if error is not None:
+                logger.warning(
+                    "[%d] BatchRand rejected dealer %d: %s",
+                    self.my_id,
+                    dealer,
+                    error,
+                )
+                continue
 
+            _, _, share_info, _ = result
+            outputs[dealer] = share_info['msg']
+            dealer_ready[dealer].set()
 
-        results = await asyncio.gather(*self.acss_tasks)
-        dealer, _, shares, commitments = zip(*results)
-        
-        outputs = {}
-        for dealer_id, _, share_info, _ in results:
-            outputs[dealer_id] = share_info['msg']
+            if (
+                len(outputs) >= self.quorum_size
+                and not quorum_proposal.done()
+            ):
+                quorum_proposal.set_result(
+                    tuple(sorted(outputs)[:self.quorum_size])
+                )
 
-
-        return outputs
+        if not quorum_proposal.done():
+            quorum_proposal.set_exception(RuntimeError(
+                "BatchRand exhausted all dealer tasks before collecting "
+                f"n-t={self.quorum_size} valid outputs"
+            ))
 
 
 class Rand_Fluid_Pre(Rand):

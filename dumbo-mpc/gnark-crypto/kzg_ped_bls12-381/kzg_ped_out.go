@@ -2,7 +2,11 @@ package main
 
 import (
 	"C"
+	"bytes"
+	cryptorand "crypto/rand"
+	"encoding/binary"
 	"encoding/json"
+	"io"
 	"math/big"
 	"sort"
 
@@ -30,6 +34,13 @@ type OpeningProofPub struct {
 	H      curve.G1Affine `json:"H"`      // witness w_i
 	GClaim curve.G1Affine `json:"GClaim"` // g^{f(i)}
 	HClaim curve.G1Affine `json:"HClaim"` // h^{f̂(i)}
+}
+
+// openingWitnessWire is the compact wire representation used by the NoAgg
+// protocol. The evaluation claims are carried by the combined Pedersen
+// commitments, so each opening only needs its KZG witness.
+type openingWitnessWire struct {
+	H curve.G1Affine `json:"H"`
 }
 
 var testSRS *kzg_ped.SRS
@@ -953,6 +964,192 @@ func pyBatchVerifyPub(json_SRS_Vk *C.char,
 	return BatchVerifyPub(comList, proofList, point, Vk)
 }
 
+//export pyBatchVerifyPubCombined
+func pyBatchVerifyPubCombined(json_SRS_Vk *C.char,
+	json_commitmentlist *C.char,
+	json_witnesslist *C.char,
+	json_pedersenlist *C.char,
+	i int) bool {
+
+	var vk kzg_ped.VerifyingKey
+	if err := decodeStrictJSON([]byte(C.GoString(json_SRS_Vk)), &vk); err != nil {
+		return false
+	}
+
+	commitments, err := decodeG1Vector(
+		[]byte(C.GoString(json_commitmentlist)), "commitments",
+	)
+	if err != nil {
+		return false
+	}
+	pedersen, err := decodeG1Vector(
+		[]byte(C.GoString(json_pedersenlist)), "Pedersen commitments",
+	)
+	if err != nil {
+		return false
+	}
+
+	var witnessWire []openingWitnessWire
+	if err := decodeStrictJSON([]byte(C.GoString(json_witnesslist)), &witnessWire); err != nil || len(witnessWire) == 0 {
+		return false
+	}
+	witnesses := make([]curve.G1Affine, len(witnessWire))
+	for index := range witnessWire {
+		witnesses[index].Set(&witnessWire[index].H)
+	}
+
+	var point fr.Element
+	point.SetInt64(int64(i + 1))
+	valid, err := BatchVerifyPubCombinedUnbatched(commitments, witnesses, pedersen, point, vk)
+	return err == nil && valid
+}
+
+// randomCombinePubCombined samples verifier-local independent coefficients and
+// combines C_i, W_i and Ped_i with the same coefficient vector. Randomness
+// errors are surfaced to the caller instead of silently using a zero scalar.
+func randomCombinePubCombined(commitments []kzg_ped.Digest,
+	witnesses []curve.G1Affine,
+	pedersen []curve.G1Affine) (kzg_ped.Digest, curve.G1Affine, curve.G1Affine, error) {
+
+	if len(commitments) == 0 || len(commitments) != len(witnesses) || len(commitments) != len(pedersen) {
+		return kzg_ped.Digest{}, curve.G1Affine{}, curve.G1Affine{}, fmt.Errorf("combined batch length mismatch")
+	}
+
+	coefficients := make([]fr.Element, len(commitments))
+	for index := range coefficients {
+		if _, err := coefficients[index].SetRandom(); err != nil {
+			return kzg_ped.Digest{}, curve.G1Affine{}, curve.G1Affine{}, fmt.Errorf("sample batch coefficient %d: %w", index, err)
+		}
+	}
+
+	var aggregateCommitment, aggregateWitness, aggregatePedersen curve.G1Affine
+	if _, err := aggregateCommitment.MultiExp(commitments, coefficients, ecc.MultiExpConfig{}); err != nil {
+		return kzg_ped.Digest{}, curve.G1Affine{}, curve.G1Affine{}, fmt.Errorf("aggregate commitments: %w", err)
+	}
+	if _, err := aggregateWitness.MultiExp(witnesses, coefficients, ecc.MultiExpConfig{}); err != nil {
+		return kzg_ped.Digest{}, curve.G1Affine{}, curve.G1Affine{}, fmt.Errorf("aggregate witnesses: %w", err)
+	}
+	if _, err := aggregatePedersen.MultiExp(pedersen, coefficients, ecc.MultiExpConfig{}); err != nil {
+		return kzg_ped.Digest{}, curve.G1Affine{}, curve.G1Affine{}, fmt.Errorf("aggregate Pedersen commitments: %w", err)
+	}
+	return aggregateCommitment, aggregateWitness, aggregatePedersen, nil
+}
+
+// BatchVerifyPubCombined verifies C_i - Ped_i = W_i * (alpha - point) with
+// one verifier-randomized batch pairing. The old and fresh relations call this
+// function separately and therefore receive independent coefficient vectors.
+func BatchVerifyPubCombined(commitments []kzg_ped.Digest,
+	witnesses []curve.G1Affine,
+	pedersen []curve.G1Affine,
+	point fr.Element,
+	vk kzg_ped.VerifyingKey) (bool, error) {
+
+	if len(commitments) == 0 || len(commitments) != len(witnesses) || len(commitments) != len(pedersen) {
+		return false, fmt.Errorf("combined batch length mismatch")
+	}
+	for index := range commitments {
+		if err := validateG1(&commitments[index], fmt.Sprintf("commitments[%d]", index)); err != nil {
+			return false, err
+		}
+		if err := validateG1(&witnesses[index], fmt.Sprintf("witnesses[%d]", index)); err != nil {
+			return false, err
+		}
+		if err := validateG1(&pedersen[index], fmt.Sprintf("Pedersen commitments[%d]", index)); err != nil {
+			return false, err
+		}
+	}
+	if err := validateG2(&vk.G2[0], "Vk.G2[0]"); err != nil {
+		return false, err
+	}
+	if err := validateG2(&vk.G2[1], "Vk.G2[1]"); err != nil {
+		return false, err
+	}
+
+	aggregateCommitment, aggregateWitness, aggregatePedersen, err := randomCombinePubCombined(
+		commitments, witnesses, pedersen,
+	)
+	if err != nil {
+		return false, err
+	}
+
+	var lhs curve.G1Affine
+	lhs.Sub(&aggregateCommitment, &aggregatePedersen)
+
+	var pointBig big.Int
+	point.BigInt(&pointBig)
+	var g2AtPoint, rhsExponent curve.G2Affine
+	g2AtPoint.ScalarMultiplication(&vk.G2[0], &pointBig)
+	rhsExponent.Sub(&vk.G2[1], &g2AtPoint)
+
+	var negativeWitness curve.G1Affine
+	negativeWitness.Neg(&aggregateWitness)
+	valid, err := curve.PairingCheck(
+		[]curve.G1Affine{lhs, negativeWitness},
+		[]curve.G2Affine{vk.G2[0], rhsExponent},
+	)
+	if err != nil {
+		return false, fmt.Errorf("combined batch pairing: %w", err)
+	}
+	return valid, nil
+}
+
+// BatchVerifyPubCombinedUnbatched verifies every combined-Pedersen relation
+// independently. No random linear combination is applied, so an honest batch
+// of size B performs exactly B pairing checks.
+func BatchVerifyPubCombinedUnbatched(commitments []kzg_ped.Digest,
+	witnesses []curve.G1Affine,
+	pedersen []curve.G1Affine,
+	point fr.Element,
+	vk kzg_ped.VerifyingKey) (bool, error) {
+
+	if len(commitments) == 0 || len(commitments) != len(witnesses) || len(commitments) != len(pedersen) {
+		return false, fmt.Errorf("combined batch length mismatch")
+	}
+	for index := range commitments {
+		if err := validateG1(&commitments[index], fmt.Sprintf("commitments[%d]", index)); err != nil {
+			return false, err
+		}
+		if err := validateG1(&witnesses[index], fmt.Sprintf("witnesses[%d]", index)); err != nil {
+			return false, err
+		}
+		if err := validateG1(&pedersen[index], fmt.Sprintf("Pedersen commitments[%d]", index)); err != nil {
+			return false, err
+		}
+	}
+	if err := validateG2(&vk.G2[0], "Vk.G2[0]"); err != nil {
+		return false, err
+	}
+	if err := validateG2(&vk.G2[1], "Vk.G2[1]"); err != nil {
+		return false, err
+	}
+
+	var pointBig big.Int
+	point.BigInt(&pointBig)
+	var g2AtPoint, rhsExponent curve.G2Affine
+	g2AtPoint.ScalarMultiplication(&vk.G2[0], &pointBig)
+	rhsExponent.Sub(&vk.G2[1], &g2AtPoint)
+
+	for index := range commitments {
+		var lhs curve.G1Affine
+		lhs.Sub(&commitments[index], &pedersen[index])
+
+		var negativeWitness curve.G1Affine
+		negativeWitness.Neg(&witnesses[index])
+
+		valid, err := curve.PairingCheck(
+			[]curve.G1Affine{lhs, negativeWitness},
+			[]curve.G2Affine{vk.G2[0], rhsExponent},
+		)
+		if err != nil {
+			return false, fmt.Errorf("combined proof %d pairing: %w", index, err)
+		}
+		if !valid {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
 // aggregates commitments and proofs using a bunch of random element for batch verification.
 func randomCombine(commitment []kzg_ped.Digest, proof []kzg_ped.OpeningProof) (kzg_ped.Digest, kzg_ped.OpeningProof) {
 	batchsize := len(commitment)
@@ -1624,22 +1821,1415 @@ func pyParseRandomUnbatched(json_SRS_Pk *C.char, json_commitmentlist *C.char, js
 	return C.CString(jsonResult)
 }
 
-//export pyDeriveChallenge
-func pyDeriveChallenge(json_commitment *C.char) *C.char {
-	// 1) 反序列化批量承诺列表
+func deriveLegacyChallenge(commitmentJSON []byte) (fr.Element, error) {
 	var comList []kzg_ped.Digest
-	if err := json.Unmarshal([]byte(C.GoString(json_commitment)), &comList); err != nil {
-		return C.CString(`{"error": "invalid commitment list"}`)
+	if err := json.Unmarshal(commitmentJSON, &comList); err != nil {
+		return fr.Element{}, fmt.Errorf("invalid commitment list: %w", err)
 	}
-	// 2) 使用整个承诺列表的 JSON 字节作为哈希输入
+
+	// Preserve the historical behavior exactly: decode the caller's list,
+	// marshal it with encoding/json, then reduce SHA-256 into Fr.
 	input, _ := json.Marshal(comList)
 	hash := sha256.Sum256(input)
 
 	var gamma fr.Element
 	gamma.SetBytes(hash[:])
+	return gamma, nil
+}
+
+//export pyDeriveChallenge
+func pyDeriveChallenge(json_commitment *C.char) *C.char {
+	gamma, err := deriveLegacyChallenge([]byte(C.GoString(json_commitment)))
+	if err != nil {
+		return C.CString(`{"error": "invalid commitment list"}`)
+	}
 
 	// fr.Element 没有 MarshalText 方法，直接转换为字符串返回
 	return C.CString(gamma.String())
+}
+
+const (
+	challengeContextVersion uint32 = 1
+	aggEvalDomain                  = "AggEval"
+	ipaKZGDomain                   = "IPAKZG"
+)
+
+// AggEvalChallengeContext is the typed Fiat-Shamir context for Fig. 5's
+// aggregated public evaluation. Field points are decimal Fr strings so the
+// JSON boundary cannot silently lose precision.
+type AggEvalChallengeContext struct {
+	Version        uint32           `json:"version"`
+	Domain         string           `json:"domain"`
+	OldPoint       string           `json:"old_point"`
+	FreshPoint     string           `json:"fresh_point"`
+	OldCommitments []kzg_ped.Digest `json:"old_commitments"`
+	NewCommitments []kzg_ped.Digest `json:"new_commitments"`
+}
+
+// IPAKZGChallengeContext binds all three KZG vectors and all three
+// element-wise Pedersen commitment vectors used by AggPedVerEval.
+type IPAKZGChallengeContext struct {
+	Version           uint32           `json:"version"`
+	Domain            string           `json:"domain"`
+	LeftPoint         string           `json:"left_point"`
+	RightPoint        string           `json:"right_point"`
+	OutputPoint       string           `json:"output_point"`
+	LeftCommitments   []kzg_ped.Digest `json:"left_commitments"`
+	RightCommitments  []kzg_ped.Digest `json:"right_commitments"`
+	OutputCommitments []kzg_ped.Digest `json:"output_commitments"`
+	LeftPedersen      []curve.G1Affine `json:"left_pedersen"`
+	RightPedersen     []curve.G1Affine `json:"right_pedersen"`
+	OutputPedersen    []curve.G1Affine `json:"output_pedersen"`
+}
+
+func decodeStrictJSON(input []byte, target interface{}) error {
+	decoder := json.NewDecoder(bytes.NewReader(input))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(target); err != nil {
+		return err
+	}
+	var trailing interface{}
+	if err := decoder.Decode(&trailing); err != io.EOF {
+		if err == nil {
+			return fmt.Errorf("multiple JSON values")
+		}
+		return err
+	}
+	return nil
+}
+
+func writeCanonicalUint32(buffer *bytes.Buffer, value uint32) {
+	var encoded [4]byte
+	binary.BigEndian.PutUint32(encoded[:], value)
+	buffer.Write(encoded[:])
+}
+
+func writeCanonicalBytes(buffer *bytes.Buffer, value []byte) {
+	writeCanonicalUint32(buffer, uint32(len(value)))
+	buffer.Write(value)
+}
+
+func writeCanonicalString(buffer *bytes.Buffer, value string) {
+	writeCanonicalBytes(buffer, []byte(value))
+}
+
+func validateG1(point *curve.G1Affine, label string) error {
+	if !point.IsOnCurve() {
+		return fmt.Errorf("%s is not on G1", label)
+	}
+	if !point.IsInSubGroup() {
+		return fmt.Errorf("%s is not in the G1 subgroup", label)
+	}
+	return nil
+}
+
+func validateG2(point *curve.G2Affine, label string) error {
+	if !point.IsOnCurve() {
+		return fmt.Errorf("%s is not on G2", label)
+	}
+	if !point.IsInSubGroup() {
+		return fmt.Errorf("%s is not in the G2 subgroup", label)
+	}
+	return nil
+}
+
+func writeCanonicalG1(buffer *bytes.Buffer, point *curve.G1Affine, label string) error {
+	if err := validateG1(point, label); err != nil {
+		return err
+	}
+	encoded := point.Bytes()
+	buffer.Write(encoded[:])
+	return nil
+}
+
+func writeCanonicalG2(buffer *bytes.Buffer, point *curve.G2Affine, label string) error {
+	if err := validateG2(point, label); err != nil {
+		return err
+	}
+	encoded := point.Bytes()
+	buffer.Write(encoded[:])
+	return nil
+}
+
+func writeCanonicalG1Vector(buffer *bytes.Buffer, points []curve.G1Affine, label string) error {
+	writeCanonicalUint32(buffer, uint32(len(points)))
+	for index := range points {
+		if err := writeCanonicalG1(buffer, &points[index], fmt.Sprintf("%s[%d]", label, index)); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func parseCanonicalFieldScalar(value string, label string) (fr.Element, error) {
+	if value == "" {
+		return fr.Element{}, fmt.Errorf("%s is empty", label)
+	}
+	if value == "0" {
+		return fr.Element{}, nil
+	}
+	if value[0] < '1' || value[0] > '9' {
+		return fr.Element{}, fmt.Errorf("%s is not a canonical non-negative decimal scalar", label)
+	}
+	for index := 1; index < len(value); index++ {
+		if value[index] < '0' || value[index] > '9' {
+			return fr.Element{}, fmt.Errorf("%s is not a canonical non-negative decimal scalar", label)
+		}
+	}
+	integer, ok := new(big.Int).SetString(value, 10)
+	if !ok || integer.Sign() < 0 || integer.Cmp(fr.Modulus()) >= 0 {
+		return fr.Element{}, fmt.Errorf("%s is outside the scalar field", label)
+	}
+	var scalar fr.Element
+	scalar.SetBigInt(integer)
+	return scalar, nil
+}
+
+func parseFieldPoint(value string, label string) (fr.Element, error) {
+	return parseCanonicalFieldScalar(value, label)
+}
+
+func canonicalFieldString(value *fr.Element) string {
+	var integer big.Int
+	value.BigInt(&integer)
+	return integer.String()
+}
+
+func writeCanonicalField(buffer *bytes.Buffer, point *fr.Element) {
+	encoded := point.Bytes()
+	buffer.Write(encoded[:])
+}
+
+type parsedPublicParameters struct {
+	ProvingKey   kzg_ped.ProvingKey
+	VerifyingKey kzg_ped.VerifyingKey
+	Digest       [sha256.Size]byte
+}
+
+func parsePublicParameters(provingKeyJSON, verifyingKeyJSON []byte) (parsedPublicParameters, error) {
+	var provingKey kzg_ped.ProvingKey
+	if err := decodeStrictJSON(provingKeyJSON, &provingKey); err != nil {
+		return parsedPublicParameters{}, fmt.Errorf("invalid proving key: %w", err)
+	}
+	var verifyingKey kzg_ped.VerifyingKey
+	if err := decodeStrictJSON(verifyingKeyJSON, &verifyingKey); err != nil {
+		return parsedPublicParameters{}, fmt.Errorf("invalid verifying key: %w", err)
+	}
+	if len(provingKey.G1_g) == 0 || len(provingKey.G1_g) != len(provingKey.G1_h) {
+		return parsedPublicParameters{}, fmt.Errorf("proving key G1 vectors must be non-empty and equal length")
+	}
+
+	var canonical bytes.Buffer
+	writeCanonicalString(&canonical, "Continuum-MPC/SP/v1")
+	if err := writeCanonicalG1Vector(&canonical, provingKey.G1_g, "Pk.G1_g"); err != nil {
+		return parsedPublicParameters{}, err
+	}
+	if err := writeCanonicalG1Vector(&canonical, provingKey.G1_h, "Pk.G1_h"); err != nil {
+		return parsedPublicParameters{}, err
+	}
+	writeCanonicalUint32(&canonical, uint32(len(verifyingKey.G2)))
+	for index := range verifyingKey.G2 {
+		if err := writeCanonicalG2(&canonical, &verifyingKey.G2[index], fmt.Sprintf("Vk.G2[%d]", index)); err != nil {
+			return parsedPublicParameters{}, err
+		}
+	}
+	if err := writeCanonicalG1(&canonical, &verifyingKey.G1_g, "Vk.G1_g"); err != nil {
+		return parsedPublicParameters{}, err
+	}
+	if err := writeCanonicalG1(&canonical, &verifyingKey.G1_h, "Vk.G1_h"); err != nil {
+		return parsedPublicParameters{}, err
+	}
+	if provingKey.G1_g[0].IsInfinity() || provingKey.G1_h[0].IsInfinity() ||
+		verifyingKey.G1_g.IsInfinity() || verifyingKey.G1_h.IsInfinity() ||
+		verifyingKey.G2[0].IsInfinity() || verifyingKey.G2[1].IsInfinity() {
+		return parsedPublicParameters{}, fmt.Errorf("public parameter generators must not be infinity")
+	}
+	if !provingKey.G1_g[0].Equal(&verifyingKey.G1_g) ||
+		!provingKey.G1_h[0].Equal(&verifyingKey.G1_h) {
+		return parsedPublicParameters{}, fmt.Errorf("proving and verifying key G1 bases do not match")
+	}
+	return parsedPublicParameters{
+		ProvingKey: provingKey, VerifyingKey: verifyingKey,
+		Digest: sha256.Sum256(canonical.Bytes()),
+	}, nil
+}
+
+func publicParametersDigest(provingKeyJSON, verifyingKeyJSON []byte) ([sha256.Size]byte, error) {
+	parameters, err := parsePublicParameters(provingKeyJSON, verifyingKeyJSON)
+	if err != nil {
+		return [sha256.Size]byte{}, err
+	}
+	return parameters.Digest, nil
+}
+
+func validateChallengeHeader(version uint32, domain, expectedDomain string) error {
+	if version != challengeContextVersion {
+		return fmt.Errorf("unsupported context version %d", version)
+	}
+	if domain != expectedDomain {
+		return fmt.Errorf("invalid domain %q; expected %q", domain, expectedDomain)
+	}
+	return nil
+}
+
+func hashCanonicalChallenge(canonical *bytes.Buffer) fr.Element {
+	digest := sha256.Sum256(canonical.Bytes())
+	var challenge fr.Element
+	challenge.SetBytes(digest[:])
+	return challenge
+}
+
+type parsedAggEvalContext struct {
+	Context    AggEvalChallengeContext
+	OldPoint   fr.Element
+	FreshPoint fr.Element
+	Canonical  []byte
+}
+
+func parseAggEvalContext(spDigest [sha256.Size]byte, contextJSON []byte) (parsedAggEvalContext, error) {
+	var context AggEvalChallengeContext
+	if err := decodeStrictJSON(contextJSON, &context); err != nil {
+		return parsedAggEvalContext{}, fmt.Errorf("invalid AggEval context: %w", err)
+	}
+	if err := validateChallengeHeader(context.Version, context.Domain, aggEvalDomain); err != nil {
+		return parsedAggEvalContext{}, err
+	}
+	if len(context.OldCommitments) == 0 || len(context.OldCommitments) != len(context.NewCommitments) {
+		return parsedAggEvalContext{}, fmt.Errorf("AggEval commitment vectors must have the same non-zero length")
+	}
+	oldPoint, err := parseFieldPoint(context.OldPoint, "old_point")
+	if err != nil {
+		return parsedAggEvalContext{}, err
+	}
+	freshPoint, err := parseFieldPoint(context.FreshPoint, "fresh_point")
+	if err != nil {
+		return parsedAggEvalContext{}, err
+	}
+
+	var canonical bytes.Buffer
+	writeCanonicalString(&canonical, "Continuum-MPC/Fiat-Shamir/v1")
+	writeCanonicalString(&canonical, context.Domain)
+	writeCanonicalUint32(&canonical, context.Version)
+	writeCanonicalBytes(&canonical, spDigest[:])
+	writeCanonicalField(&canonical, &oldPoint)
+	writeCanonicalField(&canonical, &freshPoint)
+	if err := writeCanonicalG1Vector(&canonical, context.OldCommitments, "old_commitments"); err != nil {
+		return parsedAggEvalContext{}, err
+	}
+	if err := writeCanonicalG1Vector(&canonical, context.NewCommitments, "new_commitments"); err != nil {
+		return parsedAggEvalContext{}, err
+	}
+	return parsedAggEvalContext{
+		Context: context, OldPoint: oldPoint, FreshPoint: freshPoint,
+		Canonical: append([]byte(nil), canonical.Bytes()...),
+	}, nil
+}
+
+type parsedIPAKZGContext struct {
+	Context     IPAKZGChallengeContext
+	LeftPoint   fr.Element
+	RightPoint  fr.Element
+	OutputPoint fr.Element
+	Canonical   []byte
+}
+
+func parseIPAKZGContext(spDigest [sha256.Size]byte, contextJSON []byte) (parsedIPAKZGContext, error) {
+	var context IPAKZGChallengeContext
+	if err := decodeStrictJSON(contextJSON, &context); err != nil {
+		return parsedIPAKZGContext{}, fmt.Errorf("invalid IPAKZG context: %w", err)
+	}
+	if err := validateChallengeHeader(context.Version, context.Domain, ipaKZGDomain); err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	batchSize := len(context.LeftCommitments)
+	lengths := []int{
+		batchSize, len(context.RightCommitments), len(context.OutputCommitments),
+		len(context.LeftPedersen), len(context.RightPedersen), len(context.OutputPedersen),
+	}
+	if batchSize == 0 {
+		return parsedIPAKZGContext{}, fmt.Errorf("IPAKZG vectors must not be empty")
+	}
+	for _, length := range lengths[1:] {
+		if length != batchSize {
+			return parsedIPAKZGContext{}, fmt.Errorf("all IPAKZG vectors must have the same length")
+		}
+	}
+	leftPoint, err := parseFieldPoint(context.LeftPoint, "left_point")
+	if err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	rightPoint, err := parseFieldPoint(context.RightPoint, "right_point")
+	if err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	outputPoint, err := parseFieldPoint(context.OutputPoint, "output_point")
+	if err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+
+	var canonical bytes.Buffer
+	writeCanonicalString(&canonical, "Continuum-MPC/Fiat-Shamir/v1")
+	writeCanonicalString(&canonical, context.Domain)
+	writeCanonicalUint32(&canonical, context.Version)
+	writeCanonicalBytes(&canonical, spDigest[:])
+	writeCanonicalField(&canonical, &leftPoint)
+	writeCanonicalField(&canonical, &rightPoint)
+	writeCanonicalField(&canonical, &outputPoint)
+	if err := writeCanonicalG1Vector(&canonical, context.LeftCommitments, "left_commitments"); err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	if err := writeCanonicalG1Vector(&canonical, context.RightCommitments, "right_commitments"); err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	if err := writeCanonicalG1Vector(&canonical, context.OutputCommitments, "output_commitments"); err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	if err := writeCanonicalG1Vector(&canonical, context.LeftPedersen, "left_pedersen"); err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	if err := writeCanonicalG1Vector(&canonical, context.RightPedersen, "right_pedersen"); err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	if err := writeCanonicalG1Vector(&canonical, context.OutputPedersen, "output_pedersen"); err != nil {
+		return parsedIPAKZGContext{}, err
+	}
+	return parsedIPAKZGContext{
+		Context: context, LeftPoint: leftPoint, RightPoint: rightPoint,
+		OutputPoint: outputPoint, Canonical: append([]byte(nil), canonical.Bytes()...),
+	}, nil
+}
+
+func deriveAggEvalChallengeWithParameters(parameters parsedPublicParameters, contextJSON []byte) (fr.Element, error) {
+	context, err := parseAggEvalContext(parameters.Digest, contextJSON)
+	if err != nil {
+		return fr.Element{}, err
+	}
+	canonical := bytes.NewBuffer(context.Canonical)
+	return hashCanonicalChallenge(canonical), nil
+}
+
+func deriveAggEvalChallenge(provingKeyJSON, verifyingKeyJSON, contextJSON []byte) (fr.Element, error) {
+	parameters, err := parsePublicParameters(provingKeyJSON, verifyingKeyJSON)
+	if err != nil {
+		return fr.Element{}, err
+	}
+	return deriveAggEvalChallengeWithParameters(parameters, contextJSON)
+}
+
+func deriveIPAKZGChallengeWithParameters(parameters parsedPublicParameters, contextJSON []byte) (fr.Element, error) {
+	context, err := parseIPAKZGContext(parameters.Digest, contextJSON)
+	if err != nil {
+		return fr.Element{}, err
+	}
+	canonical := bytes.NewBuffer(context.Canonical)
+	return hashCanonicalChallenge(canonical), nil
+}
+
+func deriveIPAKZGChallenge(provingKeyJSON, verifyingKeyJSON, contextJSON []byte) (fr.Element, error) {
+	parameters, err := parsePublicParameters(provingKeyJSON, verifyingKeyJSON)
+	if err != nil {
+		return fr.Element{}, err
+	}
+	return deriveIPAKZGChallengeWithParameters(parameters, contextJSON)
+}
+
+func challengeResult(challenge fr.Element, err error) *C.char {
+	if err == nil {
+		return C.CString(canonicalFieldString(&challenge))
+	}
+	encoded, _ := json.Marshal(map[string]string{"error": err.Error()})
+	return C.CString(string(encoded))
+}
+
+func jsonErrorResult(err error) *C.char {
+	encoded, _ := json.Marshal(map[string]string{"error": err.Error()})
+	return C.CString(string(encoded))
+}
+
+//export pyDeriveAggEvalChallenge
+func pyDeriveAggEvalChallenge(json_SRS_Pk, json_SRS_Vk, json_context *C.char) *C.char {
+	challenge, err := deriveAggEvalChallenge(
+		[]byte(C.GoString(json_SRS_Pk)),
+		[]byte(C.GoString(json_SRS_Vk)),
+		[]byte(C.GoString(json_context)),
+	)
+	return challengeResult(challenge, err)
+}
+
+//export pyDeriveIPAKZGChallenge
+func pyDeriveIPAKZGChallenge(json_SRS_Pk, json_SRS_Vk, json_context *C.char) *C.char {
+	challenge, err := deriveIPAKZGChallenge(
+		[]byte(C.GoString(json_SRS_Pk)),
+		[]byte(C.GoString(json_SRS_Vk)),
+		[]byte(C.GoString(json_context)),
+	)
+	return challengeResult(challenge, err)
+}
+
+// PokPedProof is a Schnorr proof of knowledge of a Pedersen representation
+// T = value*G + valueAux*H. Scalars use a dedicated wire type below so the
+// FFI rejects non-canonical decimal encodings instead of silently reducing.
+type PokPedProof struct {
+	A    curve.G1Affine
+	Z    fr.Element
+	ZHat fr.Element
+}
+
+type pokPedProofWire struct {
+	A    *curve.G1Affine `json:"A"`
+	Z    string          `json:"z"`
+	ZHat string          `json:"z_hat"`
+}
+
+type aggOpeningWire struct {
+	H               curve.G1Affine `json:"H"`
+	ClaimedValue    string         `json:"ClaimedValue"`
+	ClaimedValueAux string         `json:"ClaimedValueAux"`
+}
+
+type aggPubProofWire struct {
+	T      *curve.G1Affine `json:"T"`
+	W      *curve.G1Affine `json:"W"`
+	PokPed pokPedProofWire `json:"pokPed"`
+}
+
+// aggPubBatchProofWire is the AggTrans wire proof produced from the old and
+// fresh opening vectors in one native call. It carries exactly the same
+// protocol fields as the former Python composition; only the local execution
+// boundary changes so the context and Fiat-Shamir challenge are parsed once.
+type aggPubBatchProofWire struct {
+	T      *curve.G1Affine `json:"T"`
+	WOld   *curve.G1Affine `json:"W_old"`
+	WNew   *curve.G1Affine `json:"W_new"`
+	PokPed pokPedProofWire `json:"pokPed"`
+}
+
+type aggPubProof struct {
+	T      curve.G1Affine
+	W      curve.G1Affine
+	PokPed PokPedProof
+}
+
+type aggPubBatchProof struct {
+	T      curve.G1Affine
+	WOld   curve.G1Affine
+	WNew   curve.G1Affine
+	PokPed PokPedProof
+}
+
+const (
+	ipaKZGLeftValidMask C.int = 1 << iota
+	ipaKZGRightValidMask
+	ipaKZGOutputValidMask
+)
+
+const (
+	aggTransPokPedValidMask C.int = 1 << iota
+	aggTransFreshValidMask
+	aggTransOldValidMask
+)
+
+func pokPedProofToWire(proof PokPedProof) pokPedProofWire {
+	return pokPedProofWire{
+		A: &proof.A, Z: canonicalFieldString(&proof.Z),
+		ZHat: canonicalFieldString(&proof.ZHat),
+	}
+}
+
+func pokPedProofFromWire(wire pokPedProofWire) (PokPedProof, error) {
+	if wire.A == nil {
+		return PokPedProof{}, fmt.Errorf("pokPed.A is required")
+	}
+	if err := validateG1(wire.A, "pokPed.A"); err != nil {
+		return PokPedProof{}, err
+	}
+	z, err := parseCanonicalFieldScalar(wire.Z, "pokPed.z")
+	if err != nil {
+		return PokPedProof{}, err
+	}
+	zHat, err := parseCanonicalFieldScalar(wire.ZHat, "pokPed.z_hat")
+	if err != nil {
+		return PokPedProof{}, err
+	}
+	return PokPedProof{A: *wire.A, Z: z, ZHat: zHat}, nil
+}
+
+func decodeG1(input []byte, label string) (curve.G1Affine, error) {
+	var point curve.G1Affine
+	if err := decodeStrictJSON(input, &point); err != nil {
+		return curve.G1Affine{}, fmt.Errorf("invalid %s: %w", label, err)
+	}
+	if err := validateG1(&point, label); err != nil {
+		return curve.G1Affine{}, err
+	}
+	return point, nil
+}
+
+func decodeG1Vector(input []byte, label string) ([]curve.G1Affine, error) {
+	var points []curve.G1Affine
+	if err := decodeStrictJSON(input, &points); err != nil {
+		return nil, fmt.Errorf("invalid %s: %w", label, err)
+	}
+	if len(points) == 0 {
+		return nil, fmt.Errorf("%s must not be empty", label)
+	}
+	for index := range points {
+		if err := validateG1(&points[index], fmt.Sprintf("%s[%d]", label, index)); err != nil {
+			return nil, err
+		}
+	}
+	return points, nil
+}
+
+func decodeOpeningVector(input []byte) ([]aggOpeningWire, error) {
+	var openings []aggOpeningWire
+	if err := decodeStrictJSON(input, &openings); err != nil {
+		return nil, fmt.Errorf("invalid evaluation openings: %w", err)
+	}
+	if len(openings) == 0 {
+		return nil, fmt.Errorf("evaluation openings must not be empty")
+	}
+	for index := range openings {
+		if err := validateG1(&openings[index].H, fmt.Sprintf("openings[%d].H", index)); err != nil {
+			return nil, err
+		}
+		if _, err := parseCanonicalFieldScalar(openings[index].ClaimedValue, fmt.Sprintf("openings[%d].ClaimedValue", index)); err != nil {
+			return nil, err
+		}
+		if _, err := parseCanonicalFieldScalar(openings[index].ClaimedValueAux, fmt.Sprintf("openings[%d].ClaimedValueAux", index)); err != nil {
+			return nil, err
+		}
+	}
+	return openings, nil
+}
+
+func randomFieldScalar(reader io.Reader) (fr.Element, error) {
+	integer, err := cryptorand.Int(reader, fr.Modulus())
+	if err != nil {
+		return fr.Element{}, fmt.Errorf("sample Fr randomness: %w", err)
+	}
+	var scalar fr.Element
+	scalar.SetBigInt(integer)
+	return scalar, nil
+}
+
+func pedersenCommitment(g, h *curve.G1Affine, value, valueAux *fr.Element) (curve.G1Affine, error) {
+	points := []curve.G1Affine{*g, *h}
+	scalars := []fr.Element{*value, *valueAux}
+	var commitment curve.G1Affine
+	if _, err := commitment.MultiExp(points, scalars, ecc.MultiExpConfig{}); err != nil {
+		return curve.G1Affine{}, err
+	}
+	return commitment, nil
+}
+
+func pokPedChallenge(canonicalContext []byte, statement, announcement *curve.G1Affine) (fr.Element, error) {
+	var transcript bytes.Buffer
+	writeCanonicalString(&transcript, "Continuum-MPC/pokPed/v1")
+	writeCanonicalBytes(&transcript, canonicalContext)
+	if err := writeCanonicalG1(&transcript, statement, "pokPed.T"); err != nil {
+		return fr.Element{}, err
+	}
+	if err := writeCanonicalG1(&transcript, announcement, "pokPed.A"); err != nil {
+		return fr.Element{}, err
+	}
+	return hashCanonicalChallenge(&transcript), nil
+}
+
+func pokPedProveWithReader(
+	parameters parsedPublicParameters,
+	context parsedAggEvalContext,
+	statement curve.G1Affine,
+	value, valueAux fr.Element,
+	randomness io.Reader,
+) (PokPedProof, error) {
+	if randomness == nil {
+		return PokPedProof{}, fmt.Errorf("pokPed randomness reader is nil")
+	}
+	if err := validateG1(&statement, "pokPed.T"); err != nil {
+		return PokPedProof{}, err
+	}
+	expected, err := pedersenCommitment(
+		&parameters.VerifyingKey.G1_g, &parameters.VerifyingKey.G1_h,
+		&value, &valueAux,
+	)
+	if err != nil {
+		return PokPedProof{}, err
+	}
+	if !expected.Equal(&statement) {
+		return PokPedProof{}, fmt.Errorf("pokPed witness does not open T")
+	}
+	randomValue, err := randomFieldScalar(randomness)
+	if err != nil {
+		return PokPedProof{}, err
+	}
+	randomValueAux, err := randomFieldScalar(randomness)
+	if err != nil {
+		return PokPedProof{}, err
+	}
+	announcement, err := pedersenCommitment(
+		&parameters.VerifyingKey.G1_g, &parameters.VerifyingKey.G1_h,
+		&randomValue, &randomValueAux,
+	)
+	if err != nil {
+		return PokPedProof{}, err
+	}
+	challenge, err := pokPedChallenge(context.Canonical, &statement, &announcement)
+	if err != nil {
+		return PokPedProof{}, err
+	}
+	var challengeValue, challengeValueAux, z, zHat fr.Element
+	challengeValue.Mul(&challenge, &value)
+	challengeValueAux.Mul(&challenge, &valueAux)
+	z.Add(&randomValue, &challengeValue)
+	zHat.Add(&randomValueAux, &challengeValueAux)
+	return PokPedProof{A: announcement, Z: z, ZHat: zHat}, nil
+}
+
+func pokPedVerify(
+	parameters parsedPublicParameters,
+	context parsedAggEvalContext,
+	statement curve.G1Affine,
+	proof PokPedProof,
+) bool {
+	if validateG1(&statement, "pokPed.T") != nil || validateG1(&proof.A, "pokPed.A") != nil {
+		return false
+	}
+	challenge, err := pokPedChallenge(context.Canonical, &statement, &proof.A)
+	if err != nil {
+		return false
+	}
+	left, err := pedersenCommitment(
+		&parameters.VerifyingKey.G1_g, &parameters.VerifyingKey.G1_h,
+		&proof.Z, &proof.ZHat,
+	)
+	if err != nil {
+		return false
+	}
+	var challengeStatement, right curve.G1Affine
+	var challengeBig big.Int
+	challenge.BigInt(&challengeBig)
+	challengeStatement.ScalarMultiplication(&statement, &challengeBig)
+	right.Add(&proof.A, &challengeStatement)
+	return left.Equal(&right)
+}
+
+func pointFromInt(point int) (fr.Element, error) {
+	if point < 0 {
+		return fr.Element{}, fmt.Errorf("evaluation point must be non-negative")
+	}
+	var result fr.Element
+	result.SetInt64(int64(point))
+	return result, nil
+}
+
+func pointToInt(point *fr.Element, label string) (int, error) {
+	var integer big.Int
+	point.BigInt(&integer)
+	if !integer.IsInt64() {
+		return 0, fmt.Errorf("%s does not fit the native evaluation-point interface", label)
+	}
+	value := integer.Int64()
+	pointInt := int(value)
+	if value < 0 || int64(pointInt) != value {
+		return 0, fmt.Errorf("%s does not fit the native evaluation-point interface", label)
+	}
+	return pointInt, nil
+}
+
+func equalG1Vectors(left, right []curve.G1Affine) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for index := range left {
+		if !left[index].Equal(&right[index]) {
+			return false
+		}
+	}
+	return true
+}
+
+func aggEvalRelationMatches(context parsedAggEvalContext, point fr.Element, commitments []curve.G1Affine) bool {
+	oldMatches := point.Equal(&context.OldPoint) && equalG1Vectors(commitments, context.Context.OldCommitments)
+	freshMatches := point.Equal(&context.FreshPoint) && equalG1Vectors(commitments, context.Context.NewCommitments)
+	return oldMatches || freshMatches
+}
+
+func ipaKZGRelationMatches(
+	context parsedIPAKZGContext,
+	point fr.Element,
+	commitments, pedersen []curve.G1Affine,
+) bool {
+	leftMatches := point.Equal(&context.LeftPoint) &&
+		equalG1Vectors(commitments, context.Context.LeftCommitments) &&
+		equalG1Vectors(pedersen, context.Context.LeftPedersen)
+	rightMatches := point.Equal(&context.RightPoint) &&
+		equalG1Vectors(commitments, context.Context.RightCommitments) &&
+		equalG1Vectors(pedersen, context.Context.RightPedersen)
+	outputMatches := point.Equal(&context.OutputPoint) &&
+		equalG1Vectors(commitments, context.Context.OutputCommitments) &&
+		equalG1Vectors(pedersen, context.Context.OutputPedersen)
+	return leftMatches || rightMatches || outputMatches
+}
+
+func challengePowers(challenge fr.Element, length int) ([]fr.Element, error) {
+	if length <= 0 {
+		return nil, fmt.Errorf("aggregation vector must not be empty")
+	}
+	coefficients := make([]fr.Element, length)
+	coefficients[0].SetOne()
+	for index := 1; index < length; index++ {
+		coefficients[index].Mul(&coefficients[index-1], &challenge)
+	}
+	return coefficients, nil
+}
+
+func aggregateG1(points []curve.G1Affine, coefficients []fr.Element, label string) (curve.G1Affine, error) {
+	if len(points) == 0 || len(points) != len(coefficients) {
+		return curve.G1Affine{}, fmt.Errorf("%s has invalid length", label)
+	}
+	for index := range points {
+		if err := validateG1(&points[index], fmt.Sprintf("%s[%d]", label, index)); err != nil {
+			return curve.G1Affine{}, err
+		}
+	}
+	return aggregateValidatedG1(points, coefficients, label)
+}
+
+// aggregateValidatedG1 is used only with points already checked by a strict
+// context/opening decoder. Keeping it separate avoids repeating expensive
+// subgroup checks inside the batched Fig. 5 verification paths.
+func aggregateValidatedG1(points []curve.G1Affine, coefficients []fr.Element, label string) (curve.G1Affine, error) {
+	if len(points) == 0 || len(points) != len(coefficients) {
+		return curve.G1Affine{}, fmt.Errorf("%s has invalid length", label)
+	}
+	var aggregate curve.G1Affine
+	if _, err := aggregate.MultiExp(points, coefficients, ecc.MultiExpConfig{}); err != nil {
+		return curve.G1Affine{}, err
+	}
+	return aggregate, nil
+}
+
+func aggregateOpeningVector(
+	openings []aggOpeningWire,
+	challenge fr.Element,
+) (curve.G1Affine, fr.Element, fr.Element, error) {
+	coefficients, err := challengePowers(challenge, len(openings))
+	if err != nil {
+		return curve.G1Affine{}, fr.Element{}, fr.Element{}, err
+	}
+	witnesses := make([]curve.G1Affine, len(openings))
+	values := make([]fr.Element, len(openings))
+	valuesAux := make([]fr.Element, len(openings))
+	for index := range openings {
+		witnesses[index] = openings[index].H
+		values[index], err = parseCanonicalFieldScalar(openings[index].ClaimedValue, fmt.Sprintf("openings[%d].ClaimedValue", index))
+		if err != nil {
+			return curve.G1Affine{}, fr.Element{}, fr.Element{}, err
+		}
+		valuesAux[index], err = parseCanonicalFieldScalar(openings[index].ClaimedValueAux, fmt.Sprintf("openings[%d].ClaimedValueAux", index))
+		if err != nil {
+			return curve.G1Affine{}, fr.Element{}, fr.Element{}, err
+		}
+	}
+	witness, err := aggregateG1(witnesses, coefficients, "evaluation witnesses")
+	if err != nil {
+		return curve.G1Affine{}, fr.Element{}, fr.Element{}, err
+	}
+	value := DotProductfrElement(values, coefficients)
+	valueAux := DotProductfrElement(valuesAux, coefficients)
+	return witness, value, valueAux, nil
+}
+
+// aggregateDecodedOpeningVector reuses coefficients and subgroup checks
+// already completed by decodeOpeningVector. It is deliberately kept separate
+// from aggregateOpeningVector, whose callers may provide in-memory points that
+// have not crossed the strict FFI decoder.
+func aggregateDecodedOpeningVector(
+	openings []aggOpeningWire,
+	coefficients []fr.Element,
+) (curve.G1Affine, fr.Element, fr.Element, error) {
+	if len(openings) == 0 || len(openings) != len(coefficients) {
+		return curve.G1Affine{}, fr.Element{}, fr.Element{}, fmt.Errorf("decoded openings and coefficients must have the same non-zero length")
+	}
+	witnesses := make([]curve.G1Affine, len(openings))
+	values := make([]fr.Element, len(openings))
+	valuesAux := make([]fr.Element, len(openings))
+	for index := range openings {
+		witnesses[index] = openings[index].H
+		var err error
+		values[index], err = parseCanonicalFieldScalar(openings[index].ClaimedValue, fmt.Sprintf("openings[%d].ClaimedValue", index))
+		if err != nil {
+			return curve.G1Affine{}, fr.Element{}, fr.Element{}, err
+		}
+		valuesAux[index], err = parseCanonicalFieldScalar(openings[index].ClaimedValueAux, fmt.Sprintf("openings[%d].ClaimedValueAux", index))
+		if err != nil {
+			return curve.G1Affine{}, fr.Element{}, fr.Element{}, err
+		}
+	}
+	witness, err := aggregateValidatedG1(witnesses, coefficients, "decoded evaluation witnesses")
+	if err != nil {
+		return curve.G1Affine{}, fr.Element{}, fr.Element{}, err
+	}
+	return witness, DotProductfrElement(values, coefficients),
+		DotProductfrElement(valuesAux, coefficients), nil
+}
+
+func aggPubProEvalWithReader(
+	parameters parsedPublicParameters,
+	contextJSON []byte,
+	commitments []curve.G1Affine,
+	openings []aggOpeningWire,
+	point int,
+	randomness io.Reader,
+) (aggPubProof, error) {
+	context, err := parseAggEvalContext(parameters.Digest, contextJSON)
+	if err != nil {
+		return aggPubProof{}, err
+	}
+	if len(commitments) == 0 || len(commitments) != len(openings) || len(commitments) != len(context.Context.OldCommitments) {
+		return aggPubProof{}, fmt.Errorf("commitments, openings, and context vectors must have the same non-zero length")
+	}
+	fieldPoint, err := pointFromInt(point)
+	if err != nil {
+		return aggPubProof{}, err
+	}
+	if !aggEvalRelationMatches(context, fieldPoint, commitments) {
+		return aggPubProof{}, fmt.Errorf("commitments and evaluation point do not match AggEval context")
+	}
+	canonical := bytes.NewBuffer(context.Canonical)
+	challenge := hashCanonicalChallenge(canonical)
+	witness, value, valueAux, err := aggregateOpeningVector(openings, challenge)
+	if err != nil {
+		return aggPubProof{}, err
+	}
+	statement, err := pedersenCommitment(
+		&parameters.VerifyingKey.G1_g, &parameters.VerifyingKey.G1_h,
+		&value, &valueAux,
+	)
+	if err != nil {
+		return aggPubProof{}, err
+	}
+	pok, err := pokPedProveWithReader(parameters, context, statement, value, valueAux, randomness)
+	if err != nil {
+		return aggPubProof{}, err
+	}
+	return aggPubProof{T: statement, W: witness, PokPed: pok}, nil
+}
+
+func aggPubProEvalBatch2WithReader(
+	parameters parsedPublicParameters,
+	contextJSON []byte,
+	oldOpenings, freshOpenings []aggOpeningWire,
+	randomness io.Reader,
+) (aggPubBatchProof, error) {
+	for label, openings := range map[string][]aggOpeningWire{
+		"old openings": oldOpenings, "fresh openings": freshOpenings,
+	} {
+		for index := range openings {
+			if err := validateG1(&openings[index].H, fmt.Sprintf("%s[%d].H", label, index)); err != nil {
+				return aggPubBatchProof{}, err
+			}
+		}
+	}
+	return aggPubProEvalBatch2DecodedWithReader(
+		parameters, contextJSON, oldOpenings, freshOpenings, randomness,
+	)
+}
+
+func aggPubProEvalBatch2DecodedWithReader(
+	parameters parsedPublicParameters,
+	contextJSON []byte,
+	oldOpenings, freshOpenings []aggOpeningWire,
+	randomness io.Reader,
+) (aggPubBatchProof, error) {
+	context, err := parseAggEvalContext(parameters.Digest, contextJSON)
+	if err != nil {
+		return aggPubBatchProof{}, err
+	}
+	batchSize := len(context.Context.OldCommitments)
+	if len(oldOpenings) != batchSize || len(freshOpenings) != batchSize {
+		return aggPubBatchProof{}, fmt.Errorf("context and old/fresh openings must have the same non-zero length")
+	}
+	challenge := hashCanonicalChallenge(bytes.NewBuffer(context.Canonical))
+	coefficients, err := challengePowers(challenge, batchSize)
+	if err != nil {
+		return aggPubBatchProof{}, err
+	}
+	oldWitness, oldValue, oldValueAux, err := aggregateDecodedOpeningVector(oldOpenings, coefficients)
+	if err != nil {
+		return aggPubBatchProof{}, err
+	}
+	freshWitness, freshValue, freshValueAux, err := aggregateDecodedOpeningVector(freshOpenings, coefficients)
+	if err != nil {
+		return aggPubBatchProof{}, err
+	}
+	if !oldValue.Equal(&freshValue) || !oldValueAux.Equal(&freshValueAux) {
+		return aggPubBatchProof{}, fmt.Errorf("old and fresh aggregate openings produce different Pedersen claims")
+	}
+	statement, err := pedersenCommitment(
+		&parameters.VerifyingKey.G1_g, &parameters.VerifyingKey.G1_h,
+		&freshValue, &freshValueAux,
+	)
+	if err != nil {
+		return aggPubBatchProof{}, err
+	}
+	pok, err := pokPedProveWithReader(
+		parameters, context, statement, freshValue, freshValueAux, randomness,
+	)
+	if err != nil {
+		return aggPubBatchProof{}, err
+	}
+	return aggPubBatchProof{
+		T: statement, WOld: oldWitness, WNew: freshWitness, PokPed: pok,
+	}, nil
+}
+
+func aggPubVerEvalBatch2(
+	parameters parsedPublicParameters,
+	contextJSON []byte,
+	statement, oldWitness, freshWitness curve.G1Affine,
+	pok PokPedProof,
+) (C.int, error) {
+	context, err := parseAggEvalContext(parameters.Digest, contextJSON)
+	if err != nil {
+		return 0, err
+	}
+	oldPoint, err := pointToInt(&context.OldPoint, "old_point")
+	if err != nil {
+		return 0, err
+	}
+	freshPoint, err := pointToInt(&context.FreshPoint, "fresh_point")
+	if err != nil {
+		return 0, err
+	}
+	challenge := hashCanonicalChallenge(bytes.NewBuffer(context.Canonical))
+	coefficients, err := challengePowers(challenge, len(context.Context.OldCommitments))
+	if err != nil {
+		return 0, err
+	}
+	var result C.int
+	if pokPedVerify(parameters, context, statement, pok) {
+		result |= aggTransPokPedValidMask
+	}
+	if pubAggVerifyEvalCombinedWithCoefficients(
+		parameters.VerifyingKey, context.Context.NewCommitments, freshPoint,
+		statement, freshWitness, coefficients,
+	) {
+		result |= aggTransFreshValidMask
+	}
+	if pubAggVerifyEvalCombinedWithCoefficients(
+		parameters.VerifyingKey, context.Context.OldCommitments, oldPoint,
+		statement, oldWitness, coefficients,
+	) {
+		result |= aggTransOldValidMask
+	}
+	return result, nil
+}
+
+func aggPubVerEval(
+	parameters parsedPublicParameters,
+	contextJSON []byte,
+	commitments []curve.G1Affine,
+	point int,
+	statement, witness curve.G1Affine,
+	pok PokPedProof,
+) bool {
+	context, err := parseAggEvalContext(parameters.Digest, contextJSON)
+	if err != nil || len(commitments) == 0 || len(commitments) != len(context.Context.OldCommitments) {
+		return false
+	}
+	fieldPoint, err := pointFromInt(point)
+	if err != nil || !aggEvalRelationMatches(context, fieldPoint, commitments) {
+		return false
+	}
+	if validateG1(&witness, "aggregated witness") != nil || !pokPedVerify(parameters, context, statement, pok) {
+		return false
+	}
+	canonical := bytes.NewBuffer(context.Canonical)
+	challenge := hashCanonicalChallenge(canonical)
+	return PubAggVerifyEvalCombined(
+		parameters.VerifyingKey, commitments, point, statement, witness, challenge,
+	)
+}
+
+func aggPedVerEval(
+	parameters parsedPublicParameters,
+	contextJSON []byte,
+	commitments, pedersen []curve.G1Affine,
+	point int,
+	witness curve.G1Affine,
+) (bool, error) {
+	context, err := parseIPAKZGContext(parameters.Digest, contextJSON)
+	if err != nil {
+		return false, err
+	}
+	if len(commitments) == 0 || len(commitments) != len(pedersen) || len(commitments) != len(context.Context.LeftCommitments) {
+		return false, fmt.Errorf("commitment and Pedersen vectors must have the same non-zero context length")
+	}
+	fieldPoint, err := pointFromInt(point)
+	if err != nil {
+		return false, err
+	}
+	if !ipaKZGRelationMatches(context, fieldPoint, commitments, pedersen) {
+		return false, nil
+	}
+	if err := validateG1(&witness, "aggregated witness"); err != nil {
+		return false, err
+	}
+	canonical := bytes.NewBuffer(context.Canonical)
+	challenge := hashCanonicalChallenge(canonical)
+	coefficients, err := challengePowers(challenge, len(pedersen))
+	if err != nil {
+		return false, err
+	}
+	statement, err := aggregateG1(pedersen, coefficients, "Pedersen commitments")
+	if err != nil {
+		return false, err
+	}
+	return PubAggVerifyEvalCombined(
+		parameters.VerifyingKey, commitments, point, statement, witness, challenge,
+	), nil
+}
+
+func aggPedVerEvalBatch3(
+	parameters parsedPublicParameters,
+	contextJSON []byte,
+	leftWitness, rightWitness, outputWitness curve.G1Affine,
+) (C.int, error) {
+	context, err := parseIPAKZGContext(parameters.Digest, contextJSON)
+	if err != nil {
+		return 0, err
+	}
+	leftPoint, err := pointToInt(&context.LeftPoint, "left_point")
+	if err != nil {
+		return 0, err
+	}
+	rightPoint, err := pointToInt(&context.RightPoint, "right_point")
+	if err != nil {
+		return 0, err
+	}
+	outputPoint, err := pointToInt(&context.OutputPoint, "output_point")
+	if err != nil {
+		return 0, err
+	}
+	challenge := hashCanonicalChallenge(bytes.NewBuffer(context.Canonical))
+	coefficients, err := challengePowers(challenge, len(context.Context.LeftCommitments))
+	if err != nil {
+		return 0, err
+	}
+	leftStatement, err := aggregateValidatedG1(
+		context.Context.LeftPedersen, coefficients, "left Pedersen commitments",
+	)
+	if err != nil {
+		return 0, err
+	}
+	rightStatement, err := aggregateValidatedG1(
+		context.Context.RightPedersen, coefficients, "right Pedersen commitments",
+	)
+	if err != nil {
+		return 0, err
+	}
+	outputStatement, err := aggregateValidatedG1(
+		context.Context.OutputPedersen, coefficients, "output Pedersen commitments",
+	)
+	if err != nil {
+		return 0, err
+	}
+	var result C.int
+	if pubAggVerifyEvalCombinedWithCoefficients(
+		parameters.VerifyingKey, context.Context.LeftCommitments, leftPoint,
+		leftStatement, leftWitness, coefficients,
+	) {
+		result |= ipaKZGLeftValidMask
+	}
+	if pubAggVerifyEvalCombinedWithCoefficients(
+		parameters.VerifyingKey, context.Context.RightCommitments, rightPoint,
+		rightStatement, rightWitness, coefficients,
+	) {
+		result |= ipaKZGRightValidMask
+	}
+	if pubAggVerifyEvalCombinedWithCoefficients(
+		parameters.VerifyingKey, context.Context.OutputCommitments, outputPoint,
+		outputStatement, outputWitness, coefficients,
+	) {
+		result |= ipaKZGOutputValidMask
+	}
+	return result, nil
+}
+
+//export pyPokPedProve
+func pyPokPedProve(
+	json_SRS_Pk, json_SRS_Vk, json_context, json_T, value, valueAux *C.char,
+) *C.char {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	context, err := parseAggEvalContext(parameters.Digest, []byte(C.GoString(json_context)))
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	statement, err := decodeG1([]byte(C.GoString(json_T)), "pokPed.T")
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	parsedValue, err := parseCanonicalFieldScalar(C.GoString(value), "value")
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	parsedValueAux, err := parseCanonicalFieldScalar(C.GoString(valueAux), "value_aux")
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	proof, err := pokPedProveWithReader(
+		parameters, context, statement, parsedValue, parsedValueAux, cryptorand.Reader,
+	)
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	encoded, err := json.Marshal(pokPedProofToWire(proof))
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	return C.CString(string(encoded))
+}
+
+//export pyPokPedVerify
+func pyPokPedVerify(
+	json_SRS_Pk, json_SRS_Vk, json_context, json_T, json_proof *C.char,
+) bool {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return false
+	}
+	context, err := parseAggEvalContext(parameters.Digest, []byte(C.GoString(json_context)))
+	if err != nil {
+		return false
+	}
+	statement, err := decodeG1([]byte(C.GoString(json_T)), "pokPed.T")
+	if err != nil {
+		return false
+	}
+	var proofWire pokPedProofWire
+	if err := decodeStrictJSON([]byte(C.GoString(json_proof)), &proofWire); err != nil {
+		return false
+	}
+	proof, err := pokPedProofFromWire(proofWire)
+	return err == nil && pokPedVerify(parameters, context, statement, proof)
+}
+
+//export pyAggPubProEval
+func pyAggPubProEval(
+	json_SRS_Pk, json_SRS_Vk, json_context, json_commitments, json_openings *C.char,
+	point int,
+) *C.char {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	commitments, err := decodeG1Vector([]byte(C.GoString(json_commitments)), "commitments")
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	openings, err := decodeOpeningVector([]byte(C.GoString(json_openings)))
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	proof, err := aggPubProEvalWithReader(
+		parameters, []byte(C.GoString(json_context)), commitments, openings, point, cryptorand.Reader,
+	)
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	encoded, err := json.Marshal(aggPubProofWire{
+		T: &proof.T, W: &proof.W, PokPed: pokPedProofToWire(proof.PokPed),
+	})
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	return C.CString(string(encoded))
+}
+
+//export pyAggPubProEvalBatch2
+func pyAggPubProEvalBatch2(
+	json_SRS_Pk, json_SRS_Vk, json_context,
+	json_old_openings, json_fresh_openings *C.char,
+) *C.char {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	oldOpenings, err := decodeOpeningVector([]byte(C.GoString(json_old_openings)))
+	if err != nil {
+		return jsonErrorResult(fmt.Errorf("old openings: %w", err))
+	}
+	freshOpenings, err := decodeOpeningVector([]byte(C.GoString(json_fresh_openings)))
+	if err != nil {
+		return jsonErrorResult(fmt.Errorf("fresh openings: %w", err))
+	}
+	proof, err := aggPubProEvalBatch2DecodedWithReader(
+		parameters, []byte(C.GoString(json_context)), oldOpenings, freshOpenings,
+		cryptorand.Reader,
+	)
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	encoded, err := json.Marshal(aggPubBatchProofWire{
+		T: &proof.T, WOld: &proof.WOld, WNew: &proof.WNew,
+		PokPed: pokPedProofToWire(proof.PokPed),
+	})
+	if err != nil {
+		return jsonErrorResult(err)
+	}
+	return C.CString(string(encoded))
+}
+
+//export pyAggPubVerEval
+func pyAggPubVerEval(
+	json_SRS_Pk, json_SRS_Vk, json_context, json_commitments,
+	json_T, json_W, json_pokPed *C.char,
+	point int,
+) bool {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return false
+	}
+	commitments, err := decodeG1Vector([]byte(C.GoString(json_commitments)), "commitments")
+	if err != nil {
+		return false
+	}
+	statement, err := decodeG1([]byte(C.GoString(json_T)), "T")
+	if err != nil {
+		return false
+	}
+	witness, err := decodeG1([]byte(C.GoString(json_W)), "W")
+	if err != nil {
+		return false
+	}
+	var proofWire pokPedProofWire
+	if err := decodeStrictJSON([]byte(C.GoString(json_pokPed)), &proofWire); err != nil {
+		return false
+	}
+	pok, err := pokPedProofFromWire(proofWire)
+	return err == nil && aggPubVerEval(
+		parameters, []byte(C.GoString(json_context)), commitments,
+		point, statement, witness, pok,
+	)
+}
+
+//export pyAggPubVerEvalBatch2
+func pyAggPubVerEvalBatch2(
+	json_SRS_Pk, json_SRS_Vk, json_context, json_T,
+	json_W_old, json_W_new, json_pokPed *C.char,
+) C.int {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return 0
+	}
+	statement, err := decodeG1([]byte(C.GoString(json_T)), "T")
+	if err != nil {
+		return 0
+	}
+	oldWitness, err := decodeG1([]byte(C.GoString(json_W_old)), "W_old")
+	if err != nil {
+		return 0
+	}
+	freshWitness, err := decodeG1([]byte(C.GoString(json_W_new)), "W_new")
+	if err != nil {
+		return 0
+	}
+	var proofWire pokPedProofWire
+	if err := decodeStrictJSON([]byte(C.GoString(json_pokPed)), &proofWire); err != nil {
+		return 0
+	}
+	pok, err := pokPedProofFromWire(proofWire)
+	if err != nil {
+		return 0
+	}
+	result, err := aggPubVerEvalBatch2(
+		parameters, []byte(C.GoString(json_context)), statement,
+		oldWitness, freshWitness, pok,
+	)
+	if err != nil {
+		return 0
+	}
+	return result
+}
+
+//export pyAggPedVerEval
+func pyAggPedVerEval(
+	json_SRS_Pk, json_SRS_Vk, json_context, json_commitments,
+	json_pedersen, json_W *C.char,
+	point int,
+) bool {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return false
+	}
+	commitments, err := decodeG1Vector([]byte(C.GoString(json_commitments)), "commitments")
+	if err != nil {
+		return false
+	}
+	pedersen, err := decodeG1Vector([]byte(C.GoString(json_pedersen)), "Pedersen commitments")
+	if err != nil {
+		return false
+	}
+	witness, err := decodeG1([]byte(C.GoString(json_W)), "W")
+	if err != nil {
+		return false
+	}
+	valid, err := aggPedVerEval(
+		parameters, []byte(C.GoString(json_context)), commitments, pedersen, point, witness,
+	)
+	return err == nil && valid
+}
+
+//export pyAggPedVerEvalBatch3
+func pyAggPedVerEvalBatch3(
+	json_SRS_Pk, json_SRS_Vk, json_context,
+	json_W_left, json_W_right, json_W_output *C.char,
+) C.int {
+	parameters, err := parsePublicParameters(
+		[]byte(C.GoString(json_SRS_Pk)), []byte(C.GoString(json_SRS_Vk)),
+	)
+	if err != nil {
+		return 0
+	}
+	leftWitness, err := decodeG1([]byte(C.GoString(json_W_left)), "W_left")
+	if err != nil {
+		return 0
+	}
+	rightWitness, err := decodeG1([]byte(C.GoString(json_W_right)), "W_right")
+	if err != nil {
+		return 0
+	}
+	outputWitness, err := decodeG1([]byte(C.GoString(json_W_output)), "W_output")
+	if err != nil {
+		return 0
+	}
+	result, err := aggPedVerEvalBatch3(
+		parameters, []byte(C.GoString(json_context)),
+		leftWitness, rightWitness, outputWitness,
+	)
+	if err != nil {
+		return 0
+	}
+	return result
 }
 
 // deterministicCombine aggregates B opening proofs at the SAME evaluation
@@ -1931,16 +3521,34 @@ func PubAggVerifyEvalCombined(
 	if len(commitments) == 0 {
 		return false
 	}
-	// 1) Compute γ^0 … γ^{B-1}
-	B := len(commitments)
-	coeff := make([]fr.Element, B)
-	coeff[0].SetOne()
-	for i := 1; i < B; i++ {
-		coeff[i].Mul(&coeff[i-1], &gamma)
+	coeff, err := challengePowers(gamma, len(commitments))
+	if err != nil {
+		return false
+	}
+	return pubAggVerifyEvalCombinedWithCoefficients(
+		vk, commitments, pointIdx, combinedClaim, aggW, coeff,
+	)
+}
+
+// pubAggVerifyEvalCombinedWithCoefficients performs the actual KZG check after
+// the shared Fiat-Shamir powers have already been computed. The batched Fig. 5
+// interfaces use it for several relations under one context/challenge.
+func pubAggVerifyEvalCombinedWithCoefficients(
+	vk kzg_ped.VerifyingKey,
+	commitments []kzg_ped.Digest,
+	pointIdx int,
+	combinedClaim curve.G1Affine,
+	aggW curve.G1Affine,
+	coeff []fr.Element,
+) bool {
+	if len(commitments) == 0 || len(commitments) != len(coeff) {
+		return false
 	}
 	// 2) Aggregate commitments: C_agg = Σ coeff[i] · commitments[i]
 	var aggCom curve.G1Affine
-	aggCom.MultiExp(commitments, coeff, ecc.MultiExpConfig{})
+	if _, err := aggCom.MultiExp(commitments, coeff, ecc.MultiExpConfig{}); err != nil {
+		return false
+	}
 	// 3) Build LHS = C_agg − combinedClaim
 	var lhs curve.G1Affine
 	lhs.Sub(&aggCom, &combinedClaim)

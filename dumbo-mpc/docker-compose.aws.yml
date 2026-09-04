@@ -1,0 +1,47 @@
+version: "3.8"
+
+# Standalone production compose file.  Invoke it explicitly with
+# `docker compose -f docker-compose.aws.yml ...`; unlike docker-compose.yml it
+# never bind-mounts the complete source tree over the immutable image.
+services:
+  dumbo-mpc:
+    image: ${MPC_IMAGE:?set MPC_IMAGE to an immutable linux/amd64 image tag or digest}
+    entrypoint: ""
+    working_dir: /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen
+    cap_add:
+      - NET_ADMIN
+    # n=128 with 8 layers creates 1024 ZeroMQ peer sockets per process.
+    # Leave ample headroom for IPC, log files, and Docker's own descriptors.
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      PATH: /opt/venv/continuum/bin:/usr/local/go/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PYTHONPATH: /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen
+    volumes:
+      # File-scoped transport patch keeps the production image immutable while
+      # allowing n=128 to raise the libzmq context socket ceiling above 1023.
+      - ./dumbo-mpc/AsyRanTriGen/beaver/ipc.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/ipc.py:ro
+      # File-scoped BGW-AggTrans computation-overhead instrumentation.  Keep
+      # the immutable AMD64 image and mount only the audited Python boundary.
+      - ./dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/beaver/communication_metrics.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/communication_metrics.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/beaver/protocol_metrics.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/protocol_metrics.py:ro
+      # Figure 8 linear circuit runner.  The host copy contains the
+      # remainder-aware 200-input distribution needed for B=100 at n=128.
+      - ./dumbo-mpc/AsyRanTriGen/beaver/admpc2_dynamic_linear.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/admpc2_dynamic_linear.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/scripts/admpc2_dynamic_linear_run.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/scripts/admpc2_dynamic_linear_run.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/beaver/admpc2_dynamic_nonlinear.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/admpc2_dynamic_nonlinear.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/scripts/admpc2_dynamic_nonlinear_run.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/scripts/admpc2_dynamic_nonlinear_run.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/beaver/bgw_multiplication.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/bgw_multiplication.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/beaver/admpc2_dynamic_bgw_aggtrans.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/admpc2_dynamic_bgw_aggtrans.py:ro
+      - ./dumbo-mpc/AsyRanTriGen/scripts/admpc2_dynamic_bgw_aggtrans_run.py:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/scripts/admpc2_dynamic_bgw_aggtrans_run.py:ro
+      # File-scoped AMD64 KZG patch makes AggTrans-NoAgg verify each public
+      # proof independently while keeping the pinned base image unchanged.
+      - ./dumbo-mpc/AsyRanTriGen/kzg_ped_out.so:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/kzg_ped_out.so:ro
+      - ./dumbo-mpc/AsyRanTriGen/conf:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/conf
+      - ./dumbo-mpc/AsyRanTriGen/log:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/log
+      - ./dumbo-mpc/AsyRanTriGen/sharedata:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/sharedata
+      - ./dumbo-mpc/AsyRanTriGen/sharedata_test:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/sharedata_test
+      - ./dumbo-mpc/AsyRanTriGen/triples:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/triples

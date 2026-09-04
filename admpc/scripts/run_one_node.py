@@ -10,7 +10,7 @@ Usage:
         <n> <t> <k> <layers> <total_cm> <send_id> <start_ts>
 
 Environment Variables:
-  PROTOCOL  Values: admpc (default) / fluid / hbmpc, determines which *_run module to call
+  PROTOCOL  Values include admpc (default), admpc-shuffle, fluid, and hbmpc.
 
 Argument Descriptions (all integers):
   n         Number of nodes per layer
@@ -45,8 +45,10 @@ def main() -> None:
     protocol = os.environ.get("PROTOCOL", "admpc").lower()
     proto_map = {
         "admpc": "scripts.admpc_dynamic_run",
+        "admpc-shuffle": "scripts.admpc_dynamic_shuffle_run",
         "admpc-linear": "scripts.admpc_dynamic_linear_run",
         "admpc-nonlinear": "scripts.admpc_dynamic_nonlinear_run",
+        "admpc-batchrand": "scripts.admpc_dynamic_batchrand_run",
         "fluid1": "scripts.fluid_mpc_run_1",
         "fluid2": "scripts.fluid_mpc_run",
         "hbmpc": "scripts.honeybadgermpc_run",

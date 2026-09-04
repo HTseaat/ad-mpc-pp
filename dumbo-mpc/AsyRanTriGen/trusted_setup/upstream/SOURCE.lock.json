@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "name": "qsdh-py",
+  "url": "https://github.com/sourav1547/qsdh-py.git",
+  "commit": "d30147a388586ab9712dd2834491f51954278a72",
+  "git_tree": "7b1372fe0a4c2129e47776bf969df1da50f6d6ba",
+  "commit_date": "2022-11-30T00:01:18-08:00",
+  "commit_subject": "eval data",
+  "package_version": "0.0.0.dev",
+  "license": "GPL-3.0",
+  "license_file": "qsdh-py/LICENSE",
+  "license_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+  "git_archive_sha256": "09acd95547ad399d2938a3eea07b5ecd9cf107005ed6fe26d0e90cb02d04077c",
+  "snapshot_manifest": {
+    "algorithm": "sha256 of sorted '<mode> <file-sha256> <relative-path>\\n' records; mode is 755 when any executable bit is set, otherwise 644",
+    "file_count": 324,
+    "content_bytes": 3336310,
+    "sha256": "7eee89872319a60290b56af4238691eec556e7a0bd6ca9a9ec74e55870ee15f1"
+  },
+  "snapshot_policy": "Git-tracked files only; no .git metadata and no local build artifacts"
+}

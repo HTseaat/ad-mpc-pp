@@ -9,6 +9,7 @@ import time
 import logging
 import uvloop
 import numpy as np
+import os
 
 logger = logging.getLogger("benchmark_logger")
 logger.setLevel(logging.ERROR)
@@ -62,7 +63,7 @@ async def _run(peers, n, t, k, my_id, start_time, layers, my_send_id, total_cm):
             # admpc_task.cancel()
             exec_time = time.time() - begin_time
             print(f"my_send_id: {my_send_id} exec_time: {exec_time}")
-            await asyncio.sleep(50)
+            await asyncio.sleep(float(os.environ.get("POST_EXEC_SLEEP_SECONDS", "50")))
 
 
 

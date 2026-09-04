@@ -1,0 +1,101 @@
+#!/bin/bash
+set -e  # Exit immediately if any command fails
+
+# This script runs an MPC program in N processes.
+# Usage: scripts/launch-tmuxlocal.sh module.py NUM_NODES
+
+echo "DEBUG: got args count = $#"
+
+if [ $# -lt 4 ]; then
+    echo "Usage: $0 <module.py> <committee_size> <layers> <total_cm>"
+    echo "Example: $0 scripts/admpc2_dynamic_run.py 4 4 100"
+    exit 1
+fi
+
+# Get input arguments
+FILE_PATH=$1        # path to Python module
+NUM_NODES=$2        # committee size (n = 3t+1)
+LAYERS=$3           # number of circuit layers
+TOTAL_CM=$4         # total multiplication‑gate count
+
+
+# Convert dir/file.py to dir.file
+DIRS=(${FILE_PATH//\// })
+DOT_SEPARATED_PATH=$(IFS=. ; echo "${DIRS[*]}")
+MODULE_PATH=${DOT_SEPARATED_PATH::-3} # Remove ".py" extension
+
+# Configuration path based on the number of nodes
+CONFIG_PATH="conf/admpc_${TOTAL_CM}_${LAYERS}_${NUM_NODES}/local"
+
+TOTAL_NODES=$((NUM_NODES * LAYERS))
+
+# Auto-clean stale local listeners from previous interrupted runs.
+# AD-MPC local dynamic config uses contiguous ports starting at 10000.
+./scripts/cleanup_local_test.sh "${TOTAL_NODES}" 10000 1
+
+# Python command
+CMD="python -m ${MODULE_PATH}"
+
+# Start time for processes
+start_time=$(date +%s)
+start_time=$((start_time + 2))
+
+# Create a logs directory if it doesn't exist
+mkdir -p log
+
+# Keep local metrics outside the repository log directory so each run can be
+# audited and analyzed without mixing artifacts from different configurations.
+if [[ "${PROTOCOL_OVERHEAD_METRICS:-0}" =~ ^(1|true|yes|on)$ ]]; then
+    : "${PROTOCOL_OVERHEAD_OUTPUT_DIR:?PROTOCOL_OVERHEAD_OUTPUT_DIR is required when protocol metrics are enabled}"
+    mkdir -p "${PROTOCOL_OVERHEAD_OUTPUT_DIR}"
+fi
+
+# Array to store process IDs
+PIDS=()
+
+# Run all nodes in the background and log output
+for ID in $(seq 0 $((TOTAL_NODES - 1))); do
+    echo "Starting node $ID..."
+    ${CMD} -d -f ${CONFIG_PATH}.${ID}.json --time $start_time &> log/logs-${ID}.log &  # Redirect log output to log directory
+    PIDS+=($!) # Store process ID
+done
+
+if [ -z "${FINISHED_PATTERN:-}" ]; then
+    case "${MODULE_PATH}" in
+        *admpc2_dynamic_shuffle*)
+            FINISHED_PATTERN="Shuffle Finished!"
+            ;;
+        *)
+            FINISHED_PATTERN="Finished"
+            ;;
+    esac
+fi
+
+# Start monitoring the logs for the finished marker.
+./scripts/monitor_log.sh "$TOTAL_NODES" "$FINISHED_PATTERN" &  # Run monitor_log.sh in the background
+
+# Wait for the log monitoring script to finish
+wait $!  # Wait for monitor_log.sh to finish before continuing
+
+# Metrics-enabled runners flush their final transport/proof snapshot while the
+# async context exits.  Keep the historical zero-grace behaviour by default,
+# but allow baseline/benchmark runs to give every node time to leave cleanly.
+if [[ "${PROTOCOL_OVERHEAD_METRICS:-0}" =~ ^(1|true|yes|on)$ ]]; then
+    default_post_finish_grace=7
+else
+    default_post_finish_grace=0
+fi
+POST_FINISH_GRACE_SECONDS="${POST_FINISH_GRACE_SECONDS:-$default_post_finish_grace}"
+if [[ "$POST_FINISH_GRACE_SECONDS" != "0" ]]; then
+    sleep "$POST_FINISH_GRACE_SECONDS"
+fi
+
+# Once 'Finished' is found in all logs, kill all Python processes
+echo "Terminating all nodes ..."
+for IDX in "${!PIDS[@]}"; do
+    if kill -0 "${PIDS[$IDX]}" 2>/dev/null; then
+        kill -9 "${PIDS[$IDX]}" && echo "Terminated node $IDX"
+    fi
+done
+
+echo "All node processes terminated. Logs are stored in the 'dumbo-mpc/AsyRanTriGen/log/' directory"

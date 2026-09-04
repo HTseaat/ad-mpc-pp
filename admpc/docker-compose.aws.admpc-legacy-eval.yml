@@ -1,0 +1,26 @@
+version: "3.8"
+
+# Benchmark-only overlay for reproducing the historical AD-MPC evaluation
+# verifier latency.  The immutable r10 image remains the base; only the two
+# explicitly listed Python files are mounted from the synchronized workspace.
+services:
+  htadkg_adkg:
+    image: ${MPC_IMAGE:?set MPC_IMAGE to an immutable linux/amd64 image tag or digest}
+    entrypoint: ""
+    working_dir: /usr/src/adkg
+    cap_add:
+      - NET_ADMIN
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    environment:
+      PATH: /opt/venv/admpc/bin:/usr/local/go/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PYTHONPATH: /opt/admpc
+    volumes:
+      - ./conf:/opt/admpc/conf
+      - ./logs:/opt/admpc/logs
+      - ./sharedata:/opt/admpc/sharedata
+      - ./adkg/ipc.py:/opt/admpc/adkg/ipc.py:ro
+      - ./adkg/poly_commit_log_legacy_eval.py:/opt/admpc/adkg/poly_commit_log.py:ro
+      - ./scripts/admpc_dynamic_linear_run_legacy_eval.py:/opt/admpc/scripts/admpc_dynamic_linear_run.py:ro

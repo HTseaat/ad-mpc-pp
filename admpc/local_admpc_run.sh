@@ -6,14 +6,14 @@ set -euo pipefail
 
 # ---------- Protocol (optional 1st argument) ----------
 protocol="admpc"   # Default
-if [[ "$1" =~ ^(admpc|admpc-linear|admpc-nonlinear|fluid1|fluid2|hbmpc|hbmpc_attack)$ ]]; then
+if [[ "$1" =~ ^(admpc|admpc-shuffle|admpc-linear|admpc-nonlinear|admpc-batchrand|fluid1|fluid2|hbmpc|hbmpc_attack)$ ]]; then
   protocol="$1"
   shift
 fi
 
 # ---------- Argument check ----------
 if [[ $# -ne 4 ]]; then
-  echo "Usage: $0 [admpc|admpc-linear|admpc-nonlinear|fluid1|fluid2|hbmpc|hbmpc_attack] <n> <t> <layers> <total_cm>" >&2
+  echo "Usage: $0 [admpc|admpc-shuffle|admpc-linear|admpc-nonlinear|admpc-batchrand|fluid1|fluid2|hbmpc|hbmpc_attack] <n> <t> <layers> <total_cm>" >&2
   exit 1
 fi
 
@@ -37,6 +37,14 @@ if [[ "$protocol" == "hbmpc" || "$protocol" == "hbmpc_attack" ]]; then
 else
     total_nodes=$(( n * layers ))
 fi
+
+# Generate a fresh identity registry for every run. NULL mode ignores it, while
+# CURVE mode loads local.<my_send_id>.json from this directory.
+curve_config_dir="conf/curve_local_${protocol}_${n}_${layers}"
+python scripts/generate_curve_configs.py \
+  --parties "$total_nodes" --output-dir "$curve_config_dir"
+export ZMQ_CURVE_CONFIG_DIR="$(cd "$curve_config_dir" && pwd)"
+
 echo "Launching $total_nodes nodes (n=$n, layers=$layers)..."
 echo "Global start timestamp: $start_ts"
 echo "Protocol: $protocol"

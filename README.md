@@ -21,6 +21,8 @@ The codebase includes:
 
 ## 1. Deployment
 
+The unified Docker image currently supports only `linux/amd64` (`x86_64`).
+
 ### 1.1 Build unified Docker image
 
 Run from project root:
@@ -39,12 +41,14 @@ cd /opt
 
 Inside the container, the project root is `/opt`.
 
-### 1.3 Python environments
+### 1.3 Runtime environments and convenience commands
+
+Inside the container, the protocol implementations use separate Python environments:
 
 - Continuum runtime: `/opt/venv/continuum`
 - AD-MPC runtime: `/opt/venv/admpc`
 
-Convenience commands available in PATH:
+The image provides the following commands in `PATH`:
 
 - `enter-continuum`
 - `enter-admpc`
@@ -52,102 +56,264 @@ Convenience commands available in PATH:
 - `run-admpc-local`
 - `run-dumbo-mpc-local`
 
-Command notes:
-
-- `enter-continuum`: activate `/opt/venv/continuum`, set `PYTHONPATH=/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen`, and `cd /opt/dumbo-mpc`.
-- `enter-admpc`: activate `/opt/venv/admpc`, set `PYTHONPATH=/opt/admpc`, and `cd /opt/admpc`.
-- `run-*-local`: one-command wrappers that prepare the correct runtime environment and launch the target protocol test.
-
 ## 2. Local testing
 
-### 2.1 AD-MPC local tests
+### 2.1 System overheads
+
+All local tests use ZeroMQ CURVE-authenticated channels. Channel-establishment time is reported separately and excluded from protocol execution time.
+
+#### Trusted setup
+
+Example:
 
 ```bash
-run-admpc-local admpc 4 1 8 300
-run-admpc-local admpc-linear 4 1 8 300
-run-admpc-local admpc-nonlinear 4 1 8 300
+cd /opt
+./unified/run_trusted_setup_local.sh \
+  16 5 64 /opt/benchmark-local/trusted-setup-n16-q64
 ```
 
 Command format:
 
 ```bash
-run-admpc-local [admpc|admpc-linear|admpc-nonlinear|fluid1|fluid2|hbmpc|hbmpc_attack] <n> <t> <layers> <total_cm>
+./unified/run_trusted_setup_local.sh <n> <t> <Q> <output_dir>
 ```
 
 Parameter meanings:
 
-- `n`: number of parties.
+- `n`: number of setup parties. The current trusted-setup NTT path requires `n` to be a power of two.
 - `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
-- `layers`: total circuit layers used by the local runner.
-- `total_cm`: total multiplication-gate budget for the experiment.
-- `admpc-linear`: linear-gate-heavy variant.
-- `admpc-nonlinear`: nonlinear/multiplication-gate-heavy variant.
+- `Q`: requested number of KZG powers, must satisfy `Q >= t + 1`.
+- `output_dir`: new or empty output directory for per-party logs, CURVE configurations, public SRS files, metrics, and `summary.json`.
 
-### 2.2 Continuum local tests
+#### Committee election
+
+Example:
 
 ```bash
-run-continuum-local 4 1 8 300
-run-continuum-local 4 1 8 300 linear
-run-continuum-local 4 1 8 300 nonlinear
-
-# AggTrans-NoAgg ablation for all-linear transfer
-DISABLE_AGG_PROTO=1 DISABLE_RLC=1 run-continuum-local 4 1 8 300 linear
-
-# BGW+AggTrans ablation for all-multiplication evaluation
-run-continuum-local 4 1 8 300 bgw-aggtrans
-BGW_UNBATCHED_VERIFY=1 run-continuum-local 4 1 8 300 bgw-aggtrans
+cd /opt
+./unified/run_committee_election_local.sh \
+  16 5 4 /opt/benchmark-local/committee-election-n16
 ```
 
 Command format:
 
 ```bash
-run-continuum-local <n> <t> <layers|auto> <total_cm> [mixed|linear|nonlinear|bgw-aggtrans|shuffle|shuffle-bgw-static]
-run-continuum-local <n> <t> <shuffle_k> <shuffle|shuffle-bgw-static>
+./unified/run_committee_election_local.sh <n> <t> <K> <output_dir>
 ```
 
-The optional mode selects which continuum variant is launched:
+Parameter meanings:
 
-- `mixed`: mixed gates (default)
-- `linear`: linear-heavy
-- `nonlinear`: multiplication-heavy
-- `bgw-aggtrans`: ablation baseline using Dumbo-MPC BGW degree reduction followed by AggTrans hand-off
-- `shuffle`: switching-network benchmark; in this mode `total_cm` means input size `k`
-- `shuffle-bgw-static`: switching-network static baseline using Dumbo-MPC BGW degree reduction for multiplication
+- `n`: number of election parties. The paper evaluates `n=4`, `10`, and `16`.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
+- `K`: number of candidate committees. The paper uses `K=4`.
+- `output_dir`: new or empty output directory for generated configurations, per-party logs, and `summary.json`. The summary reports `protocol_completion_ms` and `distributions.channel_setup_ms` separately.
 
-### 2.3 Shuffle local tests
+### 2.2 Figure 8: Transfer protocol evaluation
 
-```bash
-SHUFFLE_MODE=iterated SHUFFLE_HANDOFF_INTERVAL=1 run-continuum-local 4 1 128 shuffle
-SHUFFLE_MODE=iterated SHUFFLE_HANDOFF_INTERVAL=3 run-continuum-local 4 1 128 shuffle
-SHUFFLE_MODE=iterated SHUFFLE_HANDOFF_INTERVAL=static run-continuum-local 4 1 128 shuffle
+#### Local protocol tests
 
-SHUFFLE_MODE=iterated run-continuum-local 4 1 128 shuffle-bgw-static
-BGW_UNBATCHED_VERIFY=1 SHUFFLE_MODE=iterated run-continuum-local 4 1 128 shuffle-bgw-static
-```
-
-The shuffle benchmark uses a butterfly switching network. The input size `k` must be a power of two.
-
-For `shuffle` and `shuffle-bgw-static`, selector signs are generated with the `BatchRandBit` path: random shared field elements are generated, squared and opened, then normalized to shared signs in `{-1, 1}`.
-
-### 2.4 Dumbo-MPC local test (AsyRanTriGen path)
+Example:
 
 ```bash
-run-dumbo-mpc-local 4 1 300 full 10
-run-dumbo-mpc-local 4 1 300 drop-epoch4 6
+cd /opt
+./unified/run_figure8_admpc_local.sh 4 1 6 100
+./unified/run_figure8_noagg_local.sh 4 1 6 100
+./unified/run_figure8_aggtrans_local.sh 4 1 6 100
 ```
 
 Command format:
 
 ```bash
-run-dumbo-mpc-local <n> <t> <k> [full|drop-epoch4] [layers]
+./unified/run_figure8_admpc_local.sh <n> <t> <d> <w>
+./unified/run_figure8_noagg_local.sh <n> <t> <d> <w>
+./unified/run_figure8_aggtrans_local.sh <n> <t> <d> <w>
 ```
 
-Arguments:
+Parameter meanings:
 
-- `k`: batch size used by `asy-triple` (for a common setup with `width=100, depth=6`, use `k=300`).
-- `full`: normal Dumbo-MPC run.
-- `drop-epoch4`: dropout test mode used for the GOD experiment.
-- `layers`: computation layer count for this run.
+- `n`: number of parties in each committee.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
+- `d`: circuit depth, excluding the input and output layers.
+- `w`: circuit width, which must be a positive even integer for the all-linear runner.
+
+The scripts derive `layers=d+2` and `total_cm=d*w/2` automatically.
+
+#### Communication and computation overheads
+
+Example:
+
+```bash
+cd /opt
+./unified/run_figure8_admpc_communication_local.sh \
+  4 1 6 100 /opt/benchmark-local/figure8-admpc-communication
+./unified/run_figure8_noagg_communication_local.sh \
+  4 1 6 100 /opt/benchmark-local/figure8-noagg-communication
+./unified/run_figure8_aggtrans_communication_local.sh \
+  4 1 6 100 /opt/benchmark-local/figure8-aggtrans-communication
+```
+
+Command format:
+
+```bash
+./unified/run_figure8_admpc_communication_local.sh <n> <t> <d> <w> <output_dir>
+./unified/run_figure8_noagg_communication_local.sh <n> <t> <d> <w> <output_dir>
+./unified/run_figure8_aggtrans_communication_local.sh <n> <t> <d> <w> <output_dir>
+```
+
+Parameter meanings:
+
+- `n`: number of parties in each committee.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
+- `d`: circuit depth used for the derived whole-circuit total.
+- `w`: circuit width and hand-off batch size `B`, which must be a positive even integer.
+- `output_dir`: new or empty output directory for the selected protocol's raw per-process artifacts, analysis, and final summaries. Use a different directory for each command.
+
+Each overhead command measures one representative hand-off with `B=w` and writes `summary.json`, `summary.csv`, `summary.md`, and `normalization_audit.json` to `<output_dir>/final/`.
+
+### 2.3 Figure 9: Multiplication protocol evaluation
+
+#### Local protocol tests
+
+Example:
+
+```bash
+cd /opt
+./unified/run_figure9_admpc_local.sh 4 1 6 100
+./unified/run_figure9_batchmul_local.sh 4 1 6 100
+./unified/run_figure9_bgw_aggtrans_local.sh 4 1 6 100
+```
+
+Command format:
+
+```bash
+./unified/run_figure9_admpc_local.sh <n> <t> <d> <w>
+./unified/run_figure9_batchmul_local.sh <n> <t> <d> <w>
+./unified/run_figure9_bgw_aggtrans_local.sh <n> <t> <d> <w>
+```
+
+Parameter meanings:
+
+- `n`: number of parties in each committee.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
+- `d`: circuit depth, excluding the input and output layers.
+- `w`: circuit width and number of multiplication gates per computation layer.
+
+The scripts derive `layers=d+2` and `total_cm=d*w` automatically.
+
+#### Communication and computation overheads
+
+Example:
+
+```bash
+cd /opt
+./unified/run_figure9_admpc_communication_local.sh \
+  4 1 6 100 /opt/benchmark-local/figure9-admpc-communication
+./unified/run_figure9_batchmul_communication_local.sh \
+  4 1 6 100 /opt/benchmark-local/figure9-batchmul-communication
+./unified/run_figure9_bgw_aggtrans_communication_local.sh \
+  4 1 6 100 /opt/benchmark-local/figure9-bgw-aggtrans-communication
+```
+
+Command format:
+
+```bash
+./unified/run_figure9_admpc_communication_local.sh <n> <t> <d> <w> <output_dir>
+./unified/run_figure9_batchmul_communication_local.sh <n> <t> <d> <w> <output_dir>
+./unified/run_figure9_bgw_aggtrans_communication_local.sh <n> <t> <d> <w> <output_dir>
+```
+
+Parameter meanings:
+
+- `n`: number of parties in each committee.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
+- `d`: circuit depth used for the derived whole-circuit total.
+- `w`: circuit width and multiplication batch size `M`.
+- `output_dir`: new or empty output directory for the selected protocol's raw per-process artifacts, analysis, logs, and final summaries. Use a different directory for each command.
+
+Each overhead command measures one representative multiplication layer with `M=w` and writes `summary.json`, `summary.csv`, `summary.md`, and `normalization_audit.json` to `<output_dir>/final/`.
+
+### 2.4 Figure 10: GOD under adversarial faults
+
+The five commands below use the fixed paper configuration `n=16`, `t=5`, `d=6`, and `w=100`, with a 1:1 ratio of multiplication and linear gates in every computation layer. Each command corresponds to one curve in Figure 10.
+
+```bash
+cd /opt
+./unified/run_figure10_admpc_accum_local.sh
+./unified/run_figure10_continuum_accum_local.sh
+./unified/run_figure10_dumbo_accum_local.sh
+./unified/run_figure10_admpc_attack_local.sh
+./unified/run_figure10_continuum_attack_local.sh
+```
+
+- `AD-MPC-Accum`: designates `t` silent parties in each computation committee.
+- `Continuum-Accum`: designates `t` silent parties in each computation committee.
+- `Dumbo-MPC`: designates `t` new silent parties in the static committee in every epoch.
+- `AD-MPC-Attack`: delays the selected parties' hand-off messages by 10 seconds in epoch 3 and injects malicious ADTrans contributions in epoch 4.
+- `Continuum-Attack`: applies the same delay in epoch 3, followed by malicious AggTrans contributions in epoch 4 and malicious BatchMul contributions in epoch 5.
+
+Each command automatically creates a separate timestamped directory under `/opt/benchmark-local/figure10/`. The directory contains the controller log, per-process logs, generated configuration, and `metadata.env`. Accumulation runs also produce `fault_trace.json` after validating the injected fault schedule and protocol progress.
+
+### 2.5 Figure 11: MPC-based shuffle
+
+Example:
+
+```bash
+cd /opt
+./unified/run_figure11_admpc_local.sh 4 1
+./unified/run_figure11_continuum_local.sh 4 1
+./unified/run_figure11_continuum_coarse_local.sh 4 1
+./unified/run_figure11_continuum_static_local.sh 4 1
+./unified/run_figure11_bgw_ampc_local.sh 4 1
+```
+
+Command format:
+
+```bash
+./unified/run_figure11_admpc_local.sh <n> <t>
+./unified/run_figure11_continuum_local.sh <n> <t>
+./unified/run_figure11_continuum_coarse_local.sh <n> <t>
+./unified/run_figure11_continuum_static_local.sh <n> <t>
+./unified/run_figure11_bgw_ampc_local.sh <n> <t>
+```
+
+Parameter meanings:
+
+- `n`: committee size; the paper evaluates `n=4`, `10`, and `16`.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`.
+
+All five commands run the 128-input iterated butterfly network with 49 switch layers.
+
+- `AD-MPC` and `Continuum`: change committees after every switch layer.
+- `Continuum-Coarse`: changes committees every five switch layers.
+- `Continuum-Static`: uses one committee for all switch layers.
+- `BGW-AMPC`: uses the static BGW-style multiplication baseline.
+
+### 2.6 Figure 14: Impact of circuit depth on latency
+
+Example:
+
+```bash
+cd /opt
+./unified/run_figure14_admpc_local.sh 16 5 6
+./unified/run_figure14_continuum_local.sh 16 5 6
+./unified/run_figure14_dumbo_mpc_local.sh 16 5 6
+```
+
+Command format:
+
+```bash
+./unified/run_figure14_admpc_local.sh <n> <t> <d>
+./unified/run_figure14_continuum_local.sh <n> <t> <d>
+./unified/run_figure14_dumbo_mpc_local.sh <n> <t> <d>
+```
+
+Parameter meanings:
+
+- `n`: number of parties; Figure 14 uses `n=16`.
+- `t`: Byzantine threshold, must satisfy `n >= 3t + 1`; Figure 14 uses `t=5`.
+- `d`: circuit depth, excluding the input and output layers; Figure 14 evaluates `d=2`, `4`, `6`, `8`, and `10`.
+
+All three commands use a mixed circuit of fixed width `w=100`, with a 1:1 ratio of multiplication and linear gates in every computation layer. The scripts derive `layers=d+2` and `total_cm=50d` automatically.
 
 ## 3. Distributed deployment and experiments
 
@@ -157,203 +323,197 @@ All distributed orchestration is under:
 cd /opt/unified/distributed
 ```
 
-### 3.1 Configure cluster
+### 3.1 Configure the distributed cluster
+
+Create the cluster configuration:
 
 ```bash
+cd /opt/unified/distributed
 cp cluster.env.example cluster.env
 ```
 
-Edit `cluster.env`:
-
-- `NODE_SSH_USERNAME`
-- `CLUSTER_IPS` (ordered node list)
-- `REMOTE_WORKSPACE_DIR` (for layouts like `~/Continuum/admpc`)
-- `MPC_IMAGE` (default `continuum:latest`)
-
-### 3.2 Smoke tests (recommended first)
-
-AD-MPC + Continuum (`exp1`, `n=4` only):
+Then edit `cluster.env`. A minimal configuration has the following form:
 
 ```bash
-./run_exp1_smoke_n4.sh
+NODE_SSH_USERNAME="ubuntu"
+
+MPC_IMAGE="<preloaded-image-tag>"
+MPC_IMAGE_ID="sha256:<image-id>"
+MPC_COMPOSE_FILE="docker-compose.aws.yml"
+
+REMOTE_WORKSPACE_DIR="Continuum"
+
+CLUSTER_IPS=(
+  "203.0.113.11"
+  "203.0.113.12"
+  "203.0.113.13"
+  "203.0.113.14"
+)
+
+CLUSTER_PEER_IPS=(
+  "10.0.0.11"
+  "10.0.0.12"
+  "10.0.0.13"
+  "10.0.0.14"
+)
 ```
 
-This sequentially runs:
+The fields have the following meanings:
 
-- `run_suite.sh admpc exp1 --only-n 4`
-- `run_suite.sh continuum exp1 --only-n 4`
+- `NODE_SSH_USERNAME`: SSH user shared by the experiment servers.
+- `CLUSTER_IPS`: ordered addresses used by the controller for SSH. The order defines party indices and must remain fixed throughout a campaign.
+- `CLUSTER_PEER_IPS`: optional ordered addresses used for MPC traffic between servers. Use private or LAN addresses when available. If omitted, `CLUSTER_IPS` is used.
+- `MPC_IMAGE` and `MPC_IMAGE_ID`: tag and immutable image ID of the unified image already loaded on every server.
+- `MPC_COMPOSE_FILE`: distributed Compose file. Use `docker-compose.aws.yml` for the standard image-only deployment.
+- `REMOTE_WORKSPACE_DIR`: optional directory below the remote user's home containing `admpc/` and `dumbo-mpc/`. Omit it when those directories are directly below the remote home directory.
 
-Dumbo-MPC 4-node smoke (fixed `width=100`, `depth=6`, so default `k=300`):
+The configured cluster must contain at least as many servers as the largest `n` requested by the experiment preset.
 
-```bash
-./run_dumbo_smoke_n4_d6.sh
-```
+### 3.2 System overheads
 
-Default for this dumbo smoke:
+All distributed protocol runs use ZeroMQ CURVE-authenticated channels. The Figure 8 and Figure 9 runs below record `channel_setup_ms` separately from protocol execution time, so channel establishment does not require a separate command.
 
-- `n=4`, `t=1`
-- `width=100`, `depth=6`
-- `k=300`
-- `mode=full`
-
-### 3.3 Full distributed presets
-
-Unified entry:
-
-```bash
-./run_suite.sh <admpc|continuum|bgw-aggtrans|shuffle|shuffle-bgw-static|dumbo> <exp1|exp2|exp3|exp4|exp-shuffle>
-```
-
-Protocol shortcuts:
-
-```bash
-./run_admpc_dist.sh <exp1|exp2|exp3|exp4>
-./run_continuum_dist.sh <exp1|exp2|exp3|exp4>
-./run_dumbo_dist.sh <exp3|exp4>
-```
-
-Preset summary:
-
-- `exp1`: linear, `w=100`, `d=6`, `(n,t) = (4,1),(10,3),(16,5),(22,7)`
-- `exp2`: nonlinear, `w=100`, `d=6`, `(n,t) = (4,1),(10,3),(16,5),(22,7)`
-- `exp3`: mixed, `w=100`, fixed `n=16,t=5`, `d in {2,4,6,8,10}`
-- `exp4`: mixed, `w=100`, fixed `n=16,t=5,d=6` (dumbo uses `drop-epoch4`)
-- `exp-shuffle`: shuffle benchmark, default `SHUFFLE_K=128`; supported protocols are `shuffle` and `shuffle-bgw-static`
-
-Useful options:
-
-```bash
---only-n <n>
---only-d <d>
---sync-code
---timeout <seconds>
---dumbo-timeout <seconds>
---skip-remote-cleanup
---sleep-between-case <seconds>
-```
-
-## 4. Running the Evaluation
-
-### 4.1 All-linear transfer experiments
-
-Run AD-MPC and Continuum:
+Run the trusted setup with the paper configuration `n=16`, `t=5`, and `Q=64`:
 
 ```bash
 cd /opt/unified/distributed
 
-./run_suite.sh admpc exp1
-./run_suite.sh continuum exp1
+./run_trusted_setup_dist.sh --n 16 --t 5 --powers 64
 ```
 
-AggTrans-NoAgg ablation:
+The script starts one authenticated setup party on each selected physical server and collects the public SRS files, per-party metrics, and final analysis under `/opt/benchmark-distributed/`.
+
+Run the committee-election overhead experiment separately for each committee size evaluated in the paper:
 
 ```bash
-DISABLE_AGG_PROTO=1 DISABLE_RLC=1 ./run_suite.sh continuum exp1
+cd /opt/unified/distributed
+
+./run_committee_election_dist.sh \
+  --n 4 --t 1 --candidates 4 --depth 1
+./run_committee_election_dist.sh \
+  --n 10 --t 3 --candidates 4 --depth 1
+./run_committee_election_dist.sh \
+  --n 16 --t 5 --candidates 4 --depth 1
 ```
 
-Run only one committee size:
+Here, `--depth 1` measures one independent election rather than the sequence of elections charged to a multi-epoch end-to-end experiment. Repeat each command 20 times when reproducing the paper results.
+
+### 3.3 Figure 8: Transfer protocol evaluation
+
+The distributed Figure 8 experiments use all-linear circuits with fixed width `w=100` and depth `d=6`. The evaluated committee configurations are `(n,t)=(4,1)`, `(10,3)`, `(16,5)`, `(22,7)`, and `(128,42)`.
+
+Run the three Figure 8 variants separately:
 
 ```bash
-./run_suite.sh continuum exp1 --only-n 4
-./run_suite.sh continuum exp1 --only-n 22
+cd /opt/unified/distributed
+
+./run_figure8_admpc_dist.sh
+./run_figure8_noagg_dist.sh
+./run_figure8_aggtrans_dist.sh
 ```
 
-### 4.2 All-multiplication experiments
+By default, each command runs all five committee configurations. Use `--only-n` to run one configuration, or `--cluster-env` to select a non-default cluster file:
 
 ```bash
-./run_suite.sh admpc exp2
-./run_suite.sh continuum exp2
-./run_suite.sh bgw-aggtrans exp2
-BGW_UNBATCHED_VERIFY=1 ./run_suite.sh bgw-aggtrans exp2
+./run_figure8_aggtrans_dist.sh --only-n 4
+
+./run_figure8_aggtrans_dist.sh \
+  --cluster-env /path/to/cluster.env --only-n 16
 ```
 
-Run only one committee size:
+### 3.4 Figure 9: Multiplication protocol evaluation
+
+The distributed Figure 9 experiments use all-multiplication circuits with fixed width `w=100` and depth `d=6`. BatchMul and BGW-AggTrans use `(n,t)=(4,1)`, `(10,3)`, `(16,5)`, `(22,7)`, and `(128,42)`. AD-MPC is evaluated only through `(22,7)` because of its substantially higher latency.
+
+Run the three Figure 9 variants separately:
 
 ```bash
-./run_suite.sh continuum exp2 --only-n 16
+cd /opt/unified/distributed
+
+./run_figure9_admpc_dist.sh
+./run_figure9_batchmul_dist.sh
+./run_figure9_bgw_aggtrans_dist.sh
 ```
 
-### 4.3 Mixed-circuit depth sweep
+By default, the BatchMul and BGW-AggTrans commands run all five committee configurations, while the AD-MPC command runs the first four. Use `--only-n` to run one configuration, or `--cluster-env` to select a non-default cluster file:
 
 ```bash
-./run_suite.sh admpc exp3
-./run_suite.sh continuum exp3
-./run_suite.sh dumbo exp3 --dumbo-timeout 900
+./run_figure9_batchmul_dist.sh --only-n 4
+
+./run_figure9_batchmul_dist.sh \
+  --cluster-env /path/to/cluster.env --only-n 16
 ```
 
-Run a single depth:
+### 3.5 Figure 10: GOD under adversarial faults
+
+The five commands below use the fixed configuration `n=16`, `t=5`, `d=6`, and `w=100`, with a 1:1 ratio of multiplication and linear gates in every computation layer.
 
 ```bash
-./run_suite.sh continuum exp3 --only-d 6
+cd /opt/unified/distributed
+
+./run_figure10_admpc_accum_dist.sh
+./run_figure10_continuum_accum_dist.sh
+./run_figure10_dumbo_accum_dist.sh
+./run_figure10_admpc_attack_dist.sh
+./run_figure10_continuum_attack_dist.sh
 ```
 
-### 4.4 Dropout / GOD experiment
+- `AD-MPC-Accum` and `Continuum-Accum` designate `t` silent parties in every computation committee.
+- `Dumbo-MPC` designates `t` new silent parties in its static committee in each epoch.
+- `AD-MPC-Attack` introduces a 10-second delay followed by malicious ADTrans contributions.
+- `Continuum-Attack` introduces the same delay followed by malicious AggTrans and BatchMul contributions.
+
+### 3.6 Figure 11: MPC-based shuffle
+
+The distributed Figure 11 experiments run the 128-input iterated butterfly network with 49 switch layers. The evaluated committee configurations are `(n,t)=(4,1)`, `(10,3)`, and `(16,5)`.
 
 ```bash
-./run_suite.sh admpc exp4
-./run_suite.sh continuum exp4
-./run_suite.sh dumbo exp4 --dumbo-timeout 900
+cd /opt/unified/distributed
+
+./run_figure11_admpc_dist.sh
+./run_figure11_continuum_dist.sh
+./run_figure11_continuum_coarse_dist.sh
+./run_figure11_continuum_static_dist.sh
+./run_figure11_bgw_ampc_dist.sh
 ```
 
-The Dumbo-MPC dropout run uses `drop-epoch4`, which simulates node dropout during the fourth computation epoch.
+- `AD-MPC` and `Continuum` change committees after every switch layer.
+- `Continuum-Coarse` changes committees every five switch layers.
+- `Continuum-Static` uses one committee for all switch layers.
+- `BGW-AMPC` uses the static BGW-style multiplication baseline.
 
-### 4.5 Shuffle benchmark
-
-Continuum shuffle:
+Use `--only-n` to run one committee configuration. For example:
 
 ```bash
-SHUFFLE_K=128 SHUFFLE_MODE=iterated SHUFFLE_HANDOFF_INTERVAL=1 \
-  ./run_suite.sh shuffle exp-shuffle --timeout 30
-
-SHUFFLE_K=128 SHUFFLE_MODE=iterated SHUFFLE_HANDOFF_INTERVAL=3 \
-  ./run_suite.sh shuffle exp-shuffle --timeout 30
-
-SHUFFLE_K=128 SHUFFLE_MODE=iterated SHUFFLE_HANDOFF_INTERVAL=static \
-  ./run_suite.sh shuffle exp-shuffle --timeout 30
+./run_figure11_continuum_dist.sh --only-n 4
 ```
 
-Static BGW shuffle baseline:
+### 3.7 Figure 14: Impact of circuit depth on latency
+
+The distributed Figure 14 experiments use mixed circuits with fixed `n=16`, `t=5`, and `w=100`, with a 1:1 ratio of multiplication and linear gates. The evaluated depths are `d=2`, `4`, `6`, `8`, and `10`.
 
 ```bash
-SHUFFLE_K=128 SHUFFLE_MODE=iterated \
-  ./run_suite.sh shuffle-bgw-static exp-shuffle --timeout 30
+cd /opt/unified/distributed
+
+./run_figure14_admpc_dist.sh
+./run_figure14_continuum_dist.sh
+./run_figure14_dumbo_mpc_dist.sh
 ```
 
-## 5. Environment Variables
+By default, each command runs all five depths. Use `--only-d` to run one depth, or `--cluster-env` to select a non-default cluster file:
 
-| Variable | Description |
-| --- | --- |
-| `DISABLE_RLC=1` | Disable RLC-based batch verification in AggTrans. |
-| `DISABLE_AGG_PROTO=1` | Disable prover-side aggregation and send individual witnesses. |
-| `BGW_UNBATCHED_VERIFY=1` | Use unbatched verification for Dumbo-MPC BGW degree reduction in BGW-based baselines. |
-| `SHUFFLE_K` | Number of shuffle inputs. Default: `128`. |
-| `SHUFFLE_MODE=iterated` | Use the iterated butterfly switching network. |
-| `SHUFFLE_HANDOFF_INTERVAL=1` | Change committee after every switch layer. |
-| `SHUFFLE_HANDOFF_INTERVAL=3` | Change committee every three switch layers. |
-| `SHUFFLE_HANDOFF_INTERVAL=static` | Use a fixed committee for the shuffle computation. |
+```bash
+./run_figure14_continuum_dist.sh --only-d 6
 
-## 6. Outputs
+./run_figure14_continuum_dist.sh \
+  --cluster-env /path/to/cluster.env --only-d 10
+```
 
-Distributed run results are archived under:
+## 4. Outputs
+
+All distributed results are stored under:
 
 ```text
-/opt/benchmark-distributed/<timestamp>_<protocol>_<exp>/...
+/opt/benchmark-distributed/
 ```
 
-Each case contains:
-
-- `metadata.env`
-- copied runtime logs
-- generated config snapshot
-
-## 7. Cleanup
-
-If an experiment is interrupted, clean remote containers before rerunning:
-
-```bash
-cd /opt/unified/distributed
-
-./cleanup_remote_containers.sh
-./cleanup_remote_ports.sh --protocol continuum --n 4
-./cleanup_remote_ports.sh --protocol dumbo --n 16
-```

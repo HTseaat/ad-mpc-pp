@@ -1,0 +1,87 @@
+{
+  "schema": "linear-communication-calibration-v1",
+  "description": "Local n=4, t=1, B=100 linear handoff calibration used to audit current-code and paper-faithful communication.",
+  "metric": {
+    "name": "serialized application-payload bytes sent to remote parties",
+    "self_send_included": false,
+    "curve_control_included": false,
+    "transport_framing_included": false
+  },
+  "parameters": {
+    "n": 4,
+    "t": 1,
+    "batch_size": 100
+  },
+  "serialization": {
+    "field_bytes": 32,
+    "g1_bytes": 48,
+    "symmetric_ciphertext_overhead_bytes": 46,
+    "public_tuple_overhead_retransmit_bytes": 36,
+    "public_tuple_overhead_cached_bytes": 29
+  },
+  "continuum": {
+    "implementation": {
+      "observed_remote_payload_bytes_per_transfer": 4862933,
+      "rbc_payload_bytes_by_dealer": [25215, 25220, 25219, 25212],
+      "private_ciphertext_bytes_by_dealer": [
+        [71578, 71566, 71568, 71573],
+        [71572, 71571, 71585, 71574],
+        [71569, 71575, 71567, 71573],
+        [71562, 71556, 71561, 71571]
+      ]
+    },
+    "transport": {
+      "erasure_code_k": 2,
+      "rbc_stripe_transmissions_per_dealer": 16,
+      "avid_stripe_transmission_multiplier": 7
+    },
+    "paper": {
+      "aggregated_public_proof_bytes": 256,
+      "ephemeral_public_key_bytes": 48,
+      "control_and_tag_overhead_bytes_per_transfer": 47953
+    }
+  },
+  "admpc": {
+    "implementation": {
+      "batch_bundle_bytes_per_transfer": 1365412,
+      "adtrans_bytes_per_transfer": 1772964,
+      "batch_rand_executed_by_linear_driver": false
+    },
+    "paper": {
+      "batch_rand_bytes_per_transfer": 616296,
+      "public_fields_per_item_g1_elements": 2,
+      "public_fields_per_item_field_elements": 2
+    }
+  },
+  "source_sha256": {
+    "admpc/adkg/acss.py": "e05db4cdade6dcaf90ea5a52ef7cac84d4b903543bc5222cc7f07a39c98b7c70",
+    "admpc/adkg/admpc_dynamic.py": "eea3d9587ee87982686fe340914c8c6d215288f0e4516d808213bb84514f21c5",
+    "admpc/adkg/broadcast/optqrbc.py": "1a7e2446d4a6ff84c281b5a064b79bd29269fc8820cafdec9a034c0b4bf52cc1",
+    "admpc/adkg/bundle.py": "a2d7a9ed8f9c57bb9ac1dbd58563153885f78f4246ce34a5bcf7c3cb9896dd2e",
+    "admpc/adkg/ipc.py": "114e4473e7195c85fb10c7c656eb81e0a81a4916a0d472ba3c350c0d6dc7d57d",
+    "admpc/adkg/rand.py": "ede698843656f970762feb5e61c9fd6d1b08f34d0dd15606c8c3f2a23e135309",
+    "admpc/adkg/symmetric_crypto.py": "73d17590faaa919c20f763ca60a2025e0fb70df6b61a926484b966aeee8ce6b7",
+    "admpc/adkg/utils/serilization.py": "cbae281dd96346047b96acf549494e267217ccf7cca03ba3949057a9e8a3a334",
+    "admpc/scripts/admpc_dynamic_batchrand_run.py": "17f59bea69cff0d6090e71608edd35b3dd5cfae20bb69c19bbde2943e736d125",
+    "admpc/scripts/admpc_dynamic_linear_run.py": "90beaaec4e27798dba984168462b673c8be109cadcfc10fda23fad63a367fefb",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/aggregation_interfaces.py": "1731b2d9f0d1396a2e7bbc6bba568bd80716d07e575fdd788a7ed904ac5271f6",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/admpc2_dynamic_linear.py": "01a8c11725784296e3f2200fb87282654ba2103ac195bb3d05324e03aba4ea46",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/avid.py": "cf046b6b044ff4cc8bbe13ab2fe6bbb6f1d3077bc0fa2f03f7592914c6c9af28",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/broadcast/reliablebroadcast.py": "f55851a070e8dbb41d09d444a6a791cc716f452c0603e62bde58910a89d8bbee",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py": "dbf298ec0392f6d40adf730980f62ee6c45a71b9e05c281b70c159f4260d3876",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/ipc.py": "152dd8f79cc465885280787dc20549fca5be0a7231bb6e84d2fc32ced8294b9b",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/symmetric_crypto.py": "c7facda503bc74abdd11129e23bd7f2b20f632d5cf5dbd508cdf16f5dd2cf623",
+    "dumbo-mpc/dumbo-mpc/AsyRanTriGen/scripts/admpc2_dynamic_linear_run.py": "9e87396ea98fea9dc3dcb99c3912c9ef3092c2a84bd7caeab06635098959ccbc"
+  },
+  "provenance": {
+    "date_utc": "2026-08-23",
+    "continuum_payload_builder": "dumbo-mpc/dumbo-mpc/AsyRanTriGen/beaver/hbacss.py:ACSS_Pre._get_dealer_msg",
+    "admpc_transfer_builder": "admpc/adkg/acss.py:_get_dealer_msg_trans_log",
+    "batch_rand_measurement": "standalone local two-committee run; all 8 source/destination artifacts completed",
+    "notes": [
+      "Continuum control/tag overhead is the difference between the observed serialized total and the payload body propagated by RBC/AVID.",
+      "AD-MPC BatchRand is measured separately because the active linear driver invokes BatchBundle but omits the independent paper-required BatchRand.",
+      "The paper projection preserves measured control/dissemination behavior while replacing protocol payload fields with canonical binary sizes."
+    ]
+  }
+}

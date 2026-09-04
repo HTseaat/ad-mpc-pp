@@ -1,0 +1,231 @@
+# syntax=docker/dockerfile:1.6
+
+# First AWS image: intentionally keeps the compiler toolchain in the final
+# image.  This makes remote code iteration and native-library rebuilds simple;
+# image slimming can happen after the distributed deployment is stable.
+FROM ubuntu:20.04
+
+ARG TARGETARCH
+ARG GO_VERSION=1.20.14
+ARG RUST_TOOLCHAIN=nightly-2026-04-20
+ARG CHARM_COMMIT=be9587ccdd4d61c591fb50728ebf2a4690a2064f
+
+LABEL org.opencontainers.image.title="Continuum unified MPC runtime" \
+      org.opencontainers.image.description="AD-MPC, Continuum, and Dumbo-MPC linux/amd64 build/runtime image"
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=Etc/UTC \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    CGO_ENABLED=1 \
+    GOTOOLCHAIN=local \
+    LIBRARY_PATH=/usr/local/lib \
+    LD_LIBRARY_PATH=/usr/local/lib \
+    LIBRARY_INCLUDE_PATH=/usr/local/include \
+    CARGO_HOME=/root/.cargo \
+    PATH=/opt/venv/admpc/bin:/usr/local/go/bin:/root/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
+    PYTHONPATH=/opt/admpc:/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen
+
+RUN test "${TARGETARCH}" = "amd64" || \
+    { echo "Dockerfile.unified only supports linux/amd64; TARGETARCH=${TARGETARCH}" >&2; exit 1; }
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        autoconf \
+        automake \
+        binutils \
+        bison \
+        build-essential \
+        ca-certificates \
+        cmake \
+        curl \
+        file \
+        flex \
+        git \
+        iproute2 \
+        jq \
+        libffi-dev \
+        libflint-dev \
+        libgmp-dev \
+        libgomp1 \
+        libmpc-dev \
+        libmpfr-dev \
+        libntl-dev \
+        libssl-dev \
+        libtool \
+        m4 \
+        make \
+        net-tools \
+        openssh-client \
+        pkg-config \
+        procps \
+        psmisc \
+        python3 \
+        python3-dev \
+        python3-gmpy2 \
+        python3-pip \
+        python3-venv \
+        rsync \
+        sudo \
+        tmux \
+        wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install architecture-specific toolchains explicitly.  Pinning the Rust
+# nightly avoids future nightly changes breaking the legacy pypairing crates.
+RUN wget -q "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" \
+    && rm -rf /usr/local/go \
+    && tar -C /usr/local -xzf "go${GO_VERSION}.linux-amd64.tar.gz" \
+    && rm -f "go${GO_VERSION}.linux-amd64.tar.gz" \
+    && go version
+
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+      | sh -s -- -y --profile minimal --default-toolchain "${RUST_TOOLCHAIN}" \
+    && rustc --version \
+    && cargo --version
+
+COPY unified/docker/requirements-common.txt /tmp/requirements-common.txt
+
+# Both protocol trees need different pypairing builds.  They share system
+# Charm/PBC but use separate Python virtual environments.
+RUN python3 -m pip install --upgrade \
+        pip==24.0 setuptools==68.2.2 wheel==0.43.0 Cython==0.29.36 \
+    && python3 -m venv --system-site-packages /opt/venv/continuum \
+    && python3 -m venv --system-site-packages /opt/venv/admpc \
+    && /opt/venv/continuum/bin/pip install --upgrade \
+        pip==24.0 setuptools==68.2.2 wheel==0.43.0 \
+    && /opt/venv/admpc/bin/pip install --upgrade \
+        pip==24.0 setuptools==68.2.2 wheel==0.43.0 \
+    && /opt/venv/continuum/bin/pip install -r /tmp/requirements-common.txt \
+    && /opt/venv/admpc/bin/pip install -r /tmp/requirements-common.txt
+
+# Charm-Crypto 0.63 needs PBC.  Install it once into the system Python path;
+# both venvs were created with --system-site-packages and can import it.
+WORKDIR /tmp
+RUN wget -q https://crypto.stanford.edu/pbc/files/pbc-0.5.14.tar.gz \
+    && tar -xzf pbc-0.5.14.tar.gz \
+    && cd pbc-0.5.14 \
+    && ./configure \
+    && make -j"$(nproc)" \
+    && make install \
+    && ldconfig \
+    && cd /tmp \
+    && rm -rf pbc-0.5.14 pbc-0.5.14.tar.gz
+
+# Do not let the image-wide PATH select /opt/venv/admpc/bin/python here.
+# Charm is shared by both --system-site-packages virtual environments, so
+# build and install it with the system Python explicitly.
+RUN git clone https://github.com/JHUISI/charm.git /tmp/charm \
+    && cd /tmp/charm \
+    && git checkout "${CHARM_COMMIT}" \
+    && PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin ./configure.sh \
+    && make -j"$(nproc)" \
+    && make install \
+    && cd /tmp \
+    && rm -rf /tmp/charm \
+    && ldconfig
+
+# Source is copied only after stable system dependencies so normal code edits
+# do not invalidate the expensive PBC/Charm layers.
+COPY dumbo-mpc /opt/dumbo-mpc
+COPY admpc /opt/admpc
+COPY unified /opt/unified
+
+# The repository's zfec source already uses portable -march=x86-64.  Install
+# it explicitly into both protocol environments; the image-wide PATH selects
+# the AD-MPC venv and a bare `python3 -m pip` would leave Continuum without it.
+RUN /opt/venv/continuum/bin/pip install --no-build-isolation /opt/dumbo-mpc/zfec \
+    && /opt/venv/admpc/bin/pip install --no-build-isolation /opt/dumbo-mpc/zfec
+
+# Build the two independent pypairing/NTL environments.  Replace only the
+# packaging-time -march=native flag inside the image; host source is untouched.
+RUN sed -i 's/-march=native/-march=x86-64/g' \
+        /opt/dumbo-mpc/dumbo-mpc/OptRanTriGen/setup.py \
+        /opt/admpc/setup.py \
+    && /opt/venv/continuum/bin/pip install --no-build-isolation --no-deps \
+        /opt/dumbo-mpc/dumbo-mpc/OptRanTriGen/pairing \
+    && /opt/venv/continuum/bin/pip install --no-build-isolation --no-deps -e \
+        /opt/dumbo-mpc/dumbo-mpc/OptRanTriGen \
+    && continuum_ntl="$(find /opt/dumbo-mpc/dumbo-mpc/OptRanTriGen/optimizedhbmpc/ntl \
+        -maxdepth 1 -type f -name '_hbmpc_ntl_helpers*.so' -print -quit)" \
+    && test -n "${continuum_ntl}" \
+    && find /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/optimizedhbmpc/ntl \
+        -maxdepth 1 -type f -name '_hbmpc_ntl_helpers*.so' -delete \
+    && cp "${continuum_ntl}" \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/optimizedhbmpc/ntl/ \
+    && /opt/venv/admpc/bin/pip install --no-build-isolation --no-deps \
+        /opt/admpc/pairing \
+    && /opt/venv/admpc/bin/pip install --no-build-isolation --no-deps -e \
+        /opt/admpc
+
+# Trusted setup deliberately uses an isolated, manifest-locked qsdh-py build
+# instead of either protocol's active pypairing/NTL installation.  Build it in
+# the image so the documented runner works without mutating the container at
+# startup.
+RUN --mount=type=cache,target=/root/.cargo/registry \
+    --mount=type=cache,target=/root/.cargo/git \
+    cd /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen \
+    && TRUSTED_SETUP_CARGO_OFFLINE=0 \
+        bash trusted_setup/scripts/build_upstream.sh --clean
+
+# Rebuild the active Go and Rust libraries from the current source rather than
+# copying architecture-dependent artifacts from the ARM development machine.
+RUN --mount=type=cache,target=/root/.cache/go-build \
+    --mount=type=cache,target=/root/go/pkg/mod \
+    cd /opt/dumbo-mpc/gnark-crypto/kzg_ped_bls12-381 \
+    && go build -trimpath -buildmode=c-shared -o kzg_ped_out.so kzg_ped_out.go \
+    && go build -trimpath \
+        -o /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/trusted_setup/continuum_kzg_smoke \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/trusted_setup/continuum_kzg_smoke.go \
+    && install -m 0755 kzg_ped_out.so \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/kzg_ped_out.so \
+    && install -m 0755 kzg_ped_out.so /opt/dumbo-mpc/kzg_ped_out.so
+
+RUN --mount=type=cache,target=/root/.cargo/registry \
+    --mount=type=cache,target=/root/.cargo/git \
+    cd /opt/dumbo-mpc/bulletproofs-amcl \
+    && cargo build --release --locked \
+    && install -m 0755 target/release/libbulletproofs_amcl.so \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/libbulletproofs_amcl.so \
+    && install -m 0755 target/release/libbulletproofs_amcl.so \
+        /opt/dumbo-mpc/libbulletproofs_amcl.so
+
+# Preserve paths expected by the older AD-MPC compose/launcher code.
+RUN mkdir -p \
+        /opt/admpc/conf \
+        /opt/admpc/logs \
+        /opt/admpc/sharedata \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/conf \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/log \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/sharedata \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/sharedata_test \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/triples \
+        /usr/src \
+    && ln -sfn /opt/admpc /usr/src/adkg \
+    && ln -sfn /opt/unified/enter_admpc.sh /usr/local/bin/enter-admpc \
+    && ln -sfn /opt/unified/enter_continuum.sh /usr/local/bin/enter-continuum \
+    && ln -sfn /opt/unified/run_admpc_local.sh /usr/local/bin/run-admpc-local \
+    && ln -sfn /opt/unified/run_continuum_local.sh /usr/local/bin/run-continuum-local \
+    && ln -sfn /opt/unified/run_dumbo_mpc_local.sh /usr/local/bin/run-dumbo-mpc-local \
+    && chmod +x \
+        /opt/unified/docker/image_preflight.sh \
+        /opt/unified/run_*.sh \
+        /opt/unified/distributed/*.sh \
+        /opt/dumbo-mpc/*.sh \
+        /opt/dumbo-mpc/remote/AsyRanTriGen_scripts/*.sh \
+        /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/scripts/*.sh \
+        /opt/admpc/*.sh \
+        /opt/admpc/scripts/*.sh \
+    && ldconfig
+
+RUN MPC_EXPECTED_ARCH=x86_64 /opt/unified/docker/image_preflight.sh --build-check
+
+ARG VCS_REF=unknown
+ARG BUILD_DATE=unknown
+LABEL org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.created="${BUILD_DATE}"
+ENV MPC_IMAGE_BUILD_REF=${VCS_REF}
+WORKDIR /opt
+CMD ["/bin/bash"]

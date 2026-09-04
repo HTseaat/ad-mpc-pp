@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+export ZMQ_AUTH_MODE=curve
+
 if [[ $# -lt 4 || $# -gt 5 ]]; then
   echo "Usage: run-continuum-local <n> <t> <layers|auto> <total_cm> [mixed|linear|nonlinear|bgw-aggtrans|shuffle|shuffle-bgw-static|dumbo-shuffle-beaver]" >&2
   echo "       run-continuum-local <n> <t> <shuffle_k> <shuffle|shuffle-bgw-static|dumbo-shuffle-beaver>" >&2
@@ -55,6 +57,34 @@ case "$mode" in
     exit 1
     ;;
 esac
+
+committee_election_mode="${COMMITTEE_ELECTION_MODE:-off}"
+committee_election_mode="$(printf '%s' "$committee_election_mode" | tr '[:upper:]' '[:lower:]')"
+case "$committee_election_mode" in
+  off|shadow|gated) ;;
+  *)
+    echo "Invalid COMMITTEE_ELECTION_MODE=${COMMITTEE_ELECTION_MODE:-}. Expected off, shadow, or gated." >&2
+    exit 1
+    ;;
+esac
+if [[ "$committee_election_mode" != "off" ]]; then
+  if [[ "$task" != "ad-mpc2" ]]; then
+    echo "Committee election shadow/gated integration currently requires mixed mode." >&2
+    exit 1
+  fi
+  if [[ "$layers" == "auto" ]] || ! [[ "$layers" =~ ^[0-9]+$ ]] || (( layers < 4 )); then
+    echo "Committee election shadow/gated integration requires an explicit layer count >= 4." >&2
+    exit 1
+  fi
+  export ZMQ_AUTH_MODE=curve
+  export COMMITTEE_ELECTION_MODE="$committee_election_mode"
+  export FINISHED_PATTERN="COMMITTEE_ELECTION_PIPELINE_FINISHED"
+  if [[ "$committee_election_mode" == "gated" ]]; then
+    export FINAL_LAYER_START=$(( (layers - 1) * n ))
+    export FINAL_LAYER_PATTERN='my_send_id: .* exec_time:'
+    export FINAL_LAYER_THRESHOLD=$(( n - t ))
+  fi
+fi
 
 shuffle_switch_layers() {
   local k="$1"
@@ -132,6 +162,11 @@ fi
 
 source /opt/venv/continuum/bin/activate
 export PYTHONPATH="/opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen:${PYTHONPATH:-}"
+
+if [[ "${PROTOCOL_OVERHEAD_METRICS:-0}" =~ ^(1|true|yes|on)$ ]]; then
+  : "${PROTOCOL_OVERHEAD_OUTPUT_DIR:?PROTOCOL_OVERHEAD_OUTPUT_DIR is required when protocol metrics are enabled}"
+  mkdir -p "${PROTOCOL_OVERHEAD_OUTPUT_DIR}"
+fi
 
 # Rebuild KZG shared library on demand if missing in runtime container.
 if [[ ! -f /opt/dumbo-mpc/dumbo-mpc/AsyRanTriGen/kzg_ped_out.so ]]; then

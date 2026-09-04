@@ -17,7 +17,6 @@ import time
 from pypairing.pypairing import polycommit_compute_comms_t_hats, polycommit_prove_inner_product_one_known_precomp, polycommit_prove_double_batch_inner_product_one_known_ori, polycommit_verify_double_batch_inner_product_one_known, polycommit_prove_double_batch_inner_product_opt, polycommit_verify_double_batch_inner_product_one_known_but_differenter
 
 
-
 class PolyCommitLog:
     def __init__(self, crs=None, degree_max=33):
         if crs is None:
@@ -436,7 +435,7 @@ class PolyCommitLog:
         )
         return ret
 
-    # Legacy interface for backward compatibility
+    # Historical benchmark evaluator retained by the active AD-MPC runtime.
     def batch_verify_eval(self, cs, i, phis_at_i, shared, witness, degree=None):
         [roothash, t, S, Ds, mu] = shared
         [branch, T, t_hats, iproof] = witness    # t_hats 是长度 = B 的 list
@@ -478,6 +477,10 @@ class PolyCommitLog:
 
         y_vec = [ZR(i) ** j for j in range(t + 1)]
 
+        # Benchmark implementation: retain only the optimized Rust
+        # inner-product proof verification.  The caller-provided commitments,
+        # shares, Merkle branch, and S/T/mu values are intentionally not bound
+        # here, matching the historical AD-MPC evaluation verifier.
         ok = polycommit_verify_double_batch_inner_product_one_known_but_differenter(
                 Ds, t_hats, y_vec,
                 core_iproof, tail_iproof,

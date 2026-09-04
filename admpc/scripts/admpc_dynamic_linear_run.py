@@ -9,11 +9,73 @@ import time
 import logging
 import uvloop
 import numpy as np
+import os
 
 logger = logging.getLogger("benchmark_logger")
 logger.setLevel(logging.ERROR)
 # Uncomment this when you want logs from this file.
 logger.setLevel(logging.NOTSET)
+
+CANONICAL_COMMUNICATION_PROFILE = "bls12-381-fr32-g1-48-v1"
+
+
+def _communication_metrics_context(n, t, layers, my_id, my_send_id, total_cm):
+    depth = layers - 2
+    cm = int(total_cm / depth) if depth > 0 else int(total_cm)
+    width = cm * 2
+    per_item = os.environ.get("ADTRANS_ALG4_PER_ITEM", "0").strip().lower() in {
+        "1", "true", "yes", "on"
+    }
+    return {
+        "implementation": "admpc",
+        "experiment": "figure8",
+        "protocol_variant": "admpc-linear",
+        "run_id": (HbmpcConfig.extras or {}).get("run_id", os.environ.get("PROTOCOL_OVERHEAD_RUN_ID", "local")),
+        "parameters": {
+            "committee_size": int(n), "threshold": int(t),
+            "total_layers": int(layers), "circuit_depth": int(depth),
+            "total_cm": int(total_cm), "configured_width": int(width),
+            "expected_batch_size": int(width), "expected_operations": int(depth),
+            "expected_processes": int(n * layers), "proof_metrics_expected": True,
+            "cryptographic_payload_encoding": CANONICAL_COMMUNICATION_PROFILE,
+            "adtrans_alg4_mode": (
+                "per-item-line204" if per_item else "aggregate"
+            ),
+            "evaluation_verifier_mode": "legacy-inner-proof-only",
+        },
+        "process": {
+            "global_process_id": int(my_send_id), "local_party_id": int(my_id),
+            "physical_layer": int(my_send_id / n),
+        },
+        "selection": {
+            "included_tags": ([f"GR{target}" for target in range(1, depth + 1)] +
+                              [f"TR{target}" for target in range(2, layers)]),
+            "excluded_tag_prefixes": ["A", "RR", "LOCAL_METRICS_BARRIER"],
+            "normalization_unit": "sharing",
+        },
+    }
+
+
+def _register_baseline_batches(recorder, layers, total_cm, physical_layer):
+    depth = layers - 2
+    width = 2 * (int(total_cm / depth) if depth > 0 else int(total_cm))
+    for computation_layer in range(1, depth + 1):
+        operation_id = f"layer:{computation_layer}"
+        for protocol, tag, source_layer, target_layer in (
+            ("randgen", f"GR{computation_layer}", computation_layer - 1, computation_layer),
+            ("adtrans", f"TR{computation_layer + 1}", computation_layer, computation_layer + 1),
+        ):
+            if physical_layer == source_layer:
+                role = "source"
+            elif physical_layer == target_layer:
+                role = "destination"
+            else:
+                continue
+            recorder.register_protocol_batch(
+                protocol=protocol, tag=tag, source_layer=source_layer,
+                target_layer=target_layer, batch_size=width, role=role,
+                operation_id=operation_id, unit="sharing",
+            )
 
 def get_avss_params(n):
     g, h = G1.rand(b'g'), G1.rand(b'h')
@@ -39,7 +101,15 @@ async def _run(peers, n, t, k, my_id, start_time, layers, my_send_id, total_cm):
     # 注意这里，在每个委员会中 servers 的编号都是从 0 开始的，因此在生成 send 和 recv 对的时候，要注意转换
 
     print(f"my_send_id: {my_send_id}")
-    async with ProcessProgramRunner(peers, n*layers, t, my_send_id) as runner:
+    async with ProcessProgramRunner(
+        peers, n*layers, t, my_send_id,
+        metrics_context=_communication_metrics_context(
+            n, t, layers, my_id, my_send_id, total_cm
+        ),
+    ) as runner:
+        _register_baseline_batches(
+            runner.node_communicator, layers, total_cm, int(my_send_id / n)
+        )
         send, recv = runner.get_send_recv("")
         logging.debug(f"Starting ADMPC: {(my_id)}")
         logging.debug(f"Start time: {(start_time)}, diff {(start_time-int(time.time()))}")
@@ -49,7 +119,7 @@ async def _run(peers, n, t, k, my_id, start_time, layers, my_send_id, total_cm):
         )
         curve_params = (ZR, G1, multiexp, dotprod)
         layerID = int(my_send_id/n)
-        with ADMPC_Dynamic(pks, sks[my_send_id], g, h, n, t, deg, my_id, send, recv, pc, curve_params, mat, total_cm, layerID=layerID) as admpc: 
+        with ADMPC_Dynamic(pks, sks[my_send_id], g, h, n, t, deg, my_id, send, recv, pc, curve_params, mat, total_cm, layerID=layerID, metrics_recorder=runner.node_communicator) as admpc: 
             while True:
                 if time.time() > start_time:
                     break
@@ -62,7 +132,24 @@ async def _run(peers, n, t, k, my_id, start_time, layers, my_send_id, total_cm):
             # admpc_task.cancel()
             exec_time = time.time() - begin_time
             print(f"my_send_id: {my_send_id} exec_time: {exec_time}")
-            await asyncio.sleep(50)
+            if os.environ.get("PROTOCOL_OVERHEAD_METRICS", "0").lower() in {
+                "1", "true", "yes", "on"
+            }:
+                checkpoint_path = runner.node_communicator.write_metrics_checkpoint()
+                logging.info(
+                    "Protocol-overhead checkpoint written: %s", checkpoint_path
+                )
+                barrier_send, barrier_recv = runner.get_send_recv(
+                    "LOCAL_METRICS_BARRIER"
+                )
+                for process_id in range(n * layers):
+                    barrier_send(process_id, "ready")
+                ready = set()
+                while len(ready) < n * layers:
+                    sender, message = await barrier_recv()
+                    if message == "ready":
+                        ready.add(sender)
+            await asyncio.sleep(float(os.environ.get("POST_EXEC_SLEEP_SECONDS", "50")))
 
 
 

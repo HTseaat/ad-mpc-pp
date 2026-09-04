@@ -21,6 +21,13 @@ from adkg.ntl import vandermonde_batch_evaluate
 from adkg.elliptic_curve import Subgroup
 from adkg.progs.mixins.dataflow import Share
 from adkg.robust_reconstruction import robust_reconstruct_admpc
+from adkg.reed_solomon import (
+    Algorithm,
+    DecoderFactory,
+    EncoderFactory,
+    IncrementalDecoder,
+    RobustDecoderFactory,
+)
 
 import math
 
@@ -72,14 +79,142 @@ class Robust_Rec:
         )
             
     def kill(self):
+        self.subscribe_recv_task.cancel()
+        for task in list(self.tasks):
+            task.cancel()
+
+    def _track_background_task(self, task):
+        """Keep a live RBC responder reachable until it terminates or kill()."""
+        self.tasks.append(task)
+
+        def _task_done(completed):
+            try:
+                self.tasks.remove(completed)
+            except ValueError:
+                pass
+            if not completed.cancelled():
+                exception = completed.exception()
+                if exception is not None:
+                    logger.warning(
+                        "[%d] RobustRec RBC responder failed: %s",
+                        self.my_id,
+                        exception,
+                    )
+
+        task.add_done_callback(_task_done)
+        return task
+
+    async def _incremental_batch_decode(self, rbc_outputs, serializer,
+                                        batch_size):
+        """Decode dealer vectors as their RBC instances finish.
+
+        The dealer queue index is the Reed--Solomon evaluation-point index.  In
+        particular, arrival order must never be used as a replacement dealer
+        identifier.  The optimistic decoder returns after ``n-t`` consistent
+        vectors.  If a vector conflicts with that candidate, later RBC outputs
+        continue to be consumed until robust decoding succeeds.
+        """
+        if batch_size <= 0:
+            return [], set(), tuple()
+
+        field = GF(Subgroup.BLS12_381)
+        point = EvalPoint(field, self.n, use_omega_powers=False)
+        encoder = EncoderFactory.get(point, Algorithm.VANDERMONDE)
+        decoder = DecoderFactory.get(point, Algorithm.VANDERMONDE)
+        robust_decoder = RobustDecoderFactory.get(
+            self.t, point, algorithm=Algorithm.GAO
+        )
+        incremental_decoder = IncrementalDecoder(
+            encoder,
+            decoder,
+            robust_decoder,
+            degree=self.t,
+            batch_size=batch_size,
+            max_errors=self.t,
+        )
+
+        expected_payload_size = batch_size * serializer.f_size
+        receiver_tasks = {
+            asyncio.create_task(rbc_outputs[dealer].get()): dealer
+            for dealer in range(self.n)
+        }
+        pending = set(receiver_tasks)
+        received_dealers = []
+
         try:
-            self.subscribe_recv_task.cancel()
-            for task in self.acss_tasks:
-                task.cancel()
-            self.acss.kill()
-            self.acss_task.cancel()
-        except Exception:
-            logging.info("ROBUST REC task finished")
+            while pending:
+                completed, pending = await asyncio.wait(
+                    pending, return_when=asyncio.FIRST_COMPLETED
+                )
+                # A deterministic order is useful when several local queue
+                # callbacks become ready in the same event-loop iteration.
+                for receiver in sorted(
+                    completed, key=lambda task: receiver_tasks[task]
+                ):
+                    dealer = receiver_tasks[receiver]
+                    payload = receiver.result()
+                    if (
+                        not isinstance(payload, bytes)
+                        or len(payload) != expected_payload_size
+                    ):
+                        logger.warning(
+                            "[%d] RobustRec rejected dealer %d: expected %d "
+                            "serialized bytes, got %s",
+                            self.my_id,
+                            dealer,
+                            expected_payload_size,
+                            (
+                                len(payload)
+                                if isinstance(payload, bytes)
+                                else type(payload)
+                            ),
+                        )
+                        continue
+
+                    try:
+                        dealer_vector = serializer.deserialize_fs(payload)
+                    except Exception as exception:
+                        logger.warning(
+                            "[%d] RobustRec rejected dealer %d: %s",
+                            self.my_id,
+                            dealer,
+                            exception,
+                        )
+                        continue
+                    if len(dealer_vector) != batch_size:
+                        logger.warning(
+                            "[%d] RobustRec rejected dealer %d: decoded %d "
+                            "values, expected %d",
+                            self.my_id,
+                            dealer,
+                            len(dealer_vector),
+                            batch_size,
+                        )
+                        continue
+
+                    received_dealers.append(dealer)
+                    incremental_decoder.add(
+                        dealer, [int(value) for value in dealer_vector]
+                    )
+                    if incremental_decoder.done():
+                        decoded, errors = incremental_decoder.get_results()
+                        if decoded is None or len(decoded) != batch_size:
+                            raise RuntimeError(
+                                "RobustRec decoder returned an incomplete batch"
+                            )
+                        constants = [self.ZR(coefficients[0])
+                                     for coefficients in decoded]
+                        return constants, errors, tuple(received_dealers)
+        finally:
+            for receiver in pending:
+                receiver.cancel()
+            if pending:
+                await asyncio.gather(*pending, return_exceptions=True)
+
+        raise RuntimeError(
+            "RobustRec exhausted all RBC outputs without reconstructing the "
+            "batch"
+        )
         
 
     def __enter__(self):
@@ -287,10 +422,24 @@ class Robust_Rec:
         return (self.mks, res)
         
     
-    async def batch_run_robust_rec(self, rec_id, shares, member_list):
+    async def batch_run_robust_rec(
+            self, rec_id, shares, member_list=None, instance_id=None):
+        if not shares:
+            return []
+        if member_list is None:
+            member_list = list(range(self.n))
+        if len(member_list) != self.n or len(set(member_list)) != self.n:
+            raise ValueError("RobustRec member_list must contain n unique members")
+        member_list = list(member_list)
         self.member_list = member_list
 
-        self.global_num += 1
+        if instance_id is None:
+            self.global_num += 1
+            instance_tag = f"seq-{self.global_num}-rec-{rec_id}"
+        else:
+            instance_tag = str(instance_id)
+            if not instance_tag:
+                raise ValueError("RobustRec instance_id must not be empty")
 
         sr = Serial(self.G1)
         serialized_shares = bytes(sr.serialize_fs(shares))
@@ -298,13 +447,20 @@ class Robust_Rec:
 
         rbc_outputs = [asyncio.Queue() for _ in range(self.n)]
         
-        async def predicate(_m):
-            return True
+        expected_payload_size = len(serialized_shares)
+
+        async def predicate(message):
+            return (
+                isinstance(message, bytes)
+                and len(message) == expected_payload_size
+            )
         rec_rbc_time = time.time()
         async def _setup(j):            
             # starting RBC
             # rbctag = ROBUSTRECMsgType.ROBUSTREC + str(j)
-            rbctag = str(self.global_num) + str(rec_id) + ROBUSTRECMsgType.ROBUSTREC + str(j) # (M, msg)
+            rbctag = (
+                f"{instance_tag}:{ROBUSTRECMsgType.ROBUSTREC}:dealer-{j}"
+            )
             rbcsend, rbcrecv = self.get_send(rbctag), self.subscribe_recv(rbctag)
 
             rbc_input = None
@@ -312,7 +468,7 @@ class Robust_Rec:
                 rbc_input = serialized_shares
 
             
-            rbc_task = asyncio.create_task(
+            rbc_task = self._track_background_task(asyncio.create_task(
                 optqrbc_dynamic(
                     rbctag,
                     self.my_id,
@@ -324,39 +480,41 @@ class Robust_Rec:
                     rbc_outputs[j].put_nowait,
                     rbcsend,
                     rbcrecv,
-                    self.member_list
+                    member_list
+                )
+            ))
+            return rbc_task
+
+
+        rbc_tasks = await asyncio.gather(*[
+            _setup(j) for j in range(self.n)
+        ])
+        try:
+            rec_values, errors, received_dealers = (
+                await self._incremental_batch_decode(
+                    rbc_outputs, sr, len(shares)
                 )
             )
+        except BaseException:
+            # A cancelled/failed caller no longer needs to help finish these
+            # tagged RBC instances.  On the normal fast path they deliberately
+            # remain alive in the background for slower honest receivers.
+            for task in rbc_tasks:
+                if not task.done():
+                    task.cancel()
+            await asyncio.gather(*rbc_tasks, return_exceptions=True)
+            raise
 
-
-        await asyncio.gather(*[_setup(j) for j in range(self.n)])
-        rec_await_rbc_list_time = time.time()       
-        rbc_list = await asyncio.gather(*(rbc_outputs[j].get() for j in range(self.n)))  
-        rec_await_rbc_list_time = time.time() - rec_await_rbc_list_time
         rec_rbc_time = time.time() - rec_rbc_time
-        rec_de_time = time.time()
-
-        deserialized_rbc_list = [sr.deserialize_fs(item) for item in rbc_list]
-
-        rbc_shares = [[None for _ in range(len(rbc_list))] for _ in range(len(deserialized_rbc_list[0]))]
-
-        for i in range(len(deserialized_rbc_list[0])):
-            for node in range(len(deserialized_rbc_list)):
-                rbc_shares[i][node] = int(deserialized_rbc_list[node][i])
-
-        
-
-        GFEG1 = GF(Subgroup.BLS12_381)
-
-
-        point = EvalPoint(GFEG1, self.n, use_omega_powers=False)
-        key_proposal = [i for i in range(self.n)]
-        poly, err = [None] * len(rbc_shares), [None] * len(rbc_shares)
-        rec_values = []
-        for i in range(len(rbc_shares)): 
-            poly[i], err[i] = await robust_reconstruct_admpc(rbc_shares[i], key_proposal, GFEG1, self.t, point, self.t)
-            constant = int(poly[i].coeffs[0])
-            rec_values.append(self.ZR(constant))
+        logger.debug(
+            "[%d] RobustRec reconstructed batch %s from dealers %s; "
+            "identified errors=%s in %.4fs",
+            self.my_id,
+            rec_id,
+            received_dealers,
+            sorted(errors),
+            rec_rbc_time,
+        )
         return rec_values
     
        

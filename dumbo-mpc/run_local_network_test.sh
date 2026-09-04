@@ -5,7 +5,7 @@ usage() {
     echo "Usage:"
     echo "  $0 ad-mpc2|ad-mpc2-linear|ad-mpc2-nonlinear|ad-mpc2-bgw-aggtrans|ad-mpc2-shuffle|ad-mpc2-shuffle-bgw-static|ad-mpc2-dumbo-shuffle-beaver <committee_size> <layers> <total_cm>"
     echo "  $0 <task_name> <committee_size> <k>"
-    echo "  $0 asy-triple <committee_size> <k> [full|drop-epoch4] [layers]"
+    echo "  $0 asy-triple <committee_size> <k> [full|drop-epoch4|fault-accumulation] [layers]"
     echo "  $0 dumbo-bgw-direct <committee_size> <k> [layers]"
     echo "Valid task names: ad-mpc2, ad-mpc2-linear, ad-mpc2-nonlinear, ad-mpc2-bgw-aggtrans, ad-mpc2-shuffle, ad-mpc2-shuffle-bgw-static, ad-mpc2-dumbo-shuffle-beaver, asy-random, asy-triple, dumbo-bgw-direct, dumbo-mpc, opt-triple, dyn-transfer, dyn-aggtransfer, dyn-pvtransfer, bat-multiplication, bat-pvmul, yoso-rbc, yoso-gather, yoso-gradedgather"
     exit 1
@@ -40,7 +40,7 @@ case "$TASK_NAME" in
                 ;;
             "ad-mpc2-bgw-aggtrans")
                 MODULE="scripts/admpc2_dynamic_bgw_aggtrans_run.py"
-                export FINISHED_PATTERN="exec_time"
+                export FINISHED_PATTERN="Finished"
                 ;;
             "ad-mpc2-shuffle")
                 MODULE="scripts/admpc2_dynamic_shuffle_run.py"
@@ -84,9 +84,9 @@ case "$TASK_NAME" in
         DUMBO_MODE=${3:-full}
         LAYERS=${4:-10}
         case "$DUMBO_MODE" in
-            full|drop-epoch4) ;;
+            full|drop-epoch4|fault-accumulation) ;;
             *)
-                echo "Error: invalid asy-triple mode '${DUMBO_MODE}'. Expected 'full' or 'drop-epoch4'."
+                echo "Error: invalid asy-triple mode '${DUMBO_MODE}'. Expected full, drop-epoch4, or fault-accumulation."
                 usage
                 ;;
         esac
